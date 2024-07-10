@@ -1,15 +1,13 @@
 using System.Collections.Generic;
 using Microsoft.Playwright;
+using SoftwareProject.Interfaces;
 
 namespace SoftwareProject {
 
-    public class AldiScrapper{
+    public class AldiScrapper:IWebscrapper
+    {
 
-    //  private string apiKey;
-
-    //     public AldiScrapper(string apiKey){
-    //         this.apiKey=apiKey;
-    //     }
+    
 
    public async Task<List<string>> GetProductLinks(string product)
     {

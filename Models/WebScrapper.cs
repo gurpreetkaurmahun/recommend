@@ -1,15 +1,21 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace SoftwareProject {
 
     public class WebScrapper{
 
-        public char ScrapeId { get; set; }
+        [Key]
+        public int ScrapeId { get; set; }
         public string WebsiteName { get; set; }
-        public DateOnly Date { get; set; }
-        public Product ProductId { get; set; }
-        public Location location { get; set; }
-        public int MyProperty { get; set; }
+
+        public string  Url { get; set; }
+        public DateOnly ScrappedDate { get; set; }
+        public int? ProductId { get; set; }
+
+        public Product? Product { get; set; }
+   
+        public string ScraperType { get; set; }
         
     }
 }

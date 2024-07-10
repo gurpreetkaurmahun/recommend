@@ -1,0 +1,71 @@
+static async Task Main(string[] args){
+
+            //  var apiKey="1VHYN34E863BMM2L4I70WT8CHV1X5LQDAE230RNM3UTVFZNQ6L5NSF4SID5QXVL502OVT0J16DDW8V5C";
+             System.Console.WriteLine("Enter Product you want to search on Tesco/Sainsbury");
+              var product =Console.ReadLine();
+
+              TescoScrapper Tscraper=new TescoScrapper();
+
+              SainsburyScrapper Sscraper=new SainsburyScrapper();
+
+              AldiScrapper Ascrapper=new AldiScrapper();
+
+              AsdaScrapper asScrapper=new AsdaScrapper();
+
+
+              var allProducts=new List<(string source, Product Product)>();
+
+
+
+
+            try{
+
+                var scrappers=new List<(string Name, Func<string, Task<List<string>>> GetLinks ,Func<List<string>, Task<List<Product>>> GetDetails)>{
+                    ("Aldi",Ascrapper.GetProductLinks,Ascrapper.GetProductDetails),
+                    ("Tesco",Tscraper.GetProductLinks,Tscraper.GetProductDetails),
+                    ("Sainsbury",Sscraper.GetProductLinks,Sscraper.GetProductDetails),
+                    ("Asda",asScrapper.GetProductLinks,asScrapper.GetProductDetails )
+                    
+                };
+
+
+        //creating a list of async task one for  each scrapper
+        var tasks = scrappers.Select(async scrapper =>
+        {
+            var (name, getLinks, getDetails) = scrapper;
+            Console.WriteLine($"Scraping from {name} for: {product}");
+
+            try
+            {
+                var productLinks = await getLinks(product);
+                var products = await getDetails(productLinks);
+
+                return products.Select(prod => (name, prod)).ToList();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error scraping {name}: {ex.Message}");
+                return new List<(string, Product)>();
+            }
+        }).ToList();
+
+        var results = await Task.WhenAll(tasks);
+
+        foreach (var result in results)
+        {
+            allProducts.AddRange(result);
+        }
+
+                foreach (var(source,prod) in allProducts){
+
+                    System.Console.WriteLine();
+                    System.Console.WriteLine($"Source:{source} : Title:{prod.Title}  , Price: {prod.price} , Image: {prod.ImageUrl} , price per peice{prod.pricePerQuantity}");
+                    System.Console.WriteLine();
+                }
+
+
+
+            }catch(Exception ex){  System.Console.WriteLine( $"An error occured: {ex.Message}");}
+
+}
+

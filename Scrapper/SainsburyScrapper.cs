@@ -1,9 +1,12 @@
 using System.Collections.Generic;
 using Microsoft.Playwright;
+using SoftwareProject.Interfaces;
 
 namespace SoftwareProject {
 
-public class SainsburyScrapper{
+public class SainsburyScrapper:IWebscrapper
+
+{
 
   public async Task<List<string>> GetProductLinks(string product)
     {

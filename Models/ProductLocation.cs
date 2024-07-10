@@ -1,11 +1,16 @@
 using System.Collections.Generic;
-
+using System.ComponentModel.DataAnnotations;
 namespace SoftwareProject {
 
     public class ProductLocation{
-        
-        public char prodLocation { get; set; }
-        public string name { get; set; }
-        public int MyPropert { get; set; }
+        [Key]
+        public int ProdLocationID { get; set; }
+        public int? ProductId { get; set; }
+        public  Product? Product { get; set; }
+
+
+
+        public int? LocationId { get; set; }
+         public  Location? Location { get; set; }
     }
 }
