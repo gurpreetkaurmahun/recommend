@@ -3,8 +3,7 @@ using System.ComponentModel.DataAnnotations;
 namespace SoftwareProject {
 
     public class ProductLocation{
-        [Key]
-        public int ProdLocationID { get; set; }
+        
         public int? ProductId { get; set; }
         public  Product? Product { get; set; }
 

@@ -9,7 +9,7 @@ namespace SoftwareProject {
 
         // public double quantity{ get; set; }
         public string Price { get; set; }
-        public bool Availability { get; set; }
+       
         public string ImageUrl { get; set; }
 
         public string pricePerUnit{ get; set; }
@@ -27,18 +27,17 @@ namespace SoftwareProject {
 
         public Category? Category { get; set; }
 
-        public int? LocationId{get;set;}
+       
 
-        public Location? Location { get; set; }
+        public string? SupermarketName { get; set; } 
 
-        [Required]
-        public string SupermarketName { get; set; } 
-
-        public ICollection<ProductLocation> ProductLocations { get; set; }
+        public ICollection<ProductLocation>? ProductLocations { get; set; }
 
         public  ICollection<WebScrapper>? WebScrappers { get; set; }
 
-        // public ProductReview ReviewId { get; set; }
+
+
+      
 
 
 

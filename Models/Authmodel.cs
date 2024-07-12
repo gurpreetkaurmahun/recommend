@@ -22,11 +22,11 @@ namespace SoftwareProject {
         public string Address { get; set; }
         public string ContactNo { get; set; }
 
-        public DateOnly Dob{get;set;}
+        public DateTime Dob{get;set;}
 
-        public string Latitude { get; set; }
+        public double Latitude { get; set; }
 
-        public string Longitude { get; set; }
+        public double Longitude { get; set; }
 
         public string FullLocation { get; set; }
 

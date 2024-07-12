@@ -11,14 +11,13 @@ namespace SoftwareProject {
         public double Latitude { get; set; }
 
 
-        [Required]
-        public string SupermarketName { get; set; }
+        
         public string FullLocation { get; set; }
 
-        public int ConsumerId { get; set; }
+        public int? ConsumerId { get; set; }
         public  Consumer? Consumer { get; set; }
 
-        public ICollection<ProductLocation> ProductLocations { get; set; }
+        public ICollection<ProductLocation>? ProductLocations { get; set; }
 
    
 

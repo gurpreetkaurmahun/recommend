@@ -16,19 +16,24 @@ namespace SoftwareProject {
         public string Address { get; set; }
         public string ContactNo { get; set; }
 
-        public DateOnly Dob{get;set;}
+        public DateTime Dob{get;set;}
 
-        public string? IdentityUserId { get; set; }
+        public string IdentityUserId { get; set; }
         
-  
+        // Navigation property
         public  IdentityUser? IdentityUser { get; set; }
 
         public  ICollection<Newsletter>? Newsletters { get; set; }
 
         public  ICollection<Product>? Products { get; set; }
+
+         public virtual ICollection<Review>? Reviews { get; set; }
+        
         public int? LocationId { get; set; }
 
         public Location? Location{get;set;}
+
+        public ICollection<SavedProduct> SavedProducts { get; set; }
 
 
 

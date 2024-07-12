@@ -237,7 +237,7 @@ namespace FinalYearProject.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<DateOnly>("Dob")
+                    b.Property<DateTime>("Dob")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("FName")
@@ -245,6 +245,7 @@ namespace FinalYearProject.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("IdentityUserId")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("LName")
@@ -258,6 +259,9 @@ namespace FinalYearProject.Migrations
 
                     b.HasIndex("IdentityUserId");
 
+                    b.HasIndex("LocationId")
+                        .IsUnique();
+
                     b.ToTable("Consumers");
                 });
 
@@ -267,7 +271,7 @@ namespace FinalYearProject.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("ConsumerId")
+                    b.Property<int?>("ConsumerId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("FullLocation")
@@ -280,14 +284,7 @@ namespace FinalYearProject.Migrations
                     b.Property<double>("Longitude")
                         .HasColumnType("REAL");
 
-                    b.Property<string>("SupermarketName")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.HasKey("LocationId");
-
-                    b.HasIndex("ConsumerId")
-                        .IsUnique();
 
                     b.ToTable("Locations");
                 });
@@ -321,9 +318,6 @@ namespace FinalYearProject.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("Availability")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int?>("CategoryId")
                         .HasColumnType("INTEGER");
 
@@ -340,9 +334,6 @@ namespace FinalYearProject.Migrations
                     b.Property<bool>("IsAvailable")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("LocationId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Price")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -352,7 +343,6 @@ namespace FinalYearProject.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("SupermarketName")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Url")
@@ -369,8 +359,6 @@ namespace FinalYearProject.Migrations
 
                     b.HasIndex("ConsumerId");
 
-                    b.HasIndex("LocationId");
-
                     b.ToTable("Products");
                 });
 
@@ -382,14 +370,56 @@ namespace FinalYearProject.Migrations
                     b.Property<int?>("LocationId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("ProdLocationID")
-                        .HasColumnType("INTEGER");
-
                     b.HasKey("ProductId", "LocationId");
 
                     b.HasIndex("LocationId");
 
                     b.ToTable("ProductLocations");
+                });
+
+            modelBuilder.Entity("SoftwareProject.Review", b =>
+                {
+                    b.Property<int>("ReviewId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("ConsumerId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("UserEmail")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("review")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateOnly>("reviewDate")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("ReviewId");
+
+                    b.HasIndex("ConsumerId");
+
+                    b.ToTable("Reviews");
+                });
+
+            modelBuilder.Entity("SoftwareProject.SavedProduct", b =>
+                {
+                    b.Property<int?>("ConsumerId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("ProductId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("DateSaved")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("ConsumerId", "ProductId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("SavedProduct");
                 });
 
             modelBuilder.Entity("SoftwareProject.WebScrapper", b =>
@@ -478,20 +508,17 @@ namespace FinalYearProject.Migrations
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "IdentityUser")
                         .WithMany()
-                        .HasForeignKey("IdentityUserId");
-
-                    b.Navigation("IdentityUser");
-                });
-
-            modelBuilder.Entity("SoftwareProject.Location", b =>
-                {
-                    b.HasOne("SoftwareProject.Consumer", "Consumer")
-                        .WithOne("Location")
-                        .HasForeignKey("SoftwareProject.Location", "ConsumerId")
+                        .HasForeignKey("IdentityUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Consumer");
+                    b.HasOne("SoftwareProject.Location", "Location")
+                        .WithOne("Consumer")
+                        .HasForeignKey("SoftwareProject.Consumer", "LocationId");
+
+                    b.Navigation("IdentityUser");
+
+                    b.Navigation("Location");
                 });
 
             modelBuilder.Entity("SoftwareProject.Newsletter", b =>
@@ -513,15 +540,9 @@ namespace FinalYearProject.Migrations
                         .WithMany("Products")
                         .HasForeignKey("ConsumerId");
 
-                    b.HasOne("SoftwareProject.Location", "Location")
-                        .WithMany()
-                        .HasForeignKey("LocationId");
-
                     b.Navigation("Category");
 
                     b.Navigation("Consumer");
-
-                    b.Navigation("Location");
                 });
 
             modelBuilder.Entity("SoftwareProject.ProductLocation", b =>
@@ -543,6 +564,34 @@ namespace FinalYearProject.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("SoftwareProject.Review", b =>
+                {
+                    b.HasOne("SoftwareProject.Consumer", "Consumer")
+                        .WithMany("Reviews")
+                        .HasForeignKey("ConsumerId");
+
+                    b.Navigation("Consumer");
+                });
+
+            modelBuilder.Entity("SoftwareProject.SavedProduct", b =>
+                {
+                    b.HasOne("SoftwareProject.Consumer", "Consumer")
+                        .WithMany("SavedProducts")
+                        .HasForeignKey("ConsumerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SoftwareProject.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Consumer");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("SoftwareProject.WebScrapper", b =>
                 {
                     b.HasOne("SoftwareProject.Product", "Product")
@@ -554,15 +603,19 @@ namespace FinalYearProject.Migrations
 
             modelBuilder.Entity("SoftwareProject.Consumer", b =>
                 {
-                    b.Navigation("Location");
-
                     b.Navigation("Newsletters");
 
                     b.Navigation("Products");
+
+                    b.Navigation("Reviews");
+
+                    b.Navigation("SavedProducts");
                 });
 
             modelBuilder.Entity("SoftwareProject.Location", b =>
                 {
+                    b.Navigation("Consumer");
+
                     b.Navigation("ProductLocations");
                 });
 
