@@ -69,3 +69,82 @@ static async Task Main(string[] args){
 
 }
 
+Registration via AccountCOntroller:
+{
+    "Email":"gurpreetkm090@gmail.com",
+    "Password":"Priti7890!",
+    "FName":"GURPREET",
+    "LName":"MAHUN",
+    "Address":"145 west agra",
+    "ContactNo":"9988776655",
+    "Dob":"2023-12-09",
+    "Latitude":98.76544,
+    "Longitude":998.7654,
+    "FullLocation":"sw19 2 rp south west"
+}
+Product:
+{
+"ProductName":"eggs",
+"Price":"78.9",
+"ImageUrl":"http:url.com",
+"pricePerUnit":"89.70",
+"Url":"http:url.com",
+"Date":"2012-12-09",
+"IsAvailable":true
+}
+Consumer:
+ {
+        "consumerId": 1,
+        "fName": "Gurpreet",
+        "lName": "Mahun",
+        "address": "31 chapter way london",
+        "contactNo": "9988776655",
+        "dob": "2019-12-09T00:00:00",
+        "identityUserId": "519866d8-0a53-4b0c-a807-da2f675a02f8",
+        "identityUser": null,
+        "newsletters": null,
+        "products": null,
+        "reviews": null,
+        "locationId": 1,
+        "location": null,
+        "savedProducts": null
+    }
+
+    ProductLocation:
+    {
+"ProductId":1,
+"LocationId":1
+}
+
+
+                    var location=new Location{
+                        Longitude = model.Longitude,
+                        Latitude = model.Latitude,
+                        FullLocation = model.FullLocation
+
+                    };
+
+                    var consumer=new Consumer{
+                        FName=model.FName,
+                        LName=model.LName,
+                        Address=model.Address, 
+                        ContactNo=model.ContactNo,
+                        IdentityUserId =user.Id,
+                        Dob=model.Dob,
+                        Location=location
+
+                        };
+
+                _context.Locations.Add(location);
+        
+                _context.Consumers.Add(consumer);
+              try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (Exception ex)
+                {
+                    // Log the exception
+                    return StatusCode(500, $"Internal server error: {ex.Message}");
+                }
+token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJndXJwcmVldGttMDkwQGdtYWlsLmNvbSIsImp0aSI6ImE2NDNlNzIxLTY4NmMtNGQ3MS1hNzY1LTgxNjk0Y2VkNGQyMyIsImV4cCI6MTcyMDk5NDM3MCwiaXNzIjoiIGh0dHA6Ly9sb2NhbGhvc3Q6NTA4OCIsImF1ZCI6IiBodHRwOi8vbG9jYWxob3N0OjUwODgifQ.IIDY4HsaP5nSGW2rGkMrDLZV_bAl9f03L42_5vJBW-4

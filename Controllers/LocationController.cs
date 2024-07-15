@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SoftwareProject;
 using SoftwareProject.Models;
+using SoftwareProject.Helpers;
 
 namespace FinalYearProject.Controllers
 {
@@ -15,31 +16,70 @@ namespace FinalYearProject.Controllers
     public class LocationController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILogger<LocationController> _logger; 
 
-        public LocationController(ApplicationDbContext context)
+        public LocationController(ApplicationDbContext context,ILogger<LocationController> logger)
         {
             _context = context;
+            _logger=logger;
         }
 
         // GET: api/Location
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Location>>> GetLocations()
         {
-            return await _context.Locations.ToListAsync();
-        }
+
+            try{
+
+                _logger.LogInformationWithMethod($"Fetching Locations===>");
+                var Locations=await _context.Locations.ToListAsync();
+                _logger.LogInformationWithMethod("Sucessfully retreived Locations");
+
+                return Ok(Locations);
+
+            }catch(Exception ex){
+                _logger.LogErrorWithMethod($"Failed to retrieve Locations:{ex.Message}");
+
+                return StatusCode(500,$"Failed with error:{ex.Message}");
+
+            }
+
+    }
 
         // GET: api/Location/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Location>> GetLocation(int id)
         {
-            var location = await _context.Locations.FindAsync(id);
+
+            try{
+                if (!ModelState.IsValid)
+                {
+                    _logger.LogErrorWithMethod($"Invalid request");
+                    return BadRequest(ModelState);
+                }
+
+                _logger.LogInformationWithMethod($"Retreiving details of location with id:{id}");
+                var location = await _context.Locations.FindAsync(id);
 
             if (location == null)
             {
+
+                _logger.LogErrorWithMethod($"Invalid Request:Location with id: Not Found");
                 return NotFound();
             }
 
-            return location;
+            _logger.LogInformationWithMethod($"Location with Id:{location.LocationId} retrieved sucessfully!");
+            return Ok(location);
+
+
+            }
+            catch(Exception ex){
+                 _logger.LogErrorWithMethod($"Failed to reteive Location with id: {id}");
+                return StatusCode(500,$"Failed with error:{ex}");
+
+
+            }
+            
         }
 
         // PUT: api/Location/5
@@ -47,30 +87,44 @@ namespace FinalYearProject.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutLocation(int id, Location location)
         {
+           
+
+            try
+            {
+
             if (id != location.LocationId)
             {
+
+                _logger.LogErrorWithMethod($"Invalid Id, Please recheck the id as  ids DO not match");
                 return BadRequest();
             }
 
             _context.Entry(location).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
 
-            try
-            {
-                await _context.SaveChangesAsync();
+            _logger.LogInformationWithMethod($"Location with id:{id} updated sucessfully");
+              return Ok(new { message = $"Changes made to  Location with LocationId {location.LocationId}" });
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException ex)
             {
                 if (!LocationExists(id))
                 {
+                    _logger.LogErrorWithMethod($"Location with id:{id} not found");
                     return NotFound();
                 }
-                else
-                {
-                    throw;
-                }
+
+                 _logger.LogErrorWithMethod($"Failed with error:{ex.Message}");
+                  return StatusCode(500,$"Failed with error:{ex.Message}");
+                
+               
             }
 
-            return NoContent();
+            catch(Exception ex){
+                 _logger.LogErrorWithMethod($"Failed with error:{ex}");
+                  return StatusCode(500,$"Failed with error:{ex}");
+            }
+
+           
         }
 
         // POST: api/Location
@@ -78,24 +132,59 @@ namespace FinalYearProject.Controllers
         [HttpPost]
         public async Task<ActionResult<Location>> PostLocation(Location location)
         {
+
+            try{
+
+            if (!ModelState.IsValid)
+                {
+                    _logger.LogErrorWithMethod($"Invalid request");
+                    return BadRequest(ModelState);
+                }
+
+
             _context.Locations.Add(location);
             await _context.SaveChangesAsync();
-
+            _logger.LogInformationWithMethod($"Location added Suceesfully ot the system");
             return CreatedAtAction("GetLocation", new { id = location.LocationId }, location);
+
+            }
+
+            catch(Exception ex){
+
+                _logger.LogErrorWithMethod($"Failed to create Location with given information");
+                return StatusCode(500,$"Failed with error:{ex}");
+
+            }
+           
         }
 
         // DELETE: api/Location/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteLocation(int id)
         {
+
+            try{
+
+            _logger.LogInformationWithMethod($"Finding Location with id:{id} from the system");
             var location = await _context.Locations.FindAsync(id);
+
             if (location == null)
             {
+                _logger.LogErrorWithMethod($"Location with id: {id} not found in the system");
                 return NotFound();
             }
 
             _context.Locations.Remove(location);
             await _context.SaveChangesAsync();
+            _logger.LogInformationWithMethod($"Location with id:{id} deleted from the system");
+
+            }
+
+            catch(Exception ex){
+                _logger.LogErrorWithMethod($"Failed to delete Location with given information");
+                return StatusCode(500,$"Failed with error:{ex}");
+            }
+          
 
             return NoContent();
         }

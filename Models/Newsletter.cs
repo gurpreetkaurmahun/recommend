@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using SoftwareProject.Models;
 
 
-namespace SoftwareProject {
+namespace SoftwareProject.Models {
 
     public class Newsletter{
         [Key]

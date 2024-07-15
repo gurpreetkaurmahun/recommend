@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace SoftwareProject {
+namespace SoftwareProject.Models {
 
     public class Location{
 

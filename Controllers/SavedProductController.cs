@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SoftwareProject;
 using SoftwareProject.Models;
+
+using SoftwareProject.Helpers;
 
 namespace FinalYearProject.Controllers
 {
@@ -15,31 +16,85 @@ namespace FinalYearProject.Controllers
     public class SavedProductController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        
+        private readonly ILogger<SavedProductController> _logger; 
 
-        public SavedProductController(ApplicationDbContext context)
+        public SavedProductController(ApplicationDbContext context,ILogger<SavedProductController> logger)
         {
             _context = context;
+            _logger=logger;
         }
 
         // GET: api/SavedProduct
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SavedProduct>>> GetSavedProduct()
         {
-            return await _context.SavedProduct.ToListAsync();
+
+            try{
+                _logger.LogInformationWithMethod($" Retreiving SavedProducts:===>");
+
+            //Prodcuts saved with consumerid as key and product as valuue
+            
+            var savedProducts = await _context.SavedProducts
+            .Include(sp => sp.Product)
+            .Include(sp => sp.Consumer)
+            .Where(sp => sp.ConsumerId != null) // Filter out any null ConsumerId
+            .GroupBy(sp => sp.ConsumerId!.Value) // Use non-nullable value
+            .Select(group => new
+            {
+                ConsumerId = group.Key,
+                Products = group.Select(sp => new
+                {
+                    ProductName = sp.Product.ProductName,
+                    ConsumerName = sp.Consumer.FName,
+                    DateSaved = sp.DateSaved,
+                }).ToList()
+            })
+            .ToDictionaryAsync(x => x.ConsumerId, x => x.Products);
+                _logger.LogInformationWithMethod("Saved Products retreived Sucessfully");
+                return Ok(savedProducts);
+            }
+            catch(Exception ex){
+
+                _logger.LogErrorWithMethod($"Failed to SavedProducts:{ex.Message}");
+
+                return StatusCode(500,$"Failed with error:{ex.Message}");
+
+            }
+          
         }
 
         // GET: api/SavedProduct/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<SavedProduct>> GetSavedProduct(int? id)
+        [HttpGet("{consumerId}")]
+        public async Task<ActionResult<Dictionary<int, List<SavedProduct>>>> GetSavedProduct(int consumerId)
         {
-            var savedProduct = await _context.SavedProduct.FindAsync(id);
 
-            if (savedProduct == null)
-            {
-                return NotFound();
+            try{
+                _logger.LogInformationWithMethod($"Checking the databse for  saved products with id:");
+            var savedProducts = await _context.SavedProducts
+            .Where(sp => sp.ConsumerId == consumerId)
+            .Include(sp => sp.Product)
+            .ToListAsync();
+
+                if (savedProducts == null || !savedProducts.Any())
+                {
+                    _logger.LogErrorWithMethod($"Saved Product with id: doesnot exists");
+                    return NotFound();
+                }
+                _logger.LogInformationWithMethod($"Providing details of product with id:");
+
+                var result=new Dictionary<int,List<SavedProduct>>{
+                    {consumerId,savedProducts}
+                };
+                return Ok(result);
             }
+            catch(Exception ex)
+            {
+                _logger.LogErrorWithMethod($"An error occured :{ex.Message}");
 
-            return savedProduct;
+                return StatusCode(500,$"Failed with error:{ex.Message}");
+            }
+          
         }
 
         // PUT: api/SavedProduct/5
@@ -47,30 +102,46 @@ namespace FinalYearProject.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutSavedProduct(int? id, SavedProduct savedProduct)
         {
-            if (id != savedProduct.ConsumerId)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(savedProduct).State = EntityState.Modified;
+            
 
             try
             {
-                await _context.SaveChangesAsync();
+                 if (!ModelState.IsValid)
+                {
+                    _logger.LogErrorWithMethod($"Invalid request");
+                    return BadRequest(ModelState);
+                }
+
+
+                if (id != savedProduct.ConsumerId)
+                {
+
+                    _logger.LogErrorWithMethod($"Please recheck the id.");
+                    return BadRequest();
+                }
+
+            _context.Entry(savedProduct).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+             _logger.LogInformationWithMethod($"Saved Product with id:{id} successfully updated"); 
+             return NoContent();
+
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException ex)
             {
                 if (!SavedProductExists(id))
                 {
+
+                    _logger.LogErrorWithMethod($"Saved Product with is:{id} not found in the system");
                     return NotFound();
                 }
-                else
-                {
-                    throw;
-                }
+                    _logger.LogErrorWithMethod($"Failed with error:{ex.Message}");
+                  return StatusCode(500,$"Failed with error:{ex.Message}");
             }
 
-            return NoContent();
+            catch (Exception ex){
+                 _logger.LogErrorWithMethod($"Failed with error:{ex.Message}");
+                  return StatusCode(500,$"Failed with error:{ex.Message}");
+            }
         }
 
         // POST: api/SavedProduct
@@ -78,45 +149,70 @@ namespace FinalYearProject.Controllers
         [HttpPost]
         public async Task<ActionResult<SavedProduct>> PostSavedProduct(SavedProduct savedProduct)
         {
-            _context.SavedProduct.Add(savedProduct);
+           
             try
             {
-                await _context.SaveChangesAsync();
+                if (!ModelState.IsValid)
+                {
+                    _logger.LogErrorWithMethod($"Invalid request");
+                    return BadRequest(ModelState);
+                }
+                 _context.SavedProducts.Add(savedProduct);
+                 await _context.SaveChangesAsync();
+                  _logger.LogInformationWithMethod($"Saved Product saved by consumer wioth id:{savedProduct.ConsumerId} with  added successfully");
+                 return CreatedAtAction("GetSavedProduct", new { id = savedProduct.ConsumerId }, savedProduct);
             }
-            catch (DbUpdateException)
+            catch (DbUpdateException ex)
             {
                 if (SavedProductExists(savedProduct.ConsumerId))
                 {
+
+                    _logger.LogErrorWithMethod($"Failed with error:{ex.Message}");
                     return Conflict();
                 }
-                else
-                {
-                    throw;
-                }
+                   _logger.LogErrorWithMethod($"Failed with error:{ex.Message}");
+                    return StatusCode(500,$"Failed with error:{ex.Message}");
             }
 
-            return CreatedAtAction("GetSavedProduct", new { id = savedProduct.ConsumerId }, savedProduct);
+            catch(Exception ex){
+                 _logger.LogErrorWithMethod($"Failed with error:{ex.Message}");
+                  return StatusCode(500,$"Failed with error:{ex.Message}");
+            }
+
+           
         }
 
         // DELETE: api/SavedProduct/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSavedProduct(int? id)
         {
-            var savedProduct = await _context.SavedProduct.FindAsync(id);
-            if (savedProduct == null)
-            {
-                return NotFound();
+
+            try{
+                _logger.LogInformationWithMethod($"Searching for SavedProduct with id:{id}");
+                var savedProduct = await _context.SavedProducts.FindAsync(id);
+                if (savedProduct == null)
+                {
+
+                    _logger.LogErrorWithMethod($"SAved product with id {id}not found in the system");
+                    return NotFound();
+                }
+
+                _context.SavedProducts.Remove(savedProduct);
+                await _context.SaveChangesAsync();
+                _logger.LogInformationWithMethod($"SavedProduct with id:{id} deleted sucessfully");
+                return NoContent();
+
             }
-
-            _context.SavedProduct.Remove(savedProduct);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            catch(Exception ex){
+                 _logger.LogErrorWithMethod($"Failed with error:{ex.Message}");
+                  return StatusCode(500,$"Failed with error:{ex.Message}");
+            }
+           
         }
 
         private bool SavedProductExists(int? id)
         {
-            return _context.SavedProduct.Any(e => e.ConsumerId == id);
+            return _context.SavedProducts.Any(e => e.ConsumerId == id);
         }
     }
 }

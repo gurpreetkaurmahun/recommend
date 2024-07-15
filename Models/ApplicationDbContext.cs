@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
-using SoftwareProject;
+using SoftwareProject.Models;
 
-namespace SoftwareProject.Models {
+
 
     public class ApplicationDbContext:IdentityDbContext<IdentityUser>{
 
@@ -25,6 +25,8 @@ namespace SoftwareProject.Models {
         public DbSet<WebScrapper> WebScrappers{get;set;}
 
         public DbSet<Newsletter> Newsletters{get;set;}
+
+        public DbSet<SavedProduct> SavedProducts{get;set;}
 
        
 
@@ -96,7 +98,7 @@ namespace SoftwareProject.Models {
             
         }
 
-public DbSet<SoftwareProject.SavedProduct> SavedProduct { get; set; } = default!;
+
 
        
 
@@ -107,4 +109,4 @@ public DbSet<SoftwareProject.SavedProduct> SavedProduct { get; set; } = default!
 
 
 
-}
+

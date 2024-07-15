@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using Microsoft.Playwright;
 using SoftwareProject.Interfaces;
-
-namespace SoftwareProject {
+using SoftwareProject.Models;
+namespace SoftwareProject.Scrapper {
 
 public class TescoScrapper:IWebscrapper
 
@@ -172,7 +172,9 @@ public async Task<List<Product>> GetProductDetails(List<string> urls)
                         Price = price,
                         ImageUrl = imageUrl,
                         pricePerUnit=pricePerPiece,
-                        Url=url
+                        Url=url,
+                        IsAvailable=true,
+                        Date=DateOnly.FromDateTime(DateTime.Now)
 
                     });
                 }

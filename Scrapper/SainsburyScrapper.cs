@@ -1,8 +1,9 @@
 using System.Collections.Generic;
 using Microsoft.Playwright;
 using SoftwareProject.Interfaces;
+using SoftwareProject.Models;
 
-namespace SoftwareProject {
+namespace SoftwareProject.Scrapper {
 
 public class SainsburyScrapper:IWebscrapper
 
@@ -129,14 +130,14 @@ public async Task<List<Product>> GetProductDetails(List<string> urls)
     {
         try
         {
+            Console.WriteLine($"Fetching URL: {url}");
+
             var page = await context.NewPageAsync();
             await page.GotoAsync(url, new PageGotoOptions
             {
                 WaitUntil = WaitUntilState.NetworkIdle,
-                Timeout = 60000 // 60 seconds timeout for navigation
+                Timeout = 120000 // 100 seconds timeout for navigation
             });
-
-            var product = new Product { Url = url };
 
             // Wait for the content to be loaded
             await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
@@ -144,38 +145,54 @@ public async Task<List<Product>> GetProductDetails(List<string> urls)
             // Extract product title
             var titleSelector = "h1.pd__header[data-test-id='pd-product-title']";
             await page.WaitForSelectorAsync(titleSelector, new PageWaitForSelectorOptions { State = WaitForSelectorState.Visible, Timeout = 10000 });
-            product.ProductName  = await page.TextContentAsync(titleSelector);
+            var title = await page.EvaluateAsync<string>($"() => document.querySelector('{titleSelector}')?.innerText || 'Title not found'");
+            Console.WriteLine($"Extracted title: {title}");
 
             // Extract product price
             var priceSelector = "[data-test-id='pd-retail-price']";
             await page.WaitForSelectorAsync(priceSelector, new PageWaitForSelectorOptions { State = WaitForSelectorState.Visible, Timeout = 10000 });
-            product.Price = await page.TextContentAsync(priceSelector);
+            var price = await page.EvaluateAsync<string>($"() => document.querySelector('{priceSelector}')?.innerText || 'Price not found'");
+            Console.WriteLine($"Extracted price: {price}");
 
+            // Extract price per piece
             var pricePerPieceSelector = "[data-test-id='pd-unit-price']";
             await page.WaitForSelectorAsync(pricePerPieceSelector, new PageWaitForSelectorOptions { State = WaitForSelectorState.Visible, Timeout = 10000 });
-            product.pricePerUnit = await page.TextContentAsync(pricePerPieceSelector);
+            var pricePerPiece = await page.EvaluateAsync<string>($"() => document.querySelector('{pricePerPieceSelector}')?.innerText || 'Price per piece not found'");
+            Console.WriteLine($"Extracted price per piece: {pricePerPiece}");
 
             // Extract image URL
             var imageSelector = "img.pd__image[data-test-id='pd-selected-image']";
             await page.WaitForSelectorAsync(imageSelector, new PageWaitForSelectorOptions { State = WaitForSelectorState.Visible, Timeout = 10000 });
-            product.ImageUrl = await page.GetAttributeAsync(imageSelector, "src");
+            var imageUrl = await page.EvaluateAsync<string>($"() => document.querySelector('{imageSelector}')?.src || 'Image not found'");
+            Console.WriteLine($"Extracted image URL: {imageUrl}");
 
-            if (!string.IsNullOrEmpty(product.ProductName ))
+            if (!string.IsNullOrEmpty(title))
             {
-                products.Add(product);
-                Console.WriteLine($"Successfully processed: {product.ProductName }");
-                Console.WriteLine($"Price: {product.Price}");
-                Console.WriteLine($"Image URL: {product.ImageUrl}");
+                products.Add(new Product
+                {
+                    ProductName = title,
+                    Price = price,
+                    ImageUrl = imageUrl,
+                    pricePerUnit = pricePerPiece,
+                    Url = url,
+                    IsAvailable = true,
+                    Date = DateOnly.FromDateTime(DateTime.Now)
+                });
+                Console.WriteLine($"Successfully processed: {title}");
+                Console.WriteLine($"Price: {price}");
+                Console.WriteLine($"Image URL: {imageUrl}");
+                Console.WriteLine($"Product Url: {url}");
                 Console.WriteLine();
-                System.Console.WriteLine($"Product Url:{product.Url}");
-                System.Console.WriteLine();
             }
             else
             {
                 Console.WriteLine($"Failed to extract details for URL: {url}");
             }
 
-            await page.CloseAsync();
+            await context.CloseAsync();
+
+            // Add a random delay between requests
+            await Task.Delay(TimeSpan.FromSeconds(new Random().Next(5, 15)));
         }
         catch (Exception ex)
         {

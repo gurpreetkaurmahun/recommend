@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace SoftwareProject {
+namespace SoftwareProject.Models {
 
     public class Category{
 

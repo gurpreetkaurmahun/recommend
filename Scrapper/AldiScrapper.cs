@@ -2,7 +2,9 @@ using System.Collections.Generic;
 using Microsoft.Playwright;
 using SoftwareProject.Interfaces;
 
-namespace SoftwareProject {
+using SoftwareProject.Models;
+
+namespace SoftwareProject.Scrapper {
 
     public class AldiScrapper:IWebscrapper
     {
@@ -41,7 +43,7 @@ namespace SoftwareProject {
             var response = await page.GotoAsync(url, new PageGotoOptions
             {
                 WaitUntil = WaitUntilState.NetworkIdle,
-                Timeout = 60000  // Increase timeout to 60 seconds
+                Timeout = 100000  // Increase timeout to 60 seconds
             });
 
             if (!response.Ok)
@@ -88,94 +90,90 @@ namespace SoftwareProject {
 
 public async Task<List<Product>> GetProductDetails(List<string> urls)
 {
-    var products = new List<Product>();
+    List<Product> products = new List<Product>();
 
     using var playwright = await Playwright.CreateAsync();
     await using var browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
     {
-        Headless = false, // Set to true for production use
-        Timeout = 60000 // 60 seconds timeout for the entire browser context
+        Headless = false // Set to true for production
     });
 
-    var context = await browser.NewContextAsync(new BrowserNewContextOptions
-    {
-        UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
-    });
-
-    foreach (var url in urls)
+    foreach (string url in urls)
     {
         try
         {
-            var page = await context.NewPageAsync();
-            await page.GotoAsync(url, new PageGotoOptions
+            Console.WriteLine($"Fetching URL: {url}");
+
+            var context = await browser.NewContextAsync(new BrowserNewContextOptions
             {
-                WaitUntil = WaitUntilState.NetworkIdle,
-                Timeout = 60000 // 60 seconds timeout for navigation
+                UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
             });
 
-            var product = new Product { Url = url };
+            var page = await context.NewPageAsync();
 
-            // Wait for the content to be loaded
-            await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
-
-            // Extract product title
-            var titleSelector = "h1";
-            await page.WaitForSelectorAsync(titleSelector, new PageWaitForSelectorOptions { State = WaitForSelectorState.Visible, Timeout = 10000 });
-            product.ProductName  = await page.TextContentAsync(titleSelector);
-
-            // Extract product price
-            var priceSelector = "span[data-qa='product-price'] .product-price";
-            await page.WaitForSelectorAsync(priceSelector, new PageWaitForSelectorOptions { State = WaitForSelectorState.Visible, Timeout = 10000 });
-            product.Price = await page.TextContentAsync(priceSelector);
-
-            // Extract image URL
-            var imageSelector = "img.product-main-img";
-            await page.WaitForSelectorAsync(imageSelector, new PageWaitForSelectorOptions { State = WaitForSelectorState.Visible, Timeout = 10000 });
-            product.ImageUrl = await page.GetAttributeAsync(imageSelector, "src");
-
-            var pricePerPieceSelector = "small[property='price'][data-qa='product-price'] span";
-            await page.WaitForSelectorAsync(pricePerPieceSelector, new PageWaitForSelectorOptions { State = WaitForSelectorState.Visible, Timeout = 10000 });
-            product.pricePerUnit = await page.TextContentAsync(pricePerPieceSelector);
-
-
-            if (!string.IsNullOrEmpty(product.ProductName ))
+            var response = await page.GotoAsync(url, new PageGotoOptions
             {
-                products.Add(product);
-                Console.WriteLine($"Successfully processed: {product.ProductName }");
-                Console.WriteLine($"Price: {product.Price}");
-                Console.WriteLine($"Image URL: {product.ImageUrl}");
-                Console.WriteLine();
-                System.Console.WriteLine($"Product Url:{product.Url}");
-                System.Console.WriteLine();
+                WaitUntil = WaitUntilState.NetworkIdle,
+                Timeout = 60000 // 60 seconds timeout
+            });
+
+            if (response.Ok)
+            {
+                // Wait for the content to load
+                await page.WaitForSelectorAsync("h1", new PageWaitForSelectorOptions { Timeout = 30000 });
+
+                // Extract title
+                var title = await page.EvaluateAsync<string>("() => document.querySelector('h1')?.innerText || 'Title not found'");
+                Console.WriteLine($"Extracted title: {title}");
+
+                // Extract price
+                var price = await page.EvaluateAsync<string>(@"() => {
+                    const priceElement = document.querySelector('span[data-qa=""product-price""] .product-price');
+                    return priceElement ? priceElement.innerText.trim() : 'Price not found';
+                }");
+                Console.WriteLine($"Extracted price: {price}");
+
+                // Extract image URL
+                var imageUrl = await page.EvaluateAsync<string>("() => document.querySelector('img.product-main-img')?.src || 'Image not found'");
+                Console.WriteLine($"Extracted image URL: {imageUrl}");
+
+                // Extract price per piece
+                var pricePerPiece = await page.EvaluateAsync<string>(@"() => {
+                    const element = document.querySelector('small[property=""price""][data-qa=""product-price""] span');
+                    return element ? element.innerText.trim() : 'Price per piece not found';
+                }");
+                Console.WriteLine($"Extracted price per piece: {pricePerPiece}");
+
+                // Add product to list
+                products.Add(new Product
+                {
+                    ProductName = title,
+                    Price = price,
+                    ImageUrl = imageUrl,
+                    pricePerUnit = pricePerPiece,
+                    Url = url,
+                    IsAvailable = true,
+                    Date = DateOnly.FromDateTime(DateTime.Now)
+                });
             }
             else
             {
-                Console.WriteLine($"Failed to extract details for URL: {url}");
+                Console.WriteLine($"Failed to load page: {url}. Status: {response.Status}");
             }
 
-            await page.CloseAsync();
+            await context.CloseAsync();
+
+            // Add a random delay between requests
+            await Task.Delay(TimeSpan.FromSeconds(new Random().Next(5, 15)));
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error processing URL {url}: {ex.Message}");
+            Console.WriteLine($"Failed to get details for URL: {url}. Error: {ex.Message}");
         }
     }
 
     return products;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
 
 

@@ -6,7 +6,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SoftwareProject;
+
 using SoftwareProject.Models;
+
+using SoftwareProject.Helpers;
 
 namespace FinalYearProject.Controllers
 {
@@ -15,10 +18,12 @@ namespace FinalYearProject.Controllers
     public class ProductLocationController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILogger<ProductLocationController> _logger; 
 
-        public ProductLocationController(ApplicationDbContext context)
+        public ProductLocationController(ApplicationDbContext context,ILogger<ProductLocationController> logger)
         {
             _context = context;
+            _logger=logger;
         }
 
         // GET: api/ProductLocation
@@ -26,32 +31,58 @@ namespace FinalYearProject.Controllers
         public async Task<ActionResult<IEnumerable<ProductLocation>>> GetProductLocations()
         {
 
-            var productLocations = await _context.ProductLocations
-        .Include(pl => pl.Product)
-        .Include(pl => pl.Location)
-        .Select(pl => new
-        {
-            
-            ProductName = pl.Product.ProductName,
-            LocationName = pl.Location.FullLocation,
-            // Include other properties from ProductLocation if needed
-        })
-        .ToListAsync();
-            return Ok(productLocations);
+            try{
+                _logger.LogInformationWithMethod("Retreiving all the product locations");
+                var productLocations = await _context.ProductLocations
+                .Include(pl => pl.Product)
+                .Include(pl => pl.Location)
+                .Select(pl => new
+                {
+                
+                ProductName = pl.Product.ProductName,
+                LocationName = pl.Location.FullLocation,
+                // Include other properties from ProductLocation if needed
+            })
+            .ToListAsync();
+                _logger.LogInformationWithMethod($"ProductLocations retreived Sucessfully:==>");
+                return Ok(productLocations);
         }
+
+        catch(Exception ex){
+              _logger.LogErrorWithMethod($"Failed to retrieve ProductLocations:{ex.Message}");
+
+                return StatusCode(500,$"Failed with error:{ex.Message}");
+
+        }
+            }
+
+      
 
         // GET: api/ProductLocation/5
         [HttpGet("{id}")]
         public async Task<ActionResult<ProductLocation>> GetProductLocation(int? id)
         {
-            var productLocation = await _context.ProductLocations.FindAsync(id);
 
-            if (productLocation == null)
-            {
-                return NotFound();
+            try{
+                _logger.LogInformationWithMethod($"Checking system for productLocation with id:{id}");
+                var productLocation = await _context.ProductLocations.FindAsync(id);
+
+                if (productLocation == null)
+                {
+
+                    _logger.LogErrorWithMethod($"Failed to retrieve ProductLocation with id {id}");
+                    return NotFound($"Failed to retrieve ProductLocation with id {id}");
+                }
+                _logger.LogInformationWithMethod($"Providing details of ProductLocation with id:{id}");
+                return productLocation;
             }
+            catch(Exception ex){
+                 _logger.LogErrorWithMethod($"Failed to retrieve ProductLocation with id:{id}:{ex.Message}");
 
-            return productLocation;
+                return StatusCode(500,$"Failed with error:{ex.Message}");
+
+            }
+          
         }
 
         // PUT: api/ProductLocation/5
@@ -59,30 +90,44 @@ namespace FinalYearProject.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProductLocation(int? id, ProductLocation productLocation)
         {
-            if (id != productLocation.ProductId)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(productLocation).State = EntityState.Modified;
+            
 
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    _logger.LogErrorWithMethod($"Invalid request");
+                    return BadRequest(ModelState);
+                }
+                if (id != productLocation.ProductId)
+                {
+                    _logger.LogErrorWithMethod($"Error:Please check the id");
+                    return BadRequest();
+                }
+
+                _context.Entry(productLocation).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
+                _logger.LogInformationWithMethod($"Product location with id:{id} successfully updated");
+                return NoContent();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException ex)
             {
                 if (!ProductLocationExists(id))
                 {
+                    _logger.LogErrorWithMethod($"Productlocation with id:{id} not found in the system");
                     return NotFound();
                 }
-                else
-                {
-                    throw;
-                }
+                 _logger.LogErrorWithMethod($"Failed with error:{ex.Message}");
+                  return StatusCode(500,$"Failed with error:{ex.Message}");
+               
             }
 
-            return NoContent();
+            catch(Exception ex){
+                 _logger.LogErrorWithMethod($"Failed with error:{ex.Message}");
+                  return StatusCode(500,$"Failed with error:{ex.Message}");
+            }
+
+           
         }
 
         // POST: api/ProductLocation
@@ -90,40 +135,67 @@ namespace FinalYearProject.Controllers
         [HttpPost]
         public async Task<ActionResult<ProductLocation>> PostProductLocation(ProductLocation productLocation)
         {
-            _context.ProductLocations.Add(productLocation);
+           
             try
             {
+                 if (!ModelState.IsValid)
+                {
+                    _logger.LogErrorWithMethod($"Invalid request");
+                    return BadRequest(ModelState);
+                }
+                 _context.ProductLocations.Add(productLocation);
                 await _context.SaveChangesAsync();
+                _logger.LogInformationWithMethod($"Product location with  added successfully");
+                return CreatedAtAction("GetProductLocation", new { id = productLocation.ProductId }, productLocation);
             }
-            catch (DbUpdateException)
+            catch (DbUpdateException ex)
             {
                 if (ProductLocationExists(productLocation.ProductId))
                 {
+                    _logger.LogErrorWithMethod($"ProductLocation with id:{productLocation.ProductId} already exists");
                     return Conflict();
                 }
-                else
-                {
-                    throw;
-                }
+                 _logger.LogErrorWithMethod($"Failed with error:{ex.Message}");
+                  return StatusCode(500,$"Failed with error:{ex.Message}");
+                
             }
 
-            return CreatedAtAction("GetProductLocation", new { id = productLocation.ProductId }, productLocation);
+            catch(Exception ex){
+                 _logger.LogErrorWithMethod($"Failed with error:{ex.Message}");
+                  return StatusCode(500,$"Failed with error:{ex.Message}");
+            }
+
+            
         }
 
         // DELETE: api/ProductLocation/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProductLocation(int? id)
         {
+
+            try{
+
+            _logger.LogInformationWithMethod($"Searching for ProductLocation with id:{id}");
             var productLocation = await _context.ProductLocations.FindAsync(id);
+
             if (productLocation == null)
             {
+                _logger.LogErrorWithMethod($"Product with id:{id} not found");
                 return NotFound();
             }
 
             _context.ProductLocations.Remove(productLocation);
             await _context.SaveChangesAsync();
+            _logger.LogInformationWithMethod($"ProductLocation with id:{id} deleted sucessfully");
 
             return NoContent();
+            }
+            catch(Exception ex){
+
+                 _logger.LogErrorWithMethod($"Failed with error:{ex.Message}");
+                  return StatusCode(500,$"Failed with error:{ex.Message}");
+            }
+            
         }
 
         private bool ProductLocationExists(int? id)

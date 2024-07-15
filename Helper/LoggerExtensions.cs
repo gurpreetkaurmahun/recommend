@@ -1,17 +1,25 @@
 using System.Runtime.CompilerServices;
 
+namespace SoftwareProject.Helpers{
+
+
+
 public static class LoggerExtensions{
 
-
-    public static void LogInformationWithMethod (this ILogger logger,string message,[CallerMemberName] string methodName=""){
-        logger.LogInformationWithMethod($"{methodName}:{message}");
+public static void LogInformationWithMethod(this ILogger logger, string message, [CallerMemberName] string callerMethodName = "")
+    {
+        logger.LogInformation($"{callerMethodName}: {message}");
     }
 
-    public static void LogWarningWithMethod(this ILogger logger,string message,[CallerMemberName] string methodName=""){
-        logger.LogWarning($"{methodName}:{message}");
+    public static void LogWarningWithMethod(this ILogger logger, string message, [CallerMemberName] string callerMethodName = "")
+    {
+        logger.LogWarning($"{callerMethodName}: {message}");
     }
 
-    public static void LogErrorWithMethod(this ILogger logger,string message ,[CallerMemberName] string methodName=""){
-        logger.LogError($"{methodName}:{message}");
+    public static void LogErrorWithMethod(this ILogger logger, string message, [CallerMemberName] string callerMethodName = "")
+    {
+        logger.LogError($"{callerMethodName}: {message}");
     }
+    
+}
 }
