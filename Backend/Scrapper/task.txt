@@ -1,0 +1,150 @@
+static async Task Main(string[] args){
+
+            //  var apiKey="1VHYN34E863BMM2L4I70WT8CHV1X5LQDAE230RNM3UTVFZNQ6L5NSF4SID5QXVL502OVT0J16DDW8V5C";
+             System.Console.WriteLine("Enter Product you want to search on Tesco/Sainsbury");
+              var product =Console.ReadLine();
+
+              TescoScrapper Tscraper=new TescoScrapper();
+
+              SainsburyScrapper Sscraper=new SainsburyScrapper();
+
+              AldiScrapper Ascrapper=new AldiScrapper();
+
+              AsdaScrapper asScrapper=new AsdaScrapper();
+
+
+              var allProducts=new List<(string source, Product Product)>();
+
+
+
+
+            try{
+
+                var scrappers=new List<(string Name, Func<string, Task<List<string>>> GetLinks ,Func<List<string>, Task<List<Product>>> GetDetails)>{
+                    ("Aldi",Ascrapper.GetProductLinks,Ascrapper.GetProductDetails),
+                    ("Tesco",Tscraper.GetProductLinks,Tscraper.GetProductDetails),
+                    ("Sainsbury",Sscraper.GetProductLinks,Sscraper.GetProductDetails),
+                    ("Asda",asScrapper.GetProductLinks,asScrapper.GetProductDetails )
+                    
+                };
+
+
+        //creating a list of async task one for  each scrapper
+        var tasks = scrappers.Select(async scrapper =>
+        {
+            var (name, getLinks, getDetails) = scrapper;
+            Console.WriteLine($"Scraping from {name} for: {product}");
+
+            try
+            {
+                var productLinks = await getLinks(product);
+                var products = await getDetails(productLinks);
+
+                return products.Select(prod => (name, prod)).ToList();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error scraping {name}: {ex.Message}");
+                return new List<(string, Product)>();
+            }
+        }).ToList();
+
+        var results = await Task.WhenAll(tasks);
+
+        foreach (var result in results)
+        {
+            allProducts.AddRange(result);
+        }
+
+                foreach (var(source,prod) in allProducts){
+
+                    System.Console.WriteLine();
+                    System.Console.WriteLine($"Source:{source} : Title:{prod.Title}  , Price: {prod.price} , Image: {prod.ImageUrl} , price per peice{prod.pricePerQuantity}");
+                    System.Console.WriteLine();
+                }
+
+
+
+            }catch(Exception ex){  System.Console.WriteLine( $"An error occured: {ex.Message}");}
+
+}
+
+Registration via AccountCOntroller:
+{
+    "Email":"gurpreetkm090@gmail.com",
+    "Password":"Priti7890!",
+    "FName":"GURPREET",
+    "LName":"MAHUN",
+    "Address":"145 west agra",
+    "ContactNo":"9988776655",
+    "Dob":"2023-12-09",
+    "Latitude":98.76544,
+    "Longitude":998.7654,
+    "FullLocation":"sw19 2 rp south west"
+}
+Product:
+{
+"ProductName":"eggs",
+"Price":"78.9",
+"ImageUrl":"http:url.com",
+"pricePerUnit":"89.70",
+"Url":"http:url.com",
+"Date":"2012-12-09",
+"IsAvailable":true
+}
+Consumer:
+ {
+        "consumerId": 1,
+        "fName": "Gurpreet",
+        "lName": "Mahun",
+        "address": "31 chapter way london",
+        "contactNo": "9988776655",
+        "dob": "2019-12-09T00:00:00",
+        "identityUserId": "519866d8-0a53-4b0c-a807-da2f675a02f8",
+        "identityUser": null,
+        "newsletters": null,
+        "products": null,
+        "reviews": null,
+        "locationId": 1,
+        "location": null,
+        "savedProducts": null
+    }
+
+    ProductLocation:
+    {
+"ProductId":1,
+"LocationId":1
+}
+
+
+                    var location=new Location{
+                        Longitude = model.Longitude,
+                        Latitude = model.Latitude,
+                        FullLocation = model.FullLocation
+
+                    };
+
+                    var consumer=new Consumer{
+                        FName=model.FName,
+                        LName=model.LName,
+                        Address=model.Address, 
+                        ContactNo=model.ContactNo,
+                        IdentityUserId =user.Id,
+                        Dob=model.Dob,
+                        Location=location
+
+                        };
+
+                _context.Locations.Add(location);
+        
+                _context.Consumers.Add(consumer);
+              try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (Exception ex)
+                {
+                    // Log the exception
+                    return StatusCode(500, $"Internal server error: {ex.Message}");
+                }
+token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJndXJwcmVldGttMDkwQGdtYWlsLmNvbSIsImp0aSI6ImE2NDNlNzIxLTY4NmMtNGQ3MS1hNzY1LTgxNjk0Y2VkNGQyMyIsImV4cCI6MTcyMDk5NDM3MCwiaXNzIjoiIGh0dHA6Ly9sb2NhbGhvc3Q6NTA4OCIsImF1ZCI6IiBodHRwOi8vbG9jYWxob3N0OjUwODgifQ.IIDY4HsaP5nSGW2rGkMrDLZV_bAl9f03L42_5vJBW-4
