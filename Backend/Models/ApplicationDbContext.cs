@@ -51,10 +51,7 @@ using SoftwareProject.Models;
         .WithMany()
         .HasForeignKey(p => p.CategoryId);
 
-    modelBuilder.Entity<WebScrapper>()
-        .HasOne(w => w.Product)
-        .WithMany(p => p.WebScrappers)
-        .HasForeignKey(w => w.ProductId);
+
 
     modelBuilder.Entity<Product>()
         .HasOne(p => p.Consumer)

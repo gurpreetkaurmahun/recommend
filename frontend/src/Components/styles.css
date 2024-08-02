@@ -1,0 +1,202 @@
+#login-component{
+    margin:0;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-smoothing:grayscale;
+    background:url('https://www.shutterstock.com/image-illustration/3d-render-wallpaper-abstract-color-600nw-2329074805.jpg');
+    background-size:cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width:700px
+  
+}
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #333;
+    color: #fff;
+    padding: 1rem;
+    width:100%;
+  }
+  
+  .navbar-left .logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #fff;
+    text-decoration: none;
+  }
+  
+  .navbar-center .nav-links {
+    list-style-type: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .navbar-center .nav-links li {
+    margin-right: 1rem;
+  }
+  
+  .navbar-center .nav-links a {
+    color: #fff;
+    text-decoration: none;
+  }
+  
+  .navbar-right {
+    display: flex;
+    align-items: center;
+  }
+  
+  .navbar-right .cart-icon,
+  .navbar-right .user-icon {
+    color: #fff;
+    text-decoration: none;
+    margin-left: 1rem;
+    position: relative;
+  }
+  
+  .navbar-right .cart-count {
+    background-color: #f44336;
+    color: #fff;
+    border-radius: 50%;
+    padding: 0.2rem 0.5rem;
+    font-size: 0.8rem;
+    position: absolute;
+    top: -0.5rem;
+    right: -0.5rem;
+  }
+
+.wrapper{
+    width:450px;
+    background-color: transparent;
+    color:white;
+    border-radius: 10px;
+    padding: 30px 40px;
+    border:2px solid red;
+    backdrop-filter: blur(30px);
+    box-shadow: 0 0 10px rgba(255,255,255,.2);
+}
+
+.wrapper h1{
+    font-size: 40px;
+    text-align: center
+}
+h1{
+    font-size: 50px;
+    font-family: 'Times New Roman', Times, serif;
+}
+/* p{font-size: 25px;line-height: 50px;} */
+.wrapper .input-box{
+    position:relative;
+    width:100%;
+    height:60px;
+    margin: 30PX 0;
+}
+
+
+.input-box input{
+    width:100%;
+    height:100%;
+    background-color: transparent;
+    outline:none;
+    border:none;
+    border-radius: 40px;
+    border:2px rgba(255,255,255,.2);
+    font-size: 20px;
+    color:white;
+    padding-left: 10px;
+
+
+}
+
+.input-box input::placeholder{
+    color:white
+}
+.input-box .icon{
+    position:absolute;
+    right:10px;
+    top:50%;
+    transform: translateY(-50%);
+    font-size: 20px;
+
+}
+
+.wrapper .remember{
+    display: flex;
+    justify-content: space-between;
+    font-size: 16px;
+    margin: -15px 0 15px;
+}
+
+.remember label input{
+    accent-color: white;
+    margin-right: 5px;
+}
+
+.remember a{
+color:white;
+position: relative;
+left:200px;
+text-decoration: none;
+
+}
+.remember a:hover{
+    text-decoration: underline;
+}
+
+button{
+    width:100%;
+    height:45px;
+    background-color: white;
+    border:none;
+    outline: none;
+    border-radius: 40px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    cursor: pointer;
+    font-size: 20px;
+    color:#333;
+    font-weight: 800;
+}
+
+.register{
+    text-align: center;
+    margin:20px 0 15px;
+    font-size: 15px;
+}
+
+.register> p> a{
+    color:white;
+    text-decoration: none;
+    font-weight: 700;
+}
+.register> p >a:hover{
+    text-decoration: underline;
+}
+
+.spinner-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent backdrop */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999; /* Ensure it appears on top of other content */
+}
+
+.spinner-content {
+  text-align: center;
+}
+
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+  border-width: 0.25em;
+}
+

@@ -4,15 +4,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using SoftwareProject.Models;
 
 #nullable disable
 
 namespace FinalYearProject.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240712154536_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20240802161819_create")]
+    partial class create
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -212,7 +211,7 @@ namespace FinalYearProject.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("SoftwareProject.Category", b =>
+            modelBuilder.Entity("SoftwareProject.Models.Category", b =>
                 {
                     b.Property<int>("CategoryId")
                         .ValueGeneratedOnAdd()
@@ -226,7 +225,7 @@ namespace FinalYearProject.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("SoftwareProject.Consumer", b =>
+            modelBuilder.Entity("SoftwareProject.Models.Consumer", b =>
                 {
                     b.Property<int>("ConsumerId")
                         .ValueGeneratedOnAdd()
@@ -248,7 +247,6 @@ namespace FinalYearProject.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("IdentityUserId")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("LName")
@@ -268,7 +266,7 @@ namespace FinalYearProject.Migrations
                     b.ToTable("Consumers");
                 });
 
-            modelBuilder.Entity("SoftwareProject.Location", b =>
+            modelBuilder.Entity("SoftwareProject.Models.Location", b =>
                 {
                     b.Property<int>("LocationId")
                         .ValueGeneratedOnAdd()
@@ -292,7 +290,7 @@ namespace FinalYearProject.Migrations
                     b.ToTable("Locations");
                 });
 
-            modelBuilder.Entity("SoftwareProject.Newsletter", b =>
+            modelBuilder.Entity("SoftwareProject.Models.Newsletter", b =>
                 {
                     b.Property<int>("LetterId")
                         .ValueGeneratedOnAdd()
@@ -315,7 +313,7 @@ namespace FinalYearProject.Migrations
                     b.ToTable("Newsletters");
                 });
 
-            modelBuilder.Entity("SoftwareProject.Product", b =>
+            modelBuilder.Entity("SoftwareProject.Models.Product", b =>
                 {
                     b.Property<int>("ProductId")
                         .ValueGeneratedOnAdd()
@@ -365,7 +363,7 @@ namespace FinalYearProject.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("SoftwareProject.ProductLocation", b =>
+            modelBuilder.Entity("SoftwareProject.Models.ProductLocation", b =>
                 {
                     b.Property<int?>("ProductId")
                         .HasColumnType("INTEGER");
@@ -380,7 +378,7 @@ namespace FinalYearProject.Migrations
                     b.ToTable("ProductLocations");
                 });
 
-            modelBuilder.Entity("SoftwareProject.Review", b =>
+            modelBuilder.Entity("SoftwareProject.Models.Review", b =>
                 {
                     b.Property<int>("ReviewId")
                         .ValueGeneratedOnAdd()
@@ -407,7 +405,7 @@ namespace FinalYearProject.Migrations
                     b.ToTable("Reviews");
                 });
 
-            modelBuilder.Entity("SoftwareProject.SavedProduct", b =>
+            modelBuilder.Entity("SoftwareProject.Models.SavedProduct", b =>
                 {
                     b.Property<int?>("ConsumerId")
                         .HasColumnType("INTEGER");
@@ -422,34 +420,30 @@ namespace FinalYearProject.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("SavedProduct");
+                    b.ToTable("SavedProducts");
                 });
 
-            modelBuilder.Entity("SoftwareProject.WebScrapper", b =>
+            modelBuilder.Entity("SoftwareProject.Models.WebScrapper", b =>
                 {
-                    b.Property<int>("ScrapeId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<int?>("ProductId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("ScraperType")
+                    b.Property<string>("TypeName")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<DateOnly>("ScrappedDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("WebsiteName")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("ScrapeId");
+                    b.HasKey("Id");
 
                     b.HasIndex("ProductId");
 
@@ -507,39 +501,37 @@ namespace FinalYearProject.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("SoftwareProject.Consumer", b =>
+            modelBuilder.Entity("SoftwareProject.Models.Consumer", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "IdentityUser")
                         .WithMany()
-                        .HasForeignKey("IdentityUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("IdentityUserId");
 
-                    b.HasOne("SoftwareProject.Location", "Location")
+                    b.HasOne("SoftwareProject.Models.Location", "Location")
                         .WithOne("Consumer")
-                        .HasForeignKey("SoftwareProject.Consumer", "LocationId");
+                        .HasForeignKey("SoftwareProject.Models.Consumer", "LocationId");
 
                     b.Navigation("IdentityUser");
 
                     b.Navigation("Location");
                 });
 
-            modelBuilder.Entity("SoftwareProject.Newsletter", b =>
+            modelBuilder.Entity("SoftwareProject.Models.Newsletter", b =>
                 {
-                    b.HasOne("SoftwareProject.Consumer", "Consumer")
+                    b.HasOne("SoftwareProject.Models.Consumer", "Consumer")
                         .WithMany("Newsletters")
                         .HasForeignKey("ConsumerId");
 
                     b.Navigation("Consumer");
                 });
 
-            modelBuilder.Entity("SoftwareProject.Product", b =>
+            modelBuilder.Entity("SoftwareProject.Models.Product", b =>
                 {
-                    b.HasOne("SoftwareProject.Category", "Category")
+                    b.HasOne("SoftwareProject.Models.Category", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId");
 
-                    b.HasOne("SoftwareProject.Consumer", "Consumer")
+                    b.HasOne("SoftwareProject.Models.Consumer", "Consumer")
                         .WithMany("Products")
                         .HasForeignKey("ConsumerId");
 
@@ -548,15 +540,15 @@ namespace FinalYearProject.Migrations
                     b.Navigation("Consumer");
                 });
 
-            modelBuilder.Entity("SoftwareProject.ProductLocation", b =>
+            modelBuilder.Entity("SoftwareProject.Models.ProductLocation", b =>
                 {
-                    b.HasOne("SoftwareProject.Location", "Location")
+                    b.HasOne("SoftwareProject.Models.Location", "Location")
                         .WithMany("ProductLocations")
                         .HasForeignKey("LocationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SoftwareProject.Product", "Product")
+                    b.HasOne("SoftwareProject.Models.Product", "Product")
                         .WithMany("ProductLocations")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -567,24 +559,24 @@ namespace FinalYearProject.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("SoftwareProject.Review", b =>
+            modelBuilder.Entity("SoftwareProject.Models.Review", b =>
                 {
-                    b.HasOne("SoftwareProject.Consumer", "Consumer")
+                    b.HasOne("SoftwareProject.Models.Consumer", "Consumer")
                         .WithMany("Reviews")
                         .HasForeignKey("ConsumerId");
 
                     b.Navigation("Consumer");
                 });
 
-            modelBuilder.Entity("SoftwareProject.SavedProduct", b =>
+            modelBuilder.Entity("SoftwareProject.Models.SavedProduct", b =>
                 {
-                    b.HasOne("SoftwareProject.Consumer", "Consumer")
+                    b.HasOne("SoftwareProject.Models.Consumer", "Consumer")
                         .WithMany("SavedProducts")
                         .HasForeignKey("ConsumerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SoftwareProject.Product", "Product")
+                    b.HasOne("SoftwareProject.Models.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -595,16 +587,14 @@ namespace FinalYearProject.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("SoftwareProject.WebScrapper", b =>
+            modelBuilder.Entity("SoftwareProject.Models.WebScrapper", b =>
                 {
-                    b.HasOne("SoftwareProject.Product", "Product")
+                    b.HasOne("SoftwareProject.Models.Product", null)
                         .WithMany("WebScrappers")
                         .HasForeignKey("ProductId");
-
-                    b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("SoftwareProject.Consumer", b =>
+            modelBuilder.Entity("SoftwareProject.Models.Consumer", b =>
                 {
                     b.Navigation("Newsletters");
 
@@ -615,14 +605,14 @@ namespace FinalYearProject.Migrations
                     b.Navigation("SavedProducts");
                 });
 
-            modelBuilder.Entity("SoftwareProject.Location", b =>
+            modelBuilder.Entity("SoftwareProject.Models.Location", b =>
                 {
                     b.Navigation("Consumer");
 
                     b.Navigation("ProductLocations");
                 });
 
-            modelBuilder.Entity("SoftwareProject.Product", b =>
+            modelBuilder.Entity("SoftwareProject.Models.Product", b =>
                 {
                     b.Navigation("ProductLocations");
 

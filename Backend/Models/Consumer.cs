@@ -18,7 +18,7 @@ namespace SoftwareProject.Models {
 
         public DateTime Dob{get;set;}
 
-        public string IdentityUserId { get; set; }
+        public string? IdentityUserId { get; set; }
         
         // Navigation property
         public  IdentityUser? IdentityUser { get; set; }
@@ -33,7 +33,7 @@ namespace SoftwareProject.Models {
 
         public Location? Location{get;set;}
 
-        public ICollection<SavedProduct> SavedProducts { get; set; }
+        public ICollection<SavedProduct>? SavedProducts { get; set; }
 
 
 

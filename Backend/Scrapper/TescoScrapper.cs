@@ -140,8 +140,22 @@ public async Task<List<Product>> GetProductDetails(List<string> urls)
                     Console.WriteLine($"Extracted title: {title}");
 
                     // Extract price
-                  var price = await page.EvaluateAsync<string>(@"() => {
+                //   var price = await page.EvaluateAsync<string>(@"() => {
                    
+                //     const selectors = [
+                //         'p.ddsweb-text.styled__PriceText',
+                //         '[data-auto=""pdp-price""]',
+                //         '.price',
+                //         '[itemprop=""price""]',
+                //         '[class*=""price""]'
+                //     ];
+                //     for (let selector of selectors) {
+                //         const element = document.querySelector(selector);
+                //         if (element) return element.innerText.trim();
+                //     }
+                //     return 'Price not found';
+                // }");
+                var price = await page.EvaluateAsync<string>(@"() => {
                     const selectors = [
                         'p.ddsweb-text.styled__PriceText',
                         '[data-auto=""pdp-price""]',
@@ -151,7 +165,12 @@ public async Task<List<Product>> GetProductDetails(List<string> urls)
                     ];
                     for (let selector of selectors) {
                         const element = document.querySelector(selector);
-                        if (element) return element.innerText.trim();
+                        if (element) {
+                            const fullText = element.innerText.trim();
+                            // Match the price pattern (£X.XX) and the price per unit (£X.XX/XXXX)
+                            const match = fullText.match(/£\d+\.\d+(\s+£\d+\.\d+\/\d+[a-z]+)?/);
+                            return match ? match[0] : fullText;
+                        }
                     }
                     return 'Price not found';
                 }");

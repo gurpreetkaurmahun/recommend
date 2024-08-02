@@ -130,7 +130,7 @@ namespace FinalYearProject.Controllers
         // POST: api/Location
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Location>> PostLocation(Location location)
+        public async Task<ActionResult<Location>> PostLocation(Location location,int consumerId)
         {
 
             try{
@@ -141,9 +141,22 @@ namespace FinalYearProject.Controllers
                     return BadRequest(ModelState);
                 }
 
+            var existingCustomer= await _context.Consumers.FindAsync(consumerId);
+
+            if(existingCustomer==null){
+                _logger.LogErrorWithMethod($"Customer with id: {consumerId} not found");
+                return NotFound($"Customer with id: {consumerId} not found");
+            }
+
+           
+
 
             _context.Locations.Add(location);
             await _context.SaveChangesAsync();
+
+            existingCustomer.LocationId=location.LocationId;
+            existingCustomer.Location=location;
+             await _context.SaveChangesAsync();
             _logger.LogInformationWithMethod($"Location added Suceesfully ot the system");
             return CreatedAtAction("GetLocation", new { id = location.LocationId }, location);
 

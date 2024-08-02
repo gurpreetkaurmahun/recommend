@@ -244,7 +244,6 @@ namespace FinalYearProject.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("IdentityUserId")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("LName")
@@ -423,29 +422,25 @@ namespace FinalYearProject.Migrations
 
             modelBuilder.Entity("SoftwareProject.Models.WebScrapper", b =>
                 {
-                    b.Property<int>("ScrapeId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<int?>("ProductId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("ScraperType")
+                    b.Property<string>("TypeName")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<DateOnly>("ScrappedDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("WebsiteName")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("ScrapeId");
+                    b.HasKey("Id");
 
                     b.HasIndex("ProductId");
 
@@ -507,9 +502,7 @@ namespace FinalYearProject.Migrations
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "IdentityUser")
                         .WithMany()
-                        .HasForeignKey("IdentityUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("IdentityUserId");
 
                     b.HasOne("SoftwareProject.Models.Location", "Location")
                         .WithOne("Consumer")
@@ -593,11 +586,9 @@ namespace FinalYearProject.Migrations
 
             modelBuilder.Entity("SoftwareProject.Models.WebScrapper", b =>
                 {
-                    b.HasOne("SoftwareProject.Models.Product", "Product")
+                    b.HasOne("SoftwareProject.Models.Product", null)
                         .WithMany("WebScrappers")
                         .HasForeignKey("ProductId");
-
-                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("SoftwareProject.Models.Consumer", b =>

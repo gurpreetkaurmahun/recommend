@@ -147,4 +147,43 @@ Consumer:
                     // Log the exception
                     return StatusCode(500, $"Internal server error: {ex.Message}");
                 }
-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJndXJwcmVldGttMDkwQGdtYWlsLmNvbSIsImp0aSI6ImE2NDNlNzIxLTY4NmMtNGQ3MS1hNzY1LTgxNjk0Y2VkNGQyMyIsImV4cCI6MTcyMDk5NDM3MCwiaXNzIjoiIGh0dHA6Ly9sb2NhbGhvc3Q6NTA4OCIsImF1ZCI6IiBodHRwOi8vbG9jYWxob3N0OjUwODgifQ.IIDY4HsaP5nSGW2rGkMrDLZV_bAl9f03L42_5vJBW-4
+app.MapGet("/scrapetest/{supermarket}", async (string supermarket) =>
+{
+    IWebscrapper scraper = supermarket.ToLower() switch
+    {
+        "tesco" => new TescoScrapper(),
+        "asda" => new AsdaScrapper(),
+        "sainsbury" => new SainsburyScrapper(),
+        "aldi" => new AldiScrapper(),
+        _ => throw new ArgumentException("Invalid supermarket")
+    };
+
+    try
+    {
+        var links = await scraper.GetProductLinks("eggs");
+        var products = await scraper.GetProductDetails(links);
+        return Results.Ok(new { LinkCount = links.Count, ProductCount = products.Count, Products = products });
+    }
+    catch (Exception ex)
+    {
+        return Results.BadRequest(new { Error = ex.Message, StackTrace = ex.StackTrace });
+    }
+});
+
+
+ [HttpPost("scrape")]
+        public async Task<IActionResult> ScrapeProducts([FromBody] string product)
+        {
+            try
+            {
+                var scrapedProducts=await _scrapingService.ScrapeAndSaveProducts(product);
+                 
+
+                return Ok(new{message="Scraping completed successfully",
+                productCount=scrapedProducts.Count});
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new{message=$"Error occurred during scraping:"});
+            }
+        }
