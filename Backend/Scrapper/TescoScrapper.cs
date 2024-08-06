@@ -85,7 +85,7 @@ public async Task<List<string>> GetProductLinks(string product)
                         productLinks.Add(href);
                     }
 
-                    if (productLinks.Count == 2) break; 
+                    if (productLinks.Count == 1) break; 
                 }
                 break;  // Stop if we found links with this selector
             }
@@ -112,7 +112,7 @@ public async Task<List<Product>> GetProductDetails(List<string> urls)
         using var playwright = await Playwright.CreateAsync();
         await using var browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
         {
-            Headless = false // Set to true for production
+            Headless = false// Set to true for production
         });
 
         foreach (string url in urls)
@@ -191,6 +191,7 @@ public async Task<List<Product>> GetProductDetails(List<string> urls)
                         Price = price,
                         ImageUrl = imageUrl,
                         pricePerUnit=pricePerPiece,
+                        ImageLogo="https://cdn.prod.website-files.com/63f6e52346a353ca1752970e/644fb7a65f01016bb504d02c_20230501T1259-553128f8-5bb8-4582-81d0-66fae3937e6f.jpeg",
                         Url=url,
                         IsAvailable=true,
                         Date=DateOnly.FromDateTime(DateTime.Now)

@@ -53,7 +53,8 @@ builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<AccountService>();
 builder.Services.AddScoped<ConsumerService>();
 builder.Services.AddScoped<WebScrapperService>();
-// builder.Services.AddScoped<TokenRevocation>();
+builder.Services.AddScoped<SavedProductService>();
+
 builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

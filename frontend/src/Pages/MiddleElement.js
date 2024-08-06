@@ -12,10 +12,7 @@ function MiddleElement(){
           Learn more
           <svg class="bi"></svg>
         </a>
-        {/* <a class="icon-link" href="#">
-          Search
-          <svg class="bi"></svg>
-        </a> */}
+     
         <Link to="/Search"> Search</Link>
       </div>
     </div>

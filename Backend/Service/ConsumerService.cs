@@ -65,8 +65,8 @@ namespace  SoftwareProject.Service{
             {
                 if (id != consumer.ConsumerId)
                 {
-                    _logger.LogErrorWithMethod($"Invalid request as provided id does not match with ProductId");
-                    return (false,"Invalid request as provided id does not match with ProductId");
+                    _logger.LogErrorWithMethod($"Invalid request as provided id does not match with ConsumerId");
+                    return (false,"Invalid request as provided id does not match with ConsumerId");
                 }
 
 

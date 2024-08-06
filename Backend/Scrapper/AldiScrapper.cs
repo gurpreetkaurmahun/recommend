@@ -66,7 +66,7 @@ namespace SoftwareProject.Scrapper {
             if (!string.IsNullOrEmpty(link))
             {
                 productLinks.Add(link);
-                if (productLinks.Count == 2) break; // Limit to 5 unique links
+                if (productLinks.Count == 1) break; // Limit to 1 unique links
             }
         }
 
@@ -127,11 +127,10 @@ public async Task<List<Product>> GetProductDetails(List<string> urls)
                 Console.WriteLine($"Extracted title: {title}");
 
                 // Extract price
-                var price = await page.EvaluateAsync<string>(@"() => {
-                    const priceElement = document.querySelector('span[data-qa=""product-price""] .product-price');
-                    return priceElement ? priceElement.innerText.trim() : 'Price not found';
-                }");
-                Console.WriteLine($"Extracted price: {price}");
+              var price = await page.EvaluateAsync<string>(@"() => {
+    const priceElement = document.querySelector('span[property=""price""][data-qa=""product-price""] span.product-price');
+    return priceElement ? priceElement.innerText.trim() : 'Price not found';
+}");
 
                 // Extract image URL
                 var imageUrl = await page.EvaluateAsync<string>("() => document.querySelector('img.product-main-img')?.src || 'Image not found'");
@@ -139,10 +138,9 @@ public async Task<List<Product>> GetProductDetails(List<string> urls)
 
                 // Extract price per piece
                 var pricePerPiece = await page.EvaluateAsync<string>(@"() => {
-                    const element = document.querySelector('small[property=""price""][data-qa=""product-price""] span');
-                    return element ? element.innerText.trim() : 'Price per piece not found';
-                }");
-                Console.WriteLine($"Extracted price per piece: {pricePerPiece}");
+    const element = document.querySelector('div.small.text-gray-small p.m-0 small[property=""price""][data-qa=""product-price""] span');
+    return element ? element.innerText.trim() : 'Price per piece not found';
+}");
 
                 // Add product to list
                 products.Add(new Product
@@ -151,6 +149,7 @@ public async Task<List<Product>> GetProductDetails(List<string> urls)
                     Price = price,
                     ImageUrl = imageUrl,
                     pricePerUnit = pricePerPiece,
+                    ImageLogo ="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRCYqauB9RFJqt7rS9eY18Rm9Uen7G0cSDR7w&s",
                     Url = url,
                     IsAvailable = true,
                     Date = DateOnly.FromDateTime(DateTime.Now)

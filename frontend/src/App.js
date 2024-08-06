@@ -11,6 +11,8 @@ import EditConsumer from './Components/EditConsumer';
 import AllProducts from "./Components/AllProducts.js";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
+import ClearLocalStorage from './Components/User.js';
+import Admin from './Components/Admin.js';
 import MyForm from './Components/Form';
 function App() {
   return (
@@ -26,6 +28,8 @@ function App() {
         <Route path="/Search" element={<SearchBar/>} />
         <Route path="/edit" element={<EditConsumer/>} />
         <Route path="/All" element={<AllProducts/>} />
+        <Route path="/Admin" element={<Admin/>} />
+        <Route path="/local" element={<ClearLocalStorage/>}></Route>
         
       </Routes>
     </Router>

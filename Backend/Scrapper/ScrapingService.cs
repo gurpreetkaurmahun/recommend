@@ -68,6 +68,7 @@ public async Task<List<Product>> ScrapeAndSaveProducts(string product)
                 foreach (var prod in products)
                 {
                     prod.SupermarketName = name;
+                    prod.TempId = Guid.NewGuid().ToString();
                 }
 
                 return products;
@@ -86,13 +87,6 @@ public async Task<List<Product>> ScrapeAndSaveProducts(string product)
             allProducts.AddRange(result);
         }
 
-        foreach (var prod in allProducts)
-        {
-            Console.WriteLine();
-            Console.WriteLine($"Title: {prod.ProductName}, Price: {prod.Price}, Image: {prod.ImageUrl}, Price per piece: {prod.pricePerUnit}");
-            Console.WriteLine();
-        }
-
         _logger.LogInformation($"Total products scraped: {allProducts.Count}");
 
         using (var transaction = await _context.Database.BeginTransactionAsync())
@@ -106,8 +100,10 @@ public async Task<List<Product>> ScrapeAndSaveProducts(string product)
                     var dbProduct = new Product
                     {
                         ProductName = prod.ProductName ?? "Unknown",
+                        TempId = prod.TempId,
                         Price = prod.Price ?? "0",
                         ImageUrl = prod.ImageUrl ?? "",
+                        ImageLogo=prod.ImageLogo,
                         pricePerUnit = prod.pricePerUnit ?? "",
                         Url = prod.Url ?? "",
                         Date = DateOnly.FromDateTime(DateTime.UtcNow),
@@ -140,119 +136,7 @@ public async Task<List<Product>> ScrapeAndSaveProducts(string product)
 }
 
 
-// public async Task<List<Product>> ScrapeAndSaveProducts(string product)
-// {
 
-//       try
-//     {
-//         _logger.LogInformation("Starting scraping process");
-//         _logger.LogInformation("Enter Product you want to search on Tesco/Sainsbury/Aldi/Asda");
-//         // var product = "chicken"; // You can replace this with user input if needed
-
-//         var Tscraper = new TescoScrapper();
-//         var Sscraper = new SainsburyScrapper();
-//         var Ascraper = new AldiScrapper();
-//         var asScrapper = new AsdaScrapper();
-
-//         var allProducts = new List< Product>();
-
-//         var scrappers = new List<(string Name, Func<string, Task<List<string>>> GetLinks, Func<List<string>, Task<List<Product>>> GetDetails)>
-//         {
-//             ("Aldi", Ascraper.GetProductLinks, Ascraper.GetProductDetails),
-//             ("Tesco", Tscraper.GetProductLinks, Tscraper.GetProductDetails),
-//             ("Sainsbury", Sscraper.GetProductLinks, Sscraper.GetProductDetails),
-//             ("Asda", asScrapper.GetProductLinks, asScrapper.GetProductDetails)
-//         };
-
-     
-//          var tasks = scrappers.Select(async scrapper =>
-//         {
-//             var (name, getLinks, getDetails) = scrapper;
-//             _logger.LogInformation($"Scraping from {name} for: {product}");
-
-//             try
-//             {
-//                 var productLinks = await getLinks(product);
-//                 _logger.LogInformation($"Found {productLinks.Count} links for {name}");
-//                 var products = await getDetails(productLinks);
-//                 _logger.LogInformation($"Scraped {products.Count} products from {name}");
-
-//                 foreach (var prod in products)
-//                 {
-//                     prod.SupermarketName = name;
-//                 }
-
-//                 return products;
-//             }
-//             catch (Exception ex)
-//             {
-//                 _logger.LogError($"Error scraping {name}: {ex.Message}");
-//                 return new List<Product>();
-//             }
-//         }).ToList();
-
-//         var results = await Task.WhenAll(tasks);
-
-//         foreach (var result in results)
-//         {
-//             allProducts.AddRange(result);
-//         }
-
-//         foreach (var  prod in allProducts)
-//         {
-//             Console.WriteLine();
-//             Console.WriteLine($" Title:{prod.ProductName}, Price: {prod.Price}, Image: {prod.ImageUrl}, price per piece: {prod.pricePerUnit}");
-//             Console.WriteLine();
-//         }
-
-//         _logger.LogInformation($"Total products scraped: {allProducts.Count}");
-
-//         using (var transaction = await _context.Database.BeginTransactionAsync())
-//         {
-//             try
-//             {
-//                 foreach (var  prod in allProducts)
-//                 {
-//                     _logger.LogInformation($"Title:{prod.ProductName ?? "Unknown"}, Price: {prod.Price ?? "0"}, Image: {prod.ImageUrl}, Price per piece: {prod.pricePerUnit ?? "Unknown"}");
-
-//                     var dbProduct = new Product
-//                     {
-//                         ProductName = prod.ProductName ?? "Unknown",
-//                         Price = prod.Price ?? "0",
-//                         ImageUrl = prod.ImageUrl ?? "",
-//                         pricePerUnit = prod.pricePerUnit ?? "",
-//                         Url = prod.Url ?? "",
-//                         Date = DateOnly.FromDateTime(DateTime.UtcNow),
-//                         IsAvailable = true,
-//                         SupermarketName = prod.SupermarketName
-//                     };
-
-//                    _context.Products.Add(dbProduct);
-                   
-//                 }
-
-//                 var savedCount = await _context.SaveChangesAsync();
-//                 await transaction.CommitAsync();
-//                 _logger.LogInformation($"Saved {savedCount} products to the database");
-               
-//             }
-//             catch (Exception ex)
-//             {
-//                 await transaction.RollbackAsync();
-//                 _logger.LogError($"Error saving products to database: {ex.Message}");
-               
-//             }
-//         }
-
-//         _logger.LogInformation("Scraping process completed");
-//          return allProducts;
-//     }
-//     catch (Exception ex)
-//     {
-//         _logger.LogError($"An error occurred: {ex.Message}");
-//         return new List<Product>();
-//     }
-// }
 }
     
     
@@ -260,26 +144,4 @@ public async Task<List<Product>> ScrapeAndSaveProducts(string product)
     
     }
 
-       // Creating a list of async tasks, one for each scrapper
-        // var tasks = scrappers.Select(async scrapper =>
-        // {
-        //     var (name, getLinks, getDetails) = scrapper;
-        //     _logger.LogInformation($"Scraping from {name} for: {product}");
-
-        //     try
-        //     {
-        //         var productLinks = await getLinks(product);
-        //         _logger.LogInformation($"Found {productLinks.Count} links for {name}");
-        //         var products = await getDetails(productLinks);
-        //         _logger.LogInformation($"Scraped {products.Count} products from {name}");
-
-        //         return products.Select(prod => (name, prod)).ToList();
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         _logger.LogError($"Error scraping {name}: {ex.Message}");
-        //         return new List<(string, Product)>();
-        //     }
-        // }).ToList();
-
-        // var results = await Task.WhenAll(tasks);
+      

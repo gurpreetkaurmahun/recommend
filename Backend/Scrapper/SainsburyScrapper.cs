@@ -87,7 +87,7 @@ public class SainsburyScrapper:IWebscrapper
                             productLinks.Add(href);
                         }
 
-                        if (productLinks.Count == 2) break; 
+                        if (productLinks.Count == 1) break; 
                     }
                     break;  // Stop if we found links with this selector
                 }
@@ -159,6 +159,8 @@ public async Task<List<Product>> GetProductDetails(List<string> urls)
             var imageSelector = "img.pd__image[data-test-id='pd-selected-image']";
             await page.WaitForSelectorAsync(imageSelector, new PageWaitForSelectorOptions { State = WaitForSelectorState.Visible, Timeout = 10000 });
             product.ImageUrl = await page.GetAttributeAsync(imageSelector, "src");
+
+            product.ImageLogo="https://thegreatbritishporridgeco.co.uk/cdn/shop/articles/5d5fd2cf38c00ef4daae4c38_Sainsburys_Logo_2258x.jpg?v=1588282695";
 
             if (!string.IsNullOrEmpty(product.ProductName))
             {

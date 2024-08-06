@@ -65,7 +65,7 @@ namespace SoftwareProject.Scrapper {
             if (!string.IsNullOrEmpty(link))
             {
                 productLinks.Add(link);
-                if (productLinks.Count == 2) break; // Limit to 5 unique links
+                if (productLinks.Count == 1) break; // Limit to 5 unique links
             }
         }
 
@@ -173,6 +173,7 @@ public async Task<List<Product>> GetProductDetails(List<string> urls)
                     Price = price,
                     ImageUrl = imageUrl,
                     pricePerUnit = pricePerPiece,
+                    ImageLogo="https://logos-world.net/wp-content/uploads/2021/02/ASDA-Emblem.png",
                     Url = url,
                     IsAvailable = true,
                     Date = DateOnly.FromDateTime(DateTime.Now)

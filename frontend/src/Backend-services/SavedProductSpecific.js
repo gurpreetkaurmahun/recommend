@@ -44,24 +44,17 @@ const getProductsById=async(id,token)=>{
     }
 };
 
-const addSavedProduct=async(token,product)=>{
+const addSavedProduct=async(product)=>{
 
     try{
 
-        const productAdd=await axios.post(`${API_BASE_URL}SavedProduct`,
-       product,
-        {
-            headers:{
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });
-
-        console.log("role :",productAdd.data);
+        const productAdd=await axios.post(`${API_BASE_URL}SavedProduct`, product);
+        console.log("Data:",productAdd.data);
         return productAdd.data;
 
     }catch(error){
         console.error("SavedProduct Add error:", error.response ? error.response.data : error.message);
+        return error;
     }
 };
 
@@ -84,16 +77,20 @@ const updateSavedProduct=async(token,id,editProduct)=>{
     }
 };
 
-const deleteProduct=async(token,productId)=>{
+const deleteSavedProduct=async(consumerId,tempId)=>{
     try{
-        const productDelete=await axios.delete(`${API_BASE_URL}SavedProduct/${productId}`,
-        {headers:{
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-        }}
+        const productDelete=await axios.delete(`${API_BASE_URL}SavedProduct/${consumerId}/${tempId}`
+        // ,
+        // {headers:{
+        //     'Authorization': `Bearer ${token}`,
+        //     'Content-Type': 'application/json'
+        // }}
         )
         return productDelete.data;
     }catch(error){
         console.error("SavedProduct delete error:", error.response ? error.response.data : error.message);
+        return {error:error.response.data};
     }
 };
+
+export  {addSavedProduct,deleteSavedProduct};

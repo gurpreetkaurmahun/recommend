@@ -5,10 +5,11 @@ import GetLocation from "./Location";
 import Spinner from "../Pages/Spinner";
 import Navbar from "../Pages/Navbar";
 import{ API_BASE_URL} from"../apiConfig.js";
-
+import LocationMap from "./LocationMap.js";
 import {useNavigate} from 'react-router-dom';
 
 import axios from "axios";
+//shut down browrser and implement advanced search
 
 function SearchBar(){
 
@@ -37,17 +38,28 @@ function SearchBar(){
     });
    
     const [loading, setLoading] = useState(false);
-    const[product,setProduct]=useState("");
+
 
     const[status,setStatus]=useState("");
     const navigate=useNavigate();
+
+    useEffect(()=>{
+    const storedLatitude = localStorage.getItem('userLatitude');
+    const storedLongitude = localStorage.getItem('userLongitude');
+    const storedFullLocation = localStorage.getItem('userFullLocation');
+
+    console.log("Local Latitude",storedLatitude);
+    console.log("LocalLongitude:",storedLongitude);
+    console.log("Local Full Location:",storedFullLocation);
+},[]);
+
 
 
    
 
 //Notes{Pass prodcut to backend and check if scrapper works}{render prodcut component}Done
 async function handleLocation(event) {
-    event.preventDefault();
+
     setLoading(true);
 
     await GetLocation((locationData) => {
@@ -58,63 +70,55 @@ async function handleLocation(event) {
             FullLocation:locationData.location
 
         });
+        localStorage.setItem('userLatitude', locationData.latitude);
+        localStorage.setItem('userLongitude', locationData.longitude);
+        localStorage.setItem('userFullLocation', locationData.location);
         setLoading(false);
     });
 }
 
-async function handleSubmit(event){
-    event.preventDefault();
+
+async function handleSubmit(values) {
+    console.log("Values are:", values);
     setLoading(true);
-    try{
 
-        const productScrapping=await axios.post(`${API_BASE_URL}WebScrapper/scrape`, JSON.stringify(product), {
+    // const fullProduct=values.BrandName+ " "+values.Product+ " " +values.Quantity;
+    const fullProduct = `${values.BrandName} ${values.Product} ${values.Quantity}`.trim();
+
+    console.log("Full Product is:", fullProduct);
+    try {
+        const productScrapping = await axios.post(`${API_BASE_URL}WebScrappers/scrape`, JSON.stringify(fullProduct), {
             headers: {
                 'Content-Type': 'application/json'
             }
         });
 
-        console.log("Scrapping response3",productScrapping.data);
-        console.log("Scrapping response3",productScrapping.data.productCount);
+        console.log("Scraping response:", productScrapping.data);
+        
+        if (productScrapping.data.products && productScrapping.data.products.length > 0) {
 
-        setStatus("Scrapping COmpleted");
+            const scrapedProducts = productScrapping.data.products;
+            console.log("Scraped Products:", scrapedProducts);
 
-        navigate("/all");
+         
 
-    }catch(error){
-        setStatus(error);
-    }
-    finally{
-        setStatus(false);
-    }
-}
-
-async function handleSubmit(values){
-    console.log("Values are:",values);
-    try{
-
-        const productScrapping= await axios.post(`${API_BASE_URL}WebScrappers/scrape`, JSON.stringify(values.Product), {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-
-        console.log("Scrapping response3",productScrapping.data);
-        console.log("Scrapping response3",productScrapping.data.productCount);
-
-        setStatus("Scrapping COmpleted");
-
-        if (productScrapping.data.productCount>0){
-            navigate("/all");
+            setStatus("Scraping Completed");
+            navigate("/all", { state: { searchResults: scrapedProducts} });
+        } else {
+            setStatus("No products found");
         }
+    } catch (error) {
        
-
-    }catch(error){
-        setStatus(error);
-    }
-    finally{
-        setStatus(false);
+        console.error("Scraping error:", error);
+        setStatus(error.response?.data?.message || "An error occurred while scraping");
+    } finally {
+        setLoading(false);
     }
 }
+
+
+console.log("local storage",localStorage);
+
 
 //filter search brand name product name quantity
 
@@ -129,7 +133,22 @@ async function handleSubmit(values){
             className={`btn ${showAdvancedSearch ? 'btn-secondary' : 'btn-primary'} m-2`}>
                 {!showAdvancedSearch?"Advanced Search":"Search"}
             </button>
-        
+            {loading&&<Spinner/>}
+
+            <button onClick={() => GetLocation(handleLocation)} className="btn-primary">Get Location</button>
+      {/* {userLocation && (
+        <div>
+          <p>Latitude: {userLocation.Latitude}</p>
+          <p>Longitude: {userLocation.Longitude}</p>
+          <p>Location: {userLocation.FullLocation}</p>
+          <LocationMap 
+            latitude={userLocation.Latitude}
+            longitude={userLocation.Longitude}
+            location={userLocation.FullLocation}
+          />
+        </div>
+      )}
+         */}
             
         </div>
     )

@@ -14,7 +14,7 @@ namespace SoftwareProject.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
+    // [Authorize(Roles = "Admin")]
     public class RolesController : ControllerBase
     {
         private readonly RoleManager<IdentityRole> _roleManager;
@@ -173,11 +173,11 @@ namespace SoftwareProject.Controllers
 
             try{
 
-               if (!ModelState.IsValid)
-            {
-                _logger.LogErrorWithMethod("Error. Invalid request.");
-                return BadRequest(ModelState);
-            }
+            if (!ModelState.IsValid)
+                {
+                    _logger.LogErrorWithMethod("Error. Invalid request.");
+                    return BadRequest(ModelState);
+                }
             
             var user = await _userManager.FindByIdAsync(model.UserId);
 

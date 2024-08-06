@@ -5,6 +5,7 @@ namespace SoftwareProject.Models {
     public class Product{
 
         public int ProductId { get; set; }
+         public string TempId { get; set; }
         public string ProductName { get; set; }
 
         // public double quantity{ get; set; }
@@ -14,6 +15,7 @@ namespace SoftwareProject.Models {
 
         public string pricePerUnit{ get; set; }
 
+        public string ImageLogo { get; set; }
         public string Url { get; set; }
 
         public DateOnly Date { get; set; }

@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SoftwareProject.Models;
@@ -31,6 +27,7 @@ namespace FinalYearProject.Controllers
         }
 
         // GET: api/WebScrappers
+        [Authorize(Roles="Admin")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<WebScrapper>>> GetWebScrappers()
         {
@@ -48,6 +45,7 @@ namespace FinalYearProject.Controllers
 
         // GET: api/WebScrappers/5
         [HttpGet("{id}")]
+        [Authorize(Roles="Admin")]
         public async Task<ActionResult<WebScrapper>> GetWebScrapper(int id)
         {
               var (result,message)=await _webScrappingService.GetWebScrapperById(id);
@@ -68,8 +66,7 @@ namespace FinalYearProject.Controllers
                 var scrapedProducts=await _scrapingService.ScrapeAndSaveProducts(product);
                  
 
-                return Ok(new{message="Scraping completed successfully",
-                productCount=scrapedProducts.Count});
+                return Ok(new { message = "Scraping completed successfully", productCount = scrapedProducts.Count, products = scrapedProducts });
             }
             catch (Exception ex)
             {
@@ -80,7 +77,7 @@ namespace FinalYearProject.Controllers
 
 
         // PUT: api/WebScrappers/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Roles="Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutWebScrapper(int id, WebScrapper webScrapper)
         {
@@ -96,7 +93,7 @@ namespace FinalYearProject.Controllers
         }
 
         // POST: api/WebScrappers
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Roles="Admin")]
         [HttpPost]
         public async Task<ActionResult<WebScrapper>> PostWebScrapper(WebScrapper webScrapper)
         {
@@ -111,6 +108,7 @@ namespace FinalYearProject.Controllers
         }
 
         // DELETE: api/WebScrappers/5
+        [Authorize(Roles="Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteWebScrapper(int id)
         {

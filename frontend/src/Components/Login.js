@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useState ,useEffect} from "react";
 import Confetti from"./Confetti.js";
 import { Link } from "react-router-dom";
-
+import getAllScrappers from "../Backend-services/AdminSpecific.js";
 import {useAuth}from "./AuthenticateContext.js";
 import Navbar from "../Pages/Navbar.js";
 import EditConsumer from "./EditConsumer.js";
@@ -41,7 +41,7 @@ const Login=()=>{
 
     useEffect(() => {
        
-        console.log("Auth context is",authContext);
+        console.log("Auth context in login  is",authContext);
         if(authContext.authenticated){
             navigate("/", { replace: true });
         }
@@ -70,7 +70,25 @@ const Login=()=>{
             if (success) {
                 
                 
-                    console.log("Welcome User");
+                    console.log("Welcome User",authContext.token);
+
+                    navigate("/search");
+            //         await new Promise(resolve => setTimeout(resolve, 100));
+            
+            // console.log("Auth context after login:", authContext)
+        
+            //         const token =authContext.token;
+            //         if (!token) {
+            //             throw new Error("Token is not set after login");
+            //         }
+    
+            //         console.log("Token to use for admin operations:", token);
+
+            //         console.log("token is",token);
+
+            //         const admin= await getAllScrappers(token);
+
+            //         console.log("Admin Operations:",admin);
              
                
             } else {

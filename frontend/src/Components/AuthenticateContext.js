@@ -91,7 +91,7 @@ export default function AuthProvider({children}){
         }
 
 
-    // setInterval(()=>setNumber(number+1),100000);
+
 
     const contextToBeShared={authenticated,setAuthenticated,activeUserId,setActiveUserId,token,SetToken,IdentityId,setIdentityId,Login,Logout};
 
