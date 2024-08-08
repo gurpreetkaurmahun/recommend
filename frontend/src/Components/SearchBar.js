@@ -5,7 +5,7 @@ import GetLocation from "./Location";
 import Spinner from "../Pages/Spinner";
 import Navbar from "../Pages/Navbar";
 import{ API_BASE_URL} from"../apiConfig.js";
-import LocationMap from "./LocationMap.js";
+import {fetchNearbyStores } from"./Supermarket.js";
 import {useNavigate} from 'react-router-dom';
 
 import axios from "axios";
@@ -41,6 +41,7 @@ function SearchBar(){
 
 
     const[status,setStatus]=useState("");
+    const [nearbyStores, setNearbyStores] = useState([]);
     const navigate=useNavigate();
 
     useEffect(()=>{
@@ -51,47 +52,109 @@ function SearchBar(){
     console.log("Local Latitude",storedLatitude);
     console.log("LocalLongitude:",storedLongitude);
     console.log("Local Full Location:",storedFullLocation);
-},[]);
 
+    
+},[]);
 
 
    
 
 //Notes{Pass prodcut to backend and check if scrapper works}{render prodcut component}Done
-async function handleLocation(event) {
+// async function handleLocation(event) {
 
+//     setLoading(true);
+
+//     await GetLocation((locationData) => {
+//         console.log("Location Data:::", locationData);
+//         setUserLocation({
+//             Latitude:locationData.latitude,
+//             Longitude:locationData.longitude,
+//             FullLocation:locationData.location
+
+//         });
+//         localStorage.setItem('userLatitude', locationData.latitude);
+//         localStorage.setItem('userLongitude', locationData.longitude);
+//         localStorage.setItem('userFullLocation', locationData.location);
+//         setLoading(false);
+
+//         try {
+//             const stores =  fetchNearbyStores(locationData.latitude, locationData.longitude);
+//             setNearbyStores(stores);
+//             if (stores.length === 0) {
+//               console.warn("No nearby stores found");
+//               // You might want to show a message to the user here
+//             }
+//           } catch (error) {
+//             console.error("Error fetching nearby stores:", error);
+//             // Handle the error, maybe set an error state
+//           } finally {
+//             setLoading(false);
+//           }
+    
+
+//     });
+// }
+async function handleLocation(event) {
     setLoading(true);
 
-    await GetLocation((locationData) => {
-        console.log("Location Data:::", locationData);
-        setUserLocation({
-            Latitude:locationData.latitude,
-            Longitude:locationData.longitude,
-            FullLocation:locationData.location
+    await GetLocation(async (locationData) => {
+      console.log("Location Data:", locationData);
+      setUserLocation({
+        Latitude: locationData.latitude,
+        Longitude: locationData.longitude,
+        FullLocation: locationData.location
+      });
+      localStorage.setItem('userLatitude', locationData.latitude);
+      localStorage.setItem('userLongitude', locationData.longitude);
+      localStorage.setItem('userFullLocation', locationData.location);
 
-        });
-        localStorage.setItem('userLatitude', locationData.latitude);
-        localStorage.setItem('userLongitude', locationData.longitude);
-        localStorage.setItem('userFullLocation', locationData.location);
-        setLoading(false);
-    });
-}
+      try{
+
+        console.log("Fetching stores");
+                const fetchStores= await fetchNearbyStores(localStorage.getItem('userLatitude'), localStorage.getItem('userLongitude'));
+
+                console.log("Stores:",fetchStores);
+
+      }catch(error){
+        console.log("Error Fetching stores:",error);
+      }
+
+     
+  })};
+
 
 
 async function handleSubmit(values) {
     console.log("Values are:", values);
-    setLoading(true);
+  
 
     // const fullProduct=values.BrandName+ " "+values.Product+ " " +values.Quantity;
     const fullProduct = `${values.BrandName} ${values.Product} ${values.Quantity}`.trim();
 
     console.log("Full Product is:", fullProduct);
     try {
-        const productScrapping = await axios.post(`${API_BASE_URL}WebScrappers/scrape`, JSON.stringify(fullProduct), {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
+        // const productScrapping = await axios.post(`${API_BASE_URL}WebScrappers/scrape`, JSON.stringify(fullProduct), {
+        //     headers: {
+        //         'Content-Type': 'application/json'
+        //     }
+        // })
+      
+        // setNearbyStores(fetchStores);
+
+        // console.log("Stores",fetchStores);
+        setLoading(true);
+        const [productScrapping, fetchStores] = await Promise.all([
+            axios.post(`${API_BASE_URL}WebScrappers/scrape`, JSON.stringify(fullProduct), {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }),
+            fetchNearbyStores(localStorage.getItem('userLatitude'), localStorage.getItem('userLongitude'))
+        ]);
+
+        console.log("Scraping response:", productScrapping.data);
+        console.log("Stores:", fetchStores);
+
 
         console.log("Scraping response:", productScrapping.data);
         
@@ -100,10 +163,22 @@ async function handleSubmit(values) {
             const scrapedProducts = productScrapping.data.products;
             console.log("Scraped Products:", scrapedProducts);
 
-         
+           
+      try{
+
+        console.log("Fetching stores");
+                // const fetchStores= await fetchNearbyStores(localStorage.getItem('userLatitude'), localStorage.getItem('userLongitude'));
+                setNearbyStores(fetchStores);
+                console.log("Stores:",fetchStores);
+                console.log("Narby Stores",nearbyStores);
 
             setStatus("Scraping Completed");
-            navigate("/all", { state: { searchResults: scrapedProducts} });
+            navigate("/all", { state: { searchResults: scrapedProducts,nearbyStores:fetchStores,searchProduct:fullProduct} });
+
+      }catch(error){
+        console.log("Error Fetching stores:",error);
+      }
+
         } else {
             setStatus("No products found");
         }
@@ -117,7 +192,7 @@ async function handleSubmit(values) {
 }
 
 
-console.log("local storage",localStorage);
+
 
 
 //filter search brand name product name quantity
@@ -136,19 +211,7 @@ console.log("local storage",localStorage);
             {loading&&<Spinner/>}
 
             <button onClick={() => GetLocation(handleLocation)} className="btn-primary">Get Location</button>
-      {/* {userLocation && (
-        <div>
-          <p>Latitude: {userLocation.Latitude}</p>
-          <p>Longitude: {userLocation.Longitude}</p>
-          <p>Location: {userLocation.FullLocation}</p>
-          <LocationMap 
-            latitude={userLocation.Latitude}
-            longitude={userLocation.Longitude}
-            location={userLocation.FullLocation}
-          />
-        </div>
-      )}
-         */}
+  
             
         </div>
     )

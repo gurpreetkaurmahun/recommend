@@ -15,6 +15,8 @@ import EditConsumer from "./EditConsumer.js";
 
 // import Roles from"../Backend-services/RoleSpecific.js";
 ///Remove token from local storage
+
+//add admin options button on navbar
 const Login=()=>{
 
 
@@ -73,22 +75,6 @@ const Login=()=>{
                     console.log("Welcome User",authContext.token);
 
                     navigate("/search");
-            //         await new Promise(resolve => setTimeout(resolve, 100));
-            
-            // console.log("Auth context after login:", authContext)
-        
-            //         const token =authContext.token;
-            //         if (!token) {
-            //             throw new Error("Token is not set after login");
-            //         }
-    
-            //         console.log("Token to use for admin operations:", token);
-
-            //         console.log("token is",token);
-
-            //         const admin= await getAllScrappers(token);
-
-            //         console.log("Admin Operations:",admin);
              
                
             } else {

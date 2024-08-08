@@ -8,6 +8,7 @@ import{addSavedProduct,deleteSavedProduct} from "../Backend-services/SavedProduc
 import { useAuth } from "./AuthenticateContext";
 import ClearLocalStorage from "./User.js";
 import LocationMap from "./LocationMap.js";
+import Footer from "../Pages/Footer.js";
 //users can only save prodcuts if they have logged in
 //delete prodcuts(done) , saved products tile, reference reserved, controllers set(alomost), saved product service(done) start working on location, add supermarket logo 
 
@@ -15,7 +16,10 @@ import LocationMap from "./LocationMap.js";
 function AllProducts(){
 
     const[products,setProducts]=useState([]);
+    const [searchProduct,setSearchProduct]=useState("");
     const[currentPage,setCurrentPage]=useState(1);
+    const [nearbyStores, setNearbyStores] = useState([]);
+
     const productsPerPage=4;
 
 
@@ -23,20 +27,30 @@ function AllProducts(){
     const userLocation={
         Latitude:localStorage.userLatitude,
         Longitude:localStorage.userLongitude,
-        FullLocation:ClearLocalStorage.userFullLocation
+        FullLocation:localStorage.userFullLocation
     };
     
 
+ 
+
+
     useEffect(() => {
         console.log("Location state:", location.state);
-        if (location.state && location.state.searchResults) {
-            console.log("Search results:", location.state.searchResults);
+        if (location.state) {
+          if (location.state.searchResults) {
+            console.log("Setting products:", location.state.searchResults);
             setProducts(location.state.searchResults);
-            console.log("local location",userLocation);
-            
+          }
+          if (location.state.nearbyStores) {
+            console.log("Setting nearby stores:", location.state.nearbyStores);
+            setNearbyStores(location.state.nearbyStores);
+          }
+          if(location.state.searchProduct){
+            setSearchProduct(searchProduct);
+          }
+          
         }
-       
-    }, [location]);
+      }, [location]);
 
     console.log("Products state:", products);
 
@@ -100,8 +114,13 @@ function AllProducts(){
         }
     };
     return (
-        <div>
+        <div style={{border:"1px solid red"}}>
             <Navbar />
+
+            <h2 style={{border:"1px solid blue",textAlign:"left"}}> Showing results for {searchProduct}</h2>
+
+            <div style={{border:"4px solid red",width:"70%"}}>
+          
             {currentProducts.length > 0 ? (
                 currentProducts.map((product) => (
                     <Product
@@ -120,7 +139,7 @@ function AllProducts(){
             ) : (
                 <p>No products to display on this page.</p>
             )}
-
+{/* 
             {products.length > productsPerPage && (
                 <div>
                     <button onClick={handlePreviousPage} disabled={currentPage === 1}>
@@ -131,17 +150,27 @@ function AllProducts(){
                         Next
                     </button>
                 </div>
-            )}
-             <div>
-         
+            )} */}
+           </div>
+
+            
+         <div style={{border:"1px solid black"}}>
           Nearest Supermarket:
           <LocationMap 
             latitude={userLocation.Latitude}
             longitude={userLocation.Longitude}
             location={userLocation.FullLocation}
+            stores={nearbyStores}
           />
+          </div>
+
+
+     
+
+
+        <Footer/>
         </div>
-        </div>
+      
     );
  
 }
