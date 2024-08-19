@@ -1,6 +1,7 @@
 using SoftwareProject.Models;
 using SoftwareProject.Helpers;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace  SoftwareProject.Service{
 
@@ -15,22 +16,41 @@ namespace  SoftwareProject.Service{
         }
 
 
+public async Task<(List<object> products, string message)> GetAllProductsAsync()
+{
+    try
+    {
+        var allProducts = await _context.Products
+            .Include(p => p.Category)
+            .Select(p => new
+            {
+                p.ProductId,
+                p.TempId,
+                p.ProductName,
+                p.Price,
+                p.ImageUrl,
+                p.pricePerUnit,
+                p.ImageLogo,
+                p.Url,
+                p.Date,
+                p.IsAvailable,
+                p.ConsumerId,
+                
+                p.SupermarketName,
+                p.CategoryId,
+                CategoryName = p.Category.CategoryName
+            })
+            .ToListAsync();
 
-        public async Task<(List<Product>products,string message)> GetAllProductsAsync(){
-           
-            try{
-
-                var allProducts= await _context.Products.ToListAsync();
-
-                _logger.LogInformationWithMethod($"Suceesfully retreived products ");
-                return(allProducts,"Sucessfully retreived Products from ");
-
-            }catch(Exception ex){
-                _logger.LogErrorWithMethod($"Failed to retreive products with error: {ex.Message}");
-
-                return (null,$"Failed to retreive products with error:{ex}");
-            }
-        }
+        _logger.LogInformation("Successfully retrieved products.");
+        return (allProducts.Cast<object>().ToList(), "Successfully retrieved products.");
+    }
+    catch (Exception ex)
+    {
+        _logger.LogError($"Failed to retrieve products with error: {ex.Message}");
+        return (null, $"Failed to retrieve products with error: {ex}");
+    }
+}
 
         public async Task<(Product product,string message)> GetProductByIdAsync(int id){
 

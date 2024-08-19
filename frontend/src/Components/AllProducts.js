@@ -2,7 +2,7 @@ import React from "react";
 
 import Product from "./Product";
 import { useLocation } from 'react-router-dom';
-import Navbar from "../Pages/Navbar.js";
+import Navbar from "./Navbar.js";
 import { useState,useEffect } from "react";
 import{addSavedProduct,deleteSavedProduct} from "../Backend-services/SavedProductSpecific.js";
 import { useAuth } from "./AuthenticateContext";
@@ -19,7 +19,7 @@ function AllProducts(){
     const [searchProduct,setSearchProduct]=useState("");
     const[currentPage,setCurrentPage]=useState(1);
     const [nearbyStores, setNearbyStores] = useState([]);
-
+    const[availableStores,setAvailableStores]=useState([]);
     const productsPerPage=4;
 
 
@@ -46,15 +46,29 @@ function AllProducts(){
             setNearbyStores(location.state.nearbyStores);
           }
           if(location.state.searchProduct){
-            setSearchProduct(searchProduct);
+            setSearchProduct(location.state.searchProduct);
           }
           
         }
       }, [location]);
 
+      useEffect(()=>{
+        const uniqueStores=[...new Set(products.map(product=>product.supermarket))];
+        setAvailableStores(uniqueStores);
+        console.log("Unique Stores",availableStores);
+
+      },[products]);
+
     console.log("Products state:", products);
 
     const authContext=useAuth();
+
+    const storesWithProduct = nearbyStores.filter(store =>
+        console.log("Supermarket name",store.supermarketName) );
+
+        
+    console.log("Stores",storesWithProduct);
+    
 
     async function handleProductSave(product){
 
@@ -117,7 +131,7 @@ function AllProducts(){
         <div style={{border:"1px solid red"}}>
             <Navbar />
 
-            <h2 style={{border:"1px solid blue",textAlign:"left"}}> Showing results for {searchProduct}</h2>
+            <h2 style={{border:"1px solid blue",textAlign:"left"}}> Showing results for "{searchProduct}"</h2>
 
             <div style={{border:"4px solid red",width:"70%"}}>
           
@@ -131,6 +145,7 @@ function AllProducts(){
                         pricePerUnit={product.pricePerUnit}
                         image={product.imageUrl}
                         link={product.url}
+                        category={product.category.categoryName}
                         imageLogo={product.imageLogo}
                         onSave={() => handleProductSave(product)}
                         onDelete={() => deleteTheProduct(product)}
@@ -139,7 +154,7 @@ function AllProducts(){
             ) : (
                 <p>No products to display on this page.</p>
             )}
-{/* 
+
             {products.length > productsPerPage && (
                 <div>
                     <button onClick={handlePreviousPage} disabled={currentPage === 1}>
@@ -150,7 +165,7 @@ function AllProducts(){
                         Next
                     </button>
                 </div>
-            )} */}
+            )}
            </div>
 
             

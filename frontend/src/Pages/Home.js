@@ -1,23 +1,26 @@
 import React from "react";
-import SearchBar from "../Components/SearchBar";
+
 import 'bootstrap/dist/css/bootstrap.min.css';
 import MiddleElement from "./MiddleElement";
-import { Link } from "react-router-dom";
-import Navbar from "./Navbar";
-import { useState } from "react";
-import MyForm from "../Components/Form";
+import Footer from "./Footer";
+import Navbar from "../Components/Navbar";
+import Content from "./Content";
 
+import "../Components/styles.css";
 function Home() {
-  
-    return(
-      <div>
-        <Navbar/>
-        <MiddleElement/>
-        <MyForm/>
-      </div>
 
-       
-    );
+  
+  
+  return (
+    <div>
+      <Navbar />
+      <MiddleElement />
+      <Content/>
+      <Footer/>
+
+      
+    </div>
+  );
 }
 
 export default Home;

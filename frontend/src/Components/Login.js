@@ -4,12 +4,14 @@ import { FaRegUser } from "react-icons/fa6";
 import { FaUserLock } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom';
 import { useState ,useEffect} from "react";
-import Confetti from"./Confetti.js";
-import { Link } from "react-router-dom";
-import getAllScrappers from "../Backend-services/AdminSpecific.js";
+import { HiOutlineSaveAs } from "react-icons/hi";
 import {useAuth}from "./AuthenticateContext.js";
-import Navbar from "../Pages/Navbar.js";
-import EditConsumer from "./EditConsumer.js";
+import Navbar from "./Navbar.js";
+import { ImNewspaper } from "react-icons/im";
+import { TfiEmail } from "react-icons/tfi";
+import MyForm from "./Form.js";
+
+import {registerUser,logoutUser,emailVerification} from"../Backend-services/AccountSpecific.js";
 
 
 
@@ -26,12 +28,65 @@ const Login=()=>{
 
    console.log("Authcontext",authContext);
 
-    const[login,setLogin]=useState({
-     
-        email:"",
-        password:"",
+    const [id,setId]=useState("");
+    const[token,setToken]=useState("");
+
+    const[registerClick,setRegisterCLick]=useState(false);
+    const[loginClick,setLoginClick]=useState(false);
+    const[buttonVisisble,setButtonVisible]=useState(false);
+
+   const fields=[
+       { name: 'Email', type: 'text', label: 'Email' },
+       { name: 'Password', type: 'text', label: 'Password' }
+   ]
+
+   const regFields=[
+    { name: 'Email', type: 'text', label: 'Email' },
+    { name: 'Password', type: 'text', label: 'Password' },
+    { name: 'Firstname', type: 'text', label: 'FirstName' },
+    { name: 'Lastname', type: 'text', label: 'Lastname' },
+    { name: 'Address', type: 'text', label: 'Address' },
+    { name: 'ContactNo', type: 'text', label: 'ContactNo' },
+    { name: 'DateofBirth', type: 'date', label: 'DateOfBirth' }
+]
+
+
+   const initialValues={
+    Email:"",
+    Password:""
+   }
+
+    const regValues={
+            "Email":"",
+            "Password":"",
+            "FName":"",
+            "LName":"",
+            "Address":"",
+            "ContactNo":"",
+            "Dob":"",
+            "Latitude":0.0,
+            "Longitude":0.0,
+            "FullLocation":""
+
+    }
+
+    
+    const[user,setUser]=useState({
         
-    })
+        "Email":"",
+        "Password":"",
+        "FName":"",
+        "LName":"",
+        "Address":"",
+        "ContactNo":"",
+        "Dob":"",
+        "Latitude":0.0,
+        "Longitude":0.0,
+        "FullLocation":""
+    
+});
+
+
 
 
 
@@ -51,24 +106,15 @@ const Login=()=>{
       
       }, [authContext,navigate]);
 
-    function handleChange(event){
+    
 
-        const{name,value}=event.target;
-        setLogin(prevlogin=>{
-            return{
-            ...prevlogin,
-            [name]:value
-            }
-        })
-
-    }
-
-
-  async function handleSubmit(event){
-        event.preventDefault();
+  async function handleSubmit(values){
+      console.log("Login Values",values);
 
         try {
-            const success = await authContext.Login(login.email, login.password);
+            const success = await authContext.Login(values.Email, values.Password);
+
+            console.log("Success Login message is:",success);
             if (success) {
                 
                 
@@ -81,7 +127,7 @@ const Login=()=>{
                 setError(true);
                 setErrorMessage("Login failed. Please check your credentials.");
                 console.log("Login failed. Please check your credentials.");
-                navigate("/register");
+                navigate("/login");
 
                 
             }
@@ -93,136 +139,111 @@ const Login=()=>{
        
     }
 
+    async function handleRegSubmit(values){
+
+        console.log("Registration Value",values);
+        try{
+
+            const customer={
+                "Email":values.Email,
+                "Password":values.Password,
+                "FName":values.Firstname,
+                "LName":values.Lastname,
+                "Address":values.Address,
+                "ContactNo":values.ContactNo,
+                "Dob":values.DateOfBirth,
+                "Latitude":values.Latitude,
+                "Longitude":values.Longitude,
+                "FullLocation":values.FullLocation
+            
+                };
+
+                const response= await registerUser(customer);
+
+                console.log("Registration response",response);
+
+
+
+
+        }
+        catch(error){
+
+        }}
+
+        function handleRegistration(){
+            setLoginClick(true);
+            setRegisterCLick(true);
+        }
+
+        function handleLoginClick(){
+            setRegisterCLick(false);
+            setLoginClick(false);
+        
+        }
+
   
     return(
         <div>
         <Navbar/>
-        <div className="wrapper" id="login-component">
-          {error&&<h1>{errorMessage}</h1>}
-            <form action="" id="unique-form" onSubmit={handleSubmit}>
-            <h1>Login</h1>
-            <div className="input-box">
-                <input onChange={handleChange} type="text" name="email" placeholder="Email"value={login.email} autoComplete="off"/>
-                <FaRegUser className="icon" />
-                
-                
-            </div>
+        <div style={{display:"flex",marginTop:"-40px"}}>
+       <div style={{flex:1}}>
+       {!loginClick&&<div >  
+        <h1 style={{padding:"200px 0px 50px"}}> Sign In </h1>
+        <MyForm
+        fields={fields}
+        initialValues={initialValues}
+        onSubmit={handleSubmit}
+        buttonText="Sign in"
+        /> 
+        {/* <button onClick={handleLoginClick} style={{width:200,background: "linear-gradient(45deg, #f321bf, #ebe1e4)",borderRadius:"20px",display:{}}}> SignIn</button> */}
+        
+        </div>}
 
-            <div className="input-box">
-                <input onChange={handleChange}type="password" placeholder="Password" name="password" value={login.password} autoComplete="off" /><FaUserLock className="icon" />
+        {loginClick&&  <div style={{flex:1,backgroundColor:"#fc6bd8",minHeight:"1000px"}}>
 
-            </div>
+        <h1 style={{padding:"200px 0px 50px"}}>Welcome Back!</h1>
+        <p style={{padding:"30px 0px 30px"}}> To keep connected with <span className="brand"> </span> please login </p>
+        <button onClick={handleLoginClick} className="buttonT"> SignIn</button>
+        </div>
 
-            <div className="remember">
-                <label htmlFor="">
-                    <input type="checkbox"/>
-                    Remember me <a href=""> Forgot password</a>
-                 
+        }
+        
+        </div>
+        
+      
+ 
 
-                </label>
+       <div style={{flex:1}}>
 
-            </div>
-            <button type="submit"> Login</button>
-            {/* <button type="submit" onClick={handleLogout}> Logout</button> */}
+       {!registerClick&& <div style={{backgroundColor:"#fc6bd8",minHeight:"1000px",}}>
+            <h1 style={{padding:"200px 0px 50px"}}>Is this your first visit?</h1>
+            <button onClick={handleRegistration} className="buttonT"> Create Account</button>
+            <p style={{padding:"30px 0px 30px"}}> You'll gain</p>
+            <ul style={{width:"500px",position:"relative",left:"380px"}}>
+                <li style={{listStyle:"none",textAlign:"left",marginLeft:"-22px"}}><div style={{display:"inline-block",fontSize:"30px",marginRight:"10px"}}> <HiOutlineSaveAs /></div> Save Products</li>
+                <li style={{listStyle:"none",textAlign:"left",marginLeft:"-20px"}}><div style={{display:"inline-block",fontSize:"30px",marginRight:"10px"}}> <ImNewspaper /></div> Newsletter Signup</li>
+            </ul></div>}
 
-            <div className="register">
-                <p>DOnt have an account<a href=""> Register</a></p>
-            </div>
 
-            </form>
-            {/* {edit&&<Link to="/edit">edit consumer</Link>} */}
-{/* 
-            // {logged&&<Roles token={login.token}/>} */}
-            {/* {logged&& <EditConsumer Id={login.id} Identity={login.Identity}/>} */}
-            {/* {logged&&<Confetti/>}
-            {logged&&<button onClick={handleLogout}>Logout</button>} */}
+       {registerClick&& 
+       <div>
+        <h1>Create Account</h1>
+       <MyForm
+        fields={regFields}
+        initialValues={regValues}
+        onSubmit={handleRegSubmit}
+        buttonText="Create Account"
+        />
+        </div>
+        }
+
 
         </div>
+        </div>
+        
         </div>
     )
 }
 
 export default Login;
 
-//  async function handleLogin(){
-
-//     try{
-
-//         const emailBody = {
-//             Email: login.email,
-//             Password: login.password
-//         };
-//         const loginResponse = await loginUser(emailBody);
-//         console.log("The Login Response is",loginResponse.message.token);
-//         if(loginResponse.error){
-//             setError(loginResponse.error.message);
-//             console.log("login error", loginResponse.error.data.message);
-//         }
-//         if (loginResponse.message.token) {
-//             setLogin((prevLogin) => ({
-//                 ...prevLogin,
-//                 token: loginResponse.message.token,
-//                 id:parseInt(loginResponse.message.consumerId, 10),
-//                 Identity:loginResponse.message.identityUserId
-//             }
-          
-//         ));
-//             authContext.setAuthenticated(true);
-//             authContext.setActiveUserId(parseInt(loginResponse.message.consumerId, 10));
-//             authContext.SetToken(loginResponse.message.token);
-//             authContext.setIdentityId(loginResponse.message.identityUserId);
-//             SetId(parseInt(loginResponse.message.consumerId, 10));
-//             setLogged(true);
-            
-//             console.log("Response", loginResponse.token);
-//             console.log("Id:",id);
-//             console.log("Login complete", login);
-//         } else {
-//             alert("Invalid Credentials");
-//             console.error("Login response does not contain a token:", loginResponse.token);
-//         }
-
-//     }catch(err){
-//         setError(err);
-//         console.log("error is",error)
-
-
-//     }
-//  }
-    
-// async function handleLogout(){
-
-// try{
-//     const emailBody = {
-//         Email: login.email,
-//         Password: login.password
-//     };
-
-
-
-//     const logoutResponse=await logoutUser();
-
-//     if (logoutResponse==="Logged out") {
-//         console.log("logging out");
-//         setLogin({
-//             email: "",
-//             password: "",
-//             token: ""
-//         });
-//         setLogged(false);
-//         console.log("Logout complete", logoutResponse);
-//     }
-
-//     console.log("Logout",logoutResponse);
-// }
-// catch(error){
-//     console.error(error);
-// }
-// }
-// setLogin({
-//     email:"",
-//     password:"",
-//     token:""
-// });
-// setLogged(false);
-// }

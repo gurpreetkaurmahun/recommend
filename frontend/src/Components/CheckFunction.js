@@ -9,7 +9,7 @@ import { useState,useEffect } from "react";
 import { FaRegUser } from "react-icons/fa6";
 import { FaUserLock } from "react-icons/fa";
 import {registerUser,loginUser,logoutUser,emailVerification} from"../Backend-services/AccountSpecific.js";
-
+import Navbar from "./Navbar.js";
 import MyForm from "./Form.js";
 
 
@@ -149,14 +149,16 @@ function CheckForm(){
 
 
     return (
+      <div>
+      <Navbar/>
         <MyForm
         fields={fields}
         initialValues={initialValues}
         onSubmit={handleSubmit}></MyForm>
-
+        </div>
         
-    )}
-  
+    )
+}
     
 export default CheckForm;
 

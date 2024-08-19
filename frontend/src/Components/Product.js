@@ -2,7 +2,7 @@ import React from "react";
 import { MdFavoriteBorder } from "react-icons/md";
 
 //Addlocation Icon
-function Product({title,price,image,link,pricePerUnit,supermarket,imageLogo,onSave,onDelete}){
+function Product({title,price,image,link,pricePerUnit,supermarket,imageLogo,category,onSave,onDelete}){
 
     console.log('Product Component Props:', { title, price, image, link, pricePerUnit, supermarket, imageLogo });
 
@@ -24,14 +24,14 @@ function Product({title,price,image,link,pricePerUnit,supermarket,imageLogo,onSa
   
       position: "relative", 
       boxSizing: "border-box",
-      filter: "drop-shadow(0 0 5px rgba(0, 0, 0, 0.5))"
+      filter: "drop-shadow(5px 5px 6px hwb(314 78% 1%)"
    
     }}
   >
     
     <div className="inner" style={{
         width: '200px',
-        height:"350px",
+        height:"380px",
  
         position: 'relative',
         top: '0',
@@ -41,23 +41,8 @@ function Product({title,price,image,link,pricePerUnit,supermarket,imageLogo,onSa
       
      }} > 
         <div class="card" style={{width:200,height:400,border:"none"}} >
-  <img src={image}  style={{height:150,width:"100%",borderRadius: "20px 20px 0 0"}}/>
-  {/* {imageLogo && (
-            <img 
-              src={imageLogo} 
-              className="card-img-top" 
-              style={{ 
-                height: 50,  // Adjust height as needed
-                width: 50,   // Adjust width as needed
-                position: "absolute", 
-                top: 10, 
-                right: 10, 
-                border:"10px solid black"
-          
-              }}
-              alt="Supermarket Logo"
-            />
-          )} */}
+  <img src={image}  style={{height:150,width:"100%",borderRadius: "20px ",filter: "drop-shadow(5px 5px 6px hwb(314 78% 1%)"}}/>
+
   <div class="card-body">
     <h6  style={{textAlign:"left",fontSize:"18px"}}>{truncateTitle(title)}</h6>
     <p  style={{textAlign:"justify",paddingTop:5,fontSize:"bold"}}>{price}</p>
@@ -66,12 +51,13 @@ function Product({title,price,image,link,pricePerUnit,supermarket,imageLogo,onSa
   <ul style={{marginTop:"-20px",marginLeft:10}}>
     
     <li  style={{textAlign:"left",listStyle:"none",position:"relative",left:"-25px"}}>{pricePerUnit}</li>
+
     <li  style={{fontSize:"20px",color:"red",textAlign:"left",listStyle:"none",position:"relative",left:"-25px"}}>
     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt-fill" viewBox="0 0 16 16">
   <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/>
 </svg> :
       {supermarket}</li>
-    <li  style={{textAlign:"left",listStyle:"none",margin:5,position:"relative",left:"-25px"}}> <a href={link}>Website</a></li>
+    <li  style={{textAlign:"left",listStyle:"none",margin:5,position:"relative"}}> <button className="buttonT" style={{width:80}}> <a style={{textDecoration:"none",color:"white"}} href={link}>Visit</a></button> </li>
    
   </ul>
   <div class="card-body">

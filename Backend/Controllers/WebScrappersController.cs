@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 using SoftwareProject.Models;
 using SoftwareProject.Scrapper;
 using SoftwareProject.Service;
@@ -58,21 +59,45 @@ namespace FinalYearProject.Controllers
            
         }
 
-         [HttpPost("scrape")]
-        public async Task<IActionResult> ScrapeProducts([FromBody] string product)
-        {
-            try
-            {
-                var scrapedProducts=await _scrapingService.ScrapeAndSaveProducts(product);
+        //  [HttpPost("scrape")]
+        // public async Task<IActionResult> ScrapeProducts([FromBody]dynamic requestData)
+        // {
+        //     try
+        //     {
+        //         string brand = requestData.brand;
+        // string product = requestData.product;
+        //         var scrapedProducts=await _scrapingService.ScrapeAndSaveProducts(brand,product);
                  
 
-                return Ok(new { message = "Scraping completed successfully", productCount = scrapedProducts.Count, products = scrapedProducts });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new{message=$"Error occurred during scraping:"});
-            }
+        //         return Ok(new { message = "Scraping completed successfully", productCount = scrapedProducts.Count, products = scrapedProducts });
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return BadRequest(new{message=$"Error occurred during scraping:"});
+        //     }
+       [HttpPost("scrape")]
+public async Task<IActionResult> ScrapeProducts([FromBody] JsonElement requestData)
+{
+    try
+    {
+        if (!requestData.TryGetProperty("brand", out JsonElement brandElement) || 
+            !requestData.TryGetProperty("product", out JsonElement productElement))
+        {
+            return BadRequest(new { message = "Brand and product must be provided." });
         }
+
+        string brand = brandElement.GetString();
+        string product = productElement.GetString();
+
+        var scrapedProducts = await _scrapingService.ScrapeAndSaveProducts(brand, product);
+
+        return Ok(new { message = "Scraping completed successfully", productCount = scrapedProducts.Count, products = scrapedProducts });
+    }
+    catch (Exception ex)
+    {
+        return BadRequest(new { message = $"Error occurred during scraping: {ex.Message}" });
+    }
+}
 
 
 

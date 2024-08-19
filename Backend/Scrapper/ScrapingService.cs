@@ -6,10 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace SoftwareProject.Scrapper{
 
     public class ScrapingService{
-    //     private readonly IWebscrapper _aldiScrapper;
-    //     private readonly IWebscrapper _asdaScrapper;
-    //     private readonly IWebscrapper _sainsburyScrapper;
-    //     private readonly IWebscrapper _tescoScrapper;
+ 
     private readonly IEnumerable<IWebscrapper> _scrappers;
         private readonly ApplicationDbContext _context;
         private readonly ILogger<ScrapingService> _logger;
@@ -28,7 +25,7 @@ namespace SoftwareProject.Scrapper{
     _serviceProvider=serviceProvider;
 }
 
-public async Task<List<Product>> ScrapeAndSaveProducts(string product)
+public async Task<List<Product>> ScrapeAndSaveProducts(string brand,string product)
 {
     try
     {
@@ -46,7 +43,8 @@ public async Task<List<Product>> ScrapeAndSaveProducts(string product)
             if (scraperType == null)
             {
                 _logger.LogError($"Scraper type not found: {scraperConfig.TypeName}");
-                return (scraperConfig.Name, (Func<string, Task<List<string>>>)null, (Func<List<string>, Task<List<Product>>>)null);
+                // return (scraperConfig.Name, (Func<string, Task<List<string>>>)null, (Func<List<string>, Task<List<Product>>>)null);
+                return (scraperConfig.Name, (Func<string, string, Task<List<string>>>)null, (Func<List<string>, string, string, Task<List<Product>>>)null);
             }
 
             var scraper = (IWebscrapper)ActivatorUtilities.CreateInstance(_serviceProvider, scraperType);
@@ -60,9 +58,9 @@ public async Task<List<Product>> ScrapeAndSaveProducts(string product)
 
             try
             {
-                var productLinks = await getLinks(product);
+                var productLinks = await getLinks(brand,product);
                 _logger.LogInformation($"Found {productLinks.Count} links for {name}");
-                var products = await getDetails(productLinks);
+                var products = await getDetails(productLinks,brand,product);
                 _logger.LogInformation($"Scraped {products.Count} products from {name}");
 
                 foreach (var prod in products)
@@ -97,6 +95,16 @@ public async Task<List<Product>> ScrapeAndSaveProducts(string product)
                 {
                     _logger.LogInformation($"Title: {prod.ProductName ?? "Unknown"}, Price: {prod.Price ?? "0"}, Image: {prod.ImageUrl}, Price per piece: {prod.pricePerUnit ?? "Unknown"}");
 
+
+                    var existingCategory = await _context.Categories.FirstOrDefaultAsync(c => c.CategoryName == prod.Category.CategoryName);
+
+                    if (existingCategory == null)
+                    {
+                        // If not, create a new category
+                        existingCategory = new Category { CategoryName = prod.Category.CategoryName };
+                        _context.Categories.Add(existingCategory);
+                        await _context.SaveChangesAsync(); // Save new category
+                    }
                     var dbProduct = new Product
                     {
                         ProductName = prod.ProductName ?? "Unknown",
@@ -105,6 +113,8 @@ public async Task<List<Product>> ScrapeAndSaveProducts(string product)
                         ImageUrl = prod.ImageUrl ?? "",
                         ImageLogo=prod.ImageLogo,
                         pricePerUnit = prod.pricePerUnit ?? "",
+                        Category = existingCategory, // Associate the product with the existing or new category
+                        CategoryId = existingCategory.CategoryId,
                         Url = prod.Url ?? "",
                         Date = DateOnly.FromDateTime(DateTime.UtcNow),
                         IsAvailable = true,

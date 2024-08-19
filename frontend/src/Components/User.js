@@ -1,30 +1,98 @@
-//when user logs the accountTab should change to user name and search for user name via id retrevied from login co;mponent
-import React, { useEffect } from 'react';
+// import React, { useState, useEffect, useRef } from "react";
+// import { SlHome } from "react-icons/sl";
+// import { FaAnglesRight } from "react-icons/fa6";
+// import { IoLogIn } from "react-icons/io5";
+// import { FaRegRegistered } from "react-icons/fa";
+// import { useAuth } from "./AuthenticateContext";
+// import{Link, useNavigate} from "react-router-dom";
 
-function ClearLocalStorage() {
-  useEffect(() => {
-    // List of keys to remove
-    const keysToRemove = [
-'oidc.c250926da5f14c18be1b94d111b3763f',
-'oidc.c30dbb23474a475fae167ec6528b21f7',
-'oidc.b9526d148f644d49a2061c9ec376e446'
-      ];
+// import "./styles.css";
 
-    // Remove each key from localStorage
-    keysToRemove.forEach(key => {
-      localStorage.removeItem(key);
-      console.log(`Removed ${key} from localStorage`);
-    });
+// function User() {
+//   const [activeIndex, setActiveIndex] = useState(0);
+//   const navigate=useNavigate();
 
-    // Optional: Log remaining items in localStorage
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      const value = localStorage.getItem(key);
-      console.log(`${key}: ${value}`);
-    }
-  }, []);
+//   const indicatorRef = useRef(null);
+//   const listItemRefs = useRef([]);
 
-  return null; // This component doesn't render anything
-}
+//   const authContext=useAuth();
 
-export default ClearLocalStorage;
+//   const isAuthenticated=authContext.authenticated;
+
+//   console.log("Auth context",authContext);
+
+//   useEffect(() => {
+//     if (indicatorRef.current && listItemRefs.current[activeIndex]) {
+//       const currentItem = listItemRefs.current[activeIndex];
+//       indicatorRef.current.style.left = `${currentItem.offsetLeft}px`;
+//       indicatorRef.current.style.width = `${currentItem.offsetWidth}px`;
+//     }
+//   }, [activeIndex]);
+
+//   const handleItemClick = (index) => {
+//     setActiveIndex(index);
+//   };
+
+//   const handleLogin=()=>{
+//     navigate("/login");
+//   }
+
+//   const handleRegistration=()=>{
+
+//       navigate("/register");
+//   }
+//   // const handleLogout(){
+
+//   // }
+
+//   const handleNavigation=(path)=>{
+
+//       navigate(path);
+//   }
+//   return (
+//     <div
+//       style={{
+//         display: "flex",
+//         justifyContent: "center",
+//         alignItems: "center",
+//         minHeight: "150px",
+//         backgroundColor: "white",
+//       }}
+//     >
+//       <div className="navigation" style={{ width: "100%", position: "relative",backgroundColor:"white" }}>
+//         <ul
+//           style={{
+//             display: "flex",
+//             justifyContent: "space-between",
+//             alignItems: "center",
+//             width: "100%",
+//             padding: "0 20px",
+//             listStyleType: "none",
+//           }}
+//         >
+//           <div style={{ display: "flex" }}>
+//             <li
+//               ref={(el) => (listItemRefs.current[0] = el)}
+//               className={`list ${activeIndex === 0 ? "active" : ""}`}
+//               onClick={() => handleItemClick(0)}
+//               style={{ cursor: "pointer", marginRight: "20px" }}
+//             >
+//               <a to="/" style={{ textDecoration: "none", color: "inherit" }}>
+//                 <span className="icon"><SlHome /></span>
+//                 <span onClick={() => handleNavigation("/")}  className="text">Home</span>
+//               </a>
+//             </li>
+//             <li
+//               ref={(el) => (listItemRefs.current[1] = el)}
+//               className={`list ${activeIndex === 1 ? "active" : ""}`}
+//               onClick={() => handleItemClick(1)}
+//               style={{ cursor: "pointer", marginRight: "20px" }}
+//             >
+
+
+
+
+
+
+
+

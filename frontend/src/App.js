@@ -5,7 +5,7 @@ import Home from './Pages/Home';
 import AuthProvider from './Components/AuthenticateContext';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import CheckForm from "./Components/CheckFunction";
-import Navbar from './Pages/Navbar';
+import Navbar from './Components/Navbar.js';
 import SearchBar from './Components/SearchBar';
 import EditConsumer from './Components/EditConsumer';
 import AllProducts from "./Components/AllProducts.js";
@@ -20,16 +20,17 @@ function App() {
       <AuthProvider>
      
       <Router>
-    
+  
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/Nav" element={<Navbar />} />
         <Route path="/register" element={<CheckForm/>} />
         <Route path="/login" element={<Login/>} />
         <Route path="/Search" element={<SearchBar/>} />
         <Route path="/edit" element={<EditConsumer/>} />
         <Route path="/All" element={<AllProducts/>} />
         <Route path="/Admin" element={<Admin/>} />
-        <Route path="/local" element={<ClearLocalStorage/>}></Route>
+    
         
       </Routes>
     </Router>

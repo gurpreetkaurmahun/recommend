@@ -2,7 +2,7 @@
 
 
 
-function GetLocation( onLocationReceived ){
+function GetLocation(onLocationReceived  ){
    
   
       const APIkey = "b294cd0df2bc401cb5103db698a0f3e6";

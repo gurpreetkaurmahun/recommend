@@ -28,7 +28,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowReactApp",
         corsBuilder =>
         {
-            corsBuilder.WithOrigins("http://localhost:3000")
+            corsBuilder.WithOrigins("http://localhost:3001")
                        .AllowAnyHeader()
                        .AllowAnyMethod()
                        .AllowCredentials(); // Allow credentials
@@ -54,6 +54,7 @@ builder.Services.AddScoped<AccountService>();
 builder.Services.AddScoped<ConsumerService>();
 builder.Services.AddScoped<WebScrapperService>();
 builder.Services.AddScoped<SavedProductService>();
+builder.Services.AddScoped<CategoryService>();
 
 builder.Services.AddAuthentication(options =>
             {

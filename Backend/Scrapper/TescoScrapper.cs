@@ -1,14 +1,21 @@
-using System.Collections.Generic;
+
 using Microsoft.Playwright;
 using SoftwareProject.Interfaces;
 using SoftwareProject.Models;
+using SoftwareProject.Service;
 namespace SoftwareProject.Scrapper {
 
 public class TescoScrapper:IWebscrapper
 
 {
 
-public async Task<List<string>> GetProductLinks(string product)
+    private readonly CategoryService _categoryService;
+
+        public TescoScrapper(){
+            _categoryService=new CategoryService();
+        }
+
+public async Task<List<string>> GetProductLinks(string brand,string product)
 {
     var productLinks = new List<string>();
 
@@ -33,7 +40,7 @@ public async Task<List<string>> GetProductLinks(string product)
             {"Accept-Language", "en-GB,en-US;q=0.9,en;q=0.8"}
         });
 
-        var encodedProduct = Uri.EscapeDataString(product);
+        var encodedProduct =Uri.EscapeDataString($"{brand} {product}");
         var url = $"https://www.tesco.com/groceries/en-GB/search?query={encodedProduct}";
         
         Console.WriteLine($"Navigating to: {url}");
@@ -85,7 +92,7 @@ public async Task<List<string>> GetProductLinks(string product)
                         productLinks.Add(href);
                     }
 
-                    if (productLinks.Count == 1) break; 
+                    if (productLinks.Count == 3) break; 
                 }
                 break;  // Stop if we found links with this selector
             }
@@ -105,14 +112,14 @@ public async Task<List<string>> GetProductLinks(string product)
 }
 
 
-public async Task<List<Product>> GetProductDetails(List<string> urls)
+public async Task<List<Product>> GetProductDetails(List<string> urls,string brand,string product)
     {
         List<Product> products = new List<Product>();
 
         using var playwright = await Playwright.CreateAsync();
         await using var browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
         {
-            Headless = false// Set to true for production
+            Headless = true// Set to true for production
         });
 
         foreach (string url in urls)
@@ -123,7 +130,8 @@ public async Task<List<Product>> GetProductDetails(List<string> urls)
 
                 var context = await browser.NewContextAsync(new BrowserNewContextOptions
                 {
-                    UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+                    UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+                    ViewportSize = new ViewportSize { Width = 1280, Height = 720 }
                 });
 
                 var page = await context.NewPageAsync();
@@ -138,23 +146,20 @@ public async Task<List<Product>> GetProductDetails(List<string> urls)
                     // Extract title
                     var title = await page.EvaluateAsync<string>("() => document.querySelector('h1[data-auto=\"pdp-product-title\"]')?.innerText || 'Title not found'");
                     Console.WriteLine($"Extracted title: {title}");
+                    // if (!title.Contains(brand, StringComparison.OrdinalIgnoreCase) || 
+                    //         !title.Contains(product, StringComparison.OrdinalIgnoreCase))
+                    //     {
+                    //         Console.WriteLine($"Skipping product as it doesn't match the expected brand or product name: {title}");
+                    //         continue; // Skip to the next URL
+                    //     }
 
-                    // Extract price
-                //   var price = await page.EvaluateAsync<string>(@"() => {
-                   
-                //     const selectors = [
-                //         'p.ddsweb-text.styled__PriceText',
-                //         '[data-auto=""pdp-price""]',
-                //         '.price',
-                //         '[itemprop=""price""]',
-                //         '[class*=""price""]'
-                //     ];
-                //     for (let selector of selectors) {
-                //         const element = document.querySelector(selector);
-                //         if (element) return element.innerText.trim();
-                //     }
-                //     return 'Price not found';
-                // }");
+                    var category = await page.EvaluateAsync<string>(@"() => {
+                    const breadcrumbItems = document.querySelectorAll('ol.base-components__BaseList-sc-150pv2j-2 li.styled__ListItem-sc-li57wm-3');
+                    return Array.from(breadcrumbItems).map(item => item.innerText.trim()).join(' > ');
+                }");
+
+                Console.WriteLine($"Extracted category: {category}");
+
                 var price = await page.EvaluateAsync<string>(@"() => {
                     const selectors = [
                         'p.ddsweb-text.styled__PriceText',
@@ -184,6 +189,17 @@ public async Task<List<Product>> GetProductDetails(List<string> urls)
                     return element ? element.innerText.trim() : 'Price per piece not found';
                 }");
 
+
+                    var categoryName = _categoryService.CategorizeProduct(title);
+                    var newCategory = new Category { CategoryName = categoryName };
+
+                    Console.WriteLine();
+                    Console.WriteLine();
+                    Console.WriteLine(categoryName);
+                    Console.WriteLine();
+
+
+
                     // Add product to list
                     products.Add(new Product
                     {
@@ -194,9 +210,12 @@ public async Task<List<Product>> GetProductDetails(List<string> urls)
                         ImageLogo="https://cdn.prod.website-files.com/63f6e52346a353ca1752970e/644fb7a65f01016bb504d02c_20230501T1259-553128f8-5bb8-4582-81d0-66fae3937e6f.jpeg",
                         Url=url,
                         IsAvailable=true,
-                        Date=DateOnly.FromDateTime(DateTime.Now)
+                        Date=DateOnly.FromDateTime(DateTime.Now),
+                        Category = newCategory, // Assign the category
+                        CategoryId = newCategory.CategoryId
 
                     });
+                  
                 }
                 else
                 {

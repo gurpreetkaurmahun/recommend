@@ -2,14 +2,20 @@ using System.Collections.Generic;
 using Microsoft.Playwright;
 using SoftwareProject.Interfaces;
 using SoftwareProject.Models;
+using SoftwareProject.Service;
 
 namespace SoftwareProject.Scrapper {
 
 public class SainsburyScrapper:IWebscrapper
 
 {
+     private readonly CategoryService _categoryService;
 
-  public async Task<List<string>> GetProductLinks(string product)
+        public SainsburyScrapper(){
+            _categoryService=new CategoryService();
+        }
+
+  public async Task<List<string>> GetProductLinks(string brand,string product)
     {
         var productLinks = new List<string>();
 
@@ -34,7 +40,7 @@ public class SainsburyScrapper:IWebscrapper
                 {"Accept-Language", "en-GB,en-US;q=0.9,en;q=0.8"}
             });
 
-            var encodedProduct = Uri.EscapeDataString(product);
+            var encodedProduct =Uri.EscapeDataString($"{brand} {product}");
             var url = $"https://www.sainsburys.co.uk/gol-ui/SearchResults/{encodedProduct}";
             
             Console.WriteLine($"Navigating to: {url}");
@@ -87,7 +93,7 @@ public class SainsburyScrapper:IWebscrapper
                             productLinks.Add(href);
                         }
 
-                        if (productLinks.Count == 1) break; 
+                        if (productLinks.Count == 5) break; 
                     }
                     break;  // Stop if we found links with this selector
                 }
@@ -109,7 +115,9 @@ public class SainsburyScrapper:IWebscrapper
 
         return productLinks;
     }
-public async Task<List<Product>> GetProductDetails(List<string> urls)
+    
+
+public async Task<List<Product>> GetProductDetails(List<string> urls, string brand, string product)
 {
     var products = new List<Product>();
 
@@ -136,7 +144,7 @@ public async Task<List<Product>> GetProductDetails(List<string> urls)
                 Timeout = 60000 // 60 seconds timeout for navigation
             });
 
-            var product = new Product { Url = url };
+            var productLocal = new Product { Url = url };
 
             // Wait for the content to be loaded
             await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
@@ -144,32 +152,54 @@ public async Task<List<Product>> GetProductDetails(List<string> urls)
             // Extract product title
             var titleSelector = "h1.pd__header[data-test-id='pd-product-title']";
             await page.WaitForSelectorAsync(titleSelector, new PageWaitForSelectorOptions { State = WaitForSelectorState.Visible, Timeout = 10000 });
-            product.ProductName = await page.TextContentAsync(titleSelector);
+            productLocal.ProductName = await page.TextContentAsync(titleSelector);
 
-            // Extract product price
-            var priceSelector = "[data-test-id='pd-retail-price']";
-            await page.WaitForSelectorAsync(priceSelector, new PageWaitForSelectorOptions { State = WaitForSelectorState.Visible, Timeout = 10000 });
-            product.Price = await page.TextContentAsync(priceSelector);
+            // Normalize and trim strings for comparison
+            string normalizedTitle = productLocal.ProductName?.ToLowerInvariant().Trim();
+            string normalizedBrand = brand.ToLowerInvariant().Trim();
+            string normalizedProduct = product.ToLowerInvariant().Trim();
 
-            var pricePerPieceSelector = "[data-test-id='pd-unit-price']";
-            await page.WaitForSelectorAsync(pricePerPieceSelector, new PageWaitForSelectorOptions { State = WaitForSelectorState.Visible, Timeout = 10000 });
-            product.pricePerUnit = await page.TextContentAsync(pricePerPieceSelector);
+            // Check for partial matches
+            bool brandMatch = string.IsNullOrEmpty(normalizedBrand) || normalizedTitle.Contains(normalizedBrand, StringComparison.OrdinalIgnoreCase);
+            bool productMatch = normalizedTitle.Contains(normalizedProduct, StringComparison.OrdinalIgnoreCase);
 
-            // Extract image URL
-            var imageSelector = "img.pd__image[data-test-id='pd-selected-image']";
-            await page.WaitForSelectorAsync(imageSelector, new PageWaitForSelectorOptions { State = WaitForSelectorState.Visible, Timeout = 10000 });
-            product.ImageUrl = await page.GetAttributeAsync(imageSelector, "src");
+            // Log extracted and expected values
+            Console.WriteLine($"Extracted title: {normalizedTitle}");
+            Console.WriteLine($"Expected brand: {normalizedBrand}, Expected product: {normalizedProduct}");
+            Console.WriteLine($"Brand match: {brandMatch}, Product match: {productMatch}");
 
-            product.ImageLogo="https://thegreatbritishporridgeco.co.uk/cdn/shop/articles/5d5fd2cf38c00ef4daae4c38_Sainsburys_Logo_2258x.jpg?v=1588282695";
-
-            if (!string.IsNullOrEmpty(product.ProductName))
+            // Check if the title contains the expected brand and product name
+            if (brandMatch || productMatch)
             {
-                products.Add(product);
-                Console.WriteLine($"Successfully processed: {product.ProductName}");
+                // Extract product price
+                var priceSelector = "[data-test-id='pd-retail-price']";
+                await page.WaitForSelectorAsync(priceSelector, new PageWaitForSelectorOptions { State = WaitForSelectorState.Visible, Timeout = 10000 });
+                productLocal.Price = await page.TextContentAsync(priceSelector);
+
+                var pricePerPieceSelector = "[data-test-id='pd-unit-price']";
+                await page.WaitForSelectorAsync(pricePerPieceSelector, new PageWaitForSelectorOptions { State = WaitForSelectorState.Visible, Timeout = 10000 });
+                productLocal.pricePerUnit = await page.TextContentAsync(pricePerPieceSelector);
+
+                // Extract image URL
+                var imageSelector = "img.pd__image[data-test-id='pd-selected-image']";
+                await page.WaitForSelectorAsync(imageSelector, new PageWaitForSelectorOptions { State = WaitForSelectorState.Visible, Timeout = 10000 });
+                productLocal.ImageUrl = await page.GetAttributeAsync(imageSelector, "src");
+
+                productLocal.ImageLogo = "https://thegreatbritishporridgeco.co.uk/cdn/shop/articles/5d5fd2cf38c00ef4daae4c38_Sainsburys_Logo_2258x.jpg?v=1588282695";
+
+                var categoryName = _categoryService.CategorizeProduct(productLocal.ProductName);
+                var category = new Category { CategoryName = categoryName };
+
+                productLocal.Category=category;
+                productLocal.CategoryId=category.CategoryId;
+
+
+                products.Add(productLocal);
+                Console.WriteLine($"Successfully processed: {productLocal.ProductName}");
             }
             else
             {
-                Console.WriteLine($"Failed to extract details for URL: {url}");
+                Console.WriteLine($"Skipping product as it doesn't match the expected brand or product name: {productLocal.ProductName}");
             }
 
             await page.CloseAsync();
@@ -182,6 +212,83 @@ public async Task<List<Product>> GetProductDetails(List<string> urls)
 
     return products;
 }
+
+
+    
+// public async Task<List<Product>> GetProductDetails(List<string> urls,string brand,string productS)
+// {
+//     var products = new List<Product>();
+
+//     using var playwright = await Playwright.CreateAsync();
+//     await using var browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
+//     {
+//         Headless = false, // Set to true for production use
+//         Timeout = 60000 // 60 seconds timeout for the entire browser context
+//     });
+
+//     var context = await browser.NewContextAsync(new BrowserNewContextOptions
+//     {
+//         UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+//     });
+
+//     foreach (var url in urls)
+//     {
+//         try
+//         {
+//             var page = await context.NewPageAsync();
+//             await page.GotoAsync(url, new PageGotoOptions
+//             {
+//                 WaitUntil = WaitUntilState.NetworkIdle,
+//                 Timeout = 60000 // 60 seconds timeout for navigation
+//             });
+
+//             var product = new Product { Url = url };
+
+//             // Wait for the content to be loaded
+//             await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
+
+//             // Extract product title
+//             var titleSelector = "h1.pd__header[data-test-id='pd-product-title']";
+//             await page.WaitForSelectorAsync(titleSelector, new PageWaitForSelectorOptions { State = WaitForSelectorState.Visible, Timeout = 10000 });
+//             product.ProductName = await page.TextContentAsync(titleSelector);
+
+//             // Extract product price
+//             var priceSelector = "[data-test-id='pd-retail-price']";
+//             await page.WaitForSelectorAsync(priceSelector, new PageWaitForSelectorOptions { State = WaitForSelectorState.Visible, Timeout = 10000 });
+//             product.Price = await page.TextContentAsync(priceSelector);
+
+//             var pricePerPieceSelector = "[data-test-id='pd-unit-price']";
+//             await page.WaitForSelectorAsync(pricePerPieceSelector, new PageWaitForSelectorOptions { State = WaitForSelectorState.Visible, Timeout = 10000 });
+//             product.pricePerUnit = await page.TextContentAsync(pricePerPieceSelector);
+
+//             // Extract image URL
+//             var imageSelector = "img.pd__image[data-test-id='pd-selected-image']";
+//             await page.WaitForSelectorAsync(imageSelector, new PageWaitForSelectorOptions { State = WaitForSelectorState.Visible, Timeout = 10000 });
+//             product.ImageUrl = await page.GetAttributeAsync(imageSelector, "src");
+
+//             product.ImageLogo="https://thegreatbritishporridgeco.co.uk/cdn/shop/articles/5d5fd2cf38c00ef4daae4c38_Sainsburys_Logo_2258x.jpg?v=1588282695";
+
+//             if (!string.IsNullOrEmpty(product.ProductName))
+//             {
+//                 products.Add(product);
+           
+                
+//             }
+//             else
+//             {
+//                 Console.WriteLine($"Failed to extract details for URL: {url}");
+//             }
+
+//             await page.CloseAsync();
+//         }
+//         catch (Exception ex)
+//         {
+//             Console.WriteLine($"Error processing URL {url}: {ex.Message}");
+//         }
+//     }
+
+//     return products;
+// }
 
 
 // public async Task<List<Product>> GetProductDetails(List<string> urls)

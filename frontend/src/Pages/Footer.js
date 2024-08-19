@@ -1,26 +1,26 @@
-
+import { FiArrowRightCircle } from "react-icons/fi";
 
 function Footer(){
-    return (<div>
-        <footer class="pt-4 my-md-5 pt-md-5 border-top">
+    return (<div style={{background: "linear-gradient(45deg, #f321bf, #ebe1e4)",}}>
+        <footer class="pt-4 my-md-5 pt-md-5 " >
     <div class="row">
+      <div className="newsletter" style={{height:300,marginTop:"-50px",position:"relative",marginBottom:50}}>
+            <h2 style={{marginTop:100}}>Subscribe to our Newletter</h2>
+            <p>Get information about exclusive offers </p>
+            <div >
+  <input type="text" placeholder="Enter Your Email" style={{width:400,borderRadius:"20px",height:"45px",border:"none"}}/>
+  <button type="button" className="searchButton" ><span style={{fontSize:"25px",marginBottom:"20px"}}> <FiArrowRightCircle /> </span> </button>
+ 
+</div>
+<hr style={{marginTop:100}}></hr>
+      </div>
       <div class="col-12 col-md">
         <img class="mb-2" src="/docs/5.3/assets/brand/bootstrap-logo.svg" alt="" width="24" height="19"/>
         <small class="d-block mb-3 text-body-secondary">© 2017–2024</small>
       </div>
+     
       <div class="col-6 col-md">
-        <h5>Features</h5>
-        <ul class="list-unstyled text-small">
-          <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Cool stuff</a></li>
-          <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Random feature</a></li>
-          <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Team feature</a></li>
-          <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Stuff for developers</a></li>
-          <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Another one</a></li>
-          <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Last time</a></li>
-        </ul>
-      </div>
-      <div class="col-6 col-md">
-        <h5>Resources</h5>
+        <h5>Recommend....</h5>
         <ul class="list-unstyled text-small">
           <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Resource</a></li>
           <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Resource name</a></li>
@@ -28,14 +28,12 @@ function Footer(){
           <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Final resource</a></li>
         </ul>
       </div>
-      <div class="col-6 col-md">
-        <h5>About</h5>
-        <ul class="list-unstyled text-small">
-          <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Team</a></li>
-          <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Locations</a></li>
-          <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Privacy</a></li>
-          <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Terms</a></li>
-        </ul>
+     
+
+      <hr style={{marginTop:100}}></hr>
+      <div  style={{position:"relative"}}>
+        <p style={{display:"inline-block",position:"absolute",left:100,top:50}}>Copyright 2024 Recommend</p>
+        <button    className="animatedButton" style={{width:300,display:"inline-block",backgroundColor:"transparent"}}> <a href="#top" style={{position:"relative",bottom:"10px",textDecoration:"none",color:"white"}}>To the top</a></button>
       </div>
     </div>
   </footer>

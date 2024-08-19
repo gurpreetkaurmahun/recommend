@@ -3,15 +3,21 @@ import { useState,useEffect } from "react";
 import MyForm from "./Form.js";
 import GetLocation from "./Location";
 import Spinner from "../Pages/Spinner";
-import Navbar from "../Pages/Navbar";
+import Navbar from "./Navbar.js";
 import{ API_BASE_URL} from"../apiConfig.js";
 import {fetchNearbyStores } from"./Supermarket.js";
 import {useNavigate} from 'react-router-dom';
-
+import LocationModal from "./LocationModal.js";
+import MiddleElement from "../Pages/MiddleElement.js";
+import ImageSlider from "../Pages/ImageSlider.js";
 import axios from "axios";
+import Footer from "../Pages/Footer.js";
+import SlideUpDiv from "./InfoModal.js";
 //shut down browrser and implement advanced search
 
 function SearchBar(){
+
+    const[modal,setModal]=useState(false);
 
     const advancedFields=[
         { name: 'BrandName', type: 'text', label: 'BrandName' },
@@ -27,8 +33,17 @@ function SearchBar(){
     const initialValues={
         BrandName:"",
         Product:"",
-        Quantity:""
+        Quantity:"",
+        dropdown:""
     }
+    const dropdownOptions = [
+        { value: "Groceries", label: "Groceries" },
+        { value: "Cosmetics", label: "Cosmetics" },
+        {value:"Stationary",label:"Stationary"},
+        { value: "Drinks", label: "Drinks" }
+    ];
+
+
 
     const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
     const[userLocation,setUserLocation]=useState({
@@ -44,83 +59,94 @@ function SearchBar(){
     const [nearbyStores, setNearbyStores] = useState([]);
     const navigate=useNavigate();
 
+ 
+
     useEffect(()=>{
     const storedLatitude = localStorage.getItem('userLatitude');
     const storedLongitude = localStorage.getItem('userLongitude');
     const storedFullLocation = localStorage.getItem('userFullLocation');
 
-    console.log("Local Latitude",storedLatitude);
-    console.log("LocalLongitude:",storedLongitude);
-    console.log("Local Full Location:",storedFullLocation);
+    
+
+    if((!storedLatitude || !storedLongitude || storedLatitude === "null" || storedLongitude === "null")){
+        setModal(true);
+    }
+    else{
+        console.log("presenting userlocation");
+        console.log("Local Latitude",storedLatitude);
+        console.log("LocalLongitude:",storedLongitude);
+        console.log("Local Full Location:",storedFullLocation);
+
+    }
 
     
 },[]);
 
+const handleAllowLocation = () => {
+    setModal(false);
+    setLoading(true);
+    GetLocation(handleLocation);
+  };
+
+  const handleDenyLocation = () => {
+    setModal(false);
+  };
 
    
 
-//Notes{Pass prodcut to backend and check if scrapper works}{render prodcut component}Done
 // async function handleLocation(event) {
-
 //     setLoading(true);
 
-//     await GetLocation((locationData) => {
-//         console.log("Location Data:::", locationData);
-//         setUserLocation({
-//             Latitude:locationData.latitude,
-//             Longitude:locationData.longitude,
-//             FullLocation:locationData.location
+//     await GetLocation(async (locationData) => {
+//       console.log("Location Data:", locationData);
+//       setUserLocation({
+//         Latitude: locationData.latitude,
+//         Longitude: locationData.longitude,
+//         FullLocation: locationData.location
+//       });
+//       localStorage.setItem('userLatitude', locationData.latitude);
+//       localStorage.setItem('userLongitude', locationData.longitude);
+//       localStorage.setItem('userFullLocation', locationData.location);
 
-//         });
-//         localStorage.setItem('userLatitude', locationData.latitude);
-//         localStorage.setItem('userLongitude', locationData.longitude);
-//         localStorage.setItem('userFullLocation', locationData.location);
-//         setLoading(false);
+//       try{
 
-//         try {
-//             const stores =  fetchNearbyStores(locationData.latitude, locationData.longitude);
-//             setNearbyStores(stores);
-//             if (stores.length === 0) {
-//               console.warn("No nearby stores found");
-//               // You might want to show a message to the user here
-//             }
-//           } catch (error) {
-//             console.error("Error fetching nearby stores:", error);
-//             // Handle the error, maybe set an error state
-//           } finally {
-//             setLoading(false);
-//           }
-    
+//         console.log("Fetching stores");
+//                 const fetchStores= await fetchNearbyStores(localStorage.getItem('userLatitude'), localStorage.getItem('userLongitude'));
 
-//     });
-// }
-async function handleLocation(event) {
-    setLoading(true);
+//                 console.log("Stores:",fetchStores);
 
-    await GetLocation(async (locationData) => {
-      console.log("Location Data:", locationData);
-      setUserLocation({
-        Latitude: locationData.latitude,
-        Longitude: locationData.longitude,
-        FullLocation: locationData.location
-      });
-      localStorage.setItem('userLatitude', locationData.latitude);
-      localStorage.setItem('userLongitude', locationData.longitude);
-      localStorage.setItem('userFullLocation', locationData.location);
-
-      try{
-
-        console.log("Fetching stores");
-                const fetchStores= await fetchNearbyStores(localStorage.getItem('userLatitude'), localStorage.getItem('userLongitude'));
-
-                console.log("Stores:",fetchStores);
-
-      }catch(error){
-        console.log("Error Fetching stores:",error);
-      }
+//       }catch(error){
+//         console.log("Error Fetching stores:",error);
+//       }
 
      
-  })};
+//   })};
+
+const handleLocation = async (locationData) => {
+    console.log("Location Data:", locationData);
+   
+
+    console.log("Location storage",localStorage);
+    setUserLocation({
+      Latitude: locationData.latitude,
+      Longitude: locationData.longitude,
+      FullLocation: locationData.location
+    });
+    localStorage.setItem('userLatitude', locationData.latitude);
+    localStorage.setItem('userLongitude', locationData.longitude);
+    localStorage.setItem('userFullLocation', locationData.location);
+
+    try {
+      console.log("Fetching stores");
+      const fetchStores = await fetchNearbyStores(localStorage.getItem('userLatitude'), localStorage.getItem('userLongitude'));
+      setNearbyStores(fetchStores);
+      console.log("Stores:", fetchStores);
+    } catch (error) {
+      console.log("Error Fetching stores:", error);
+    }
+  };
+
+
 
 
 
@@ -129,22 +155,25 @@ async function handleSubmit(values) {
   
 
     // const fullProduct=values.BrandName+ " "+values.Product+ " " +values.Quantity;
-    const fullProduct = `${values.BrandName} ${values.Product} ${values.Quantity}`.trim();
+    const fullProduct = `${values.BrandName}${values.Product}${values.Quantity}`.trim();
+    if(fullProduct===""){
+        alert("eneter product to scrape");
+        return;
+    }
+
+    const requestPayload = {
+        brand: values.BrandName,
+        product: values.Product
+    };
 
     console.log("Full Product is:", fullProduct);
     try {
-        // const productScrapping = await axios.post(`${API_BASE_URL}WebScrappers/scrape`, JSON.stringify(fullProduct), {
-        //     headers: {
-        //         'Content-Type': 'application/json'
-        //     }
-        // })
       
-        // setNearbyStores(fetchStores);
-
-        // console.log("Stores",fetchStores);
         setLoading(true);
+
+       
         const [productScrapping, fetchStores] = await Promise.all([
-            axios.post(`${API_BASE_URL}WebScrappers/scrape`, JSON.stringify(fullProduct), {
+            axios.post(`${API_BASE_URL}WebScrappers/scrape`, requestPayload, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -170,7 +199,7 @@ async function handleSubmit(values) {
                 // const fetchStores= await fetchNearbyStores(localStorage.getItem('userLatitude'), localStorage.getItem('userLongitude'));
                 setNearbyStores(fetchStores);
                 console.log("Stores:",fetchStores);
-                console.log("Narby Stores",nearbyStores);
+                console.log("Nearby Stores",nearbyStores);
 
             setStatus("Scraping Completed");
             navigate("/all", { state: { searchResults: scrapedProducts,nearbyStores:fetchStores,searchProduct:fullProduct} });
@@ -193,28 +222,70 @@ async function handleSubmit(values) {
 
 
 
+return(
+        <div >
+          <Navbar />
+          <div style={{position:"relative"}}>
+            <MiddleElement/>
+            <SlideUpDiv/>
+
+            <ImageSlider/>
+
+         <div style={{position:"absolute",border:"1px solid red",top:200,left:600,backgroundColor:"blue"}}>
+
+<MyForm
+   fields={showAdvancedSearch ? advancedFields : basicFields}
+   initialValues={initialValues}
+   onSubmit={handleSubmit}
+   dropdownOptions={dropdownOptions}
+   buttonText="Search"
+ />
+ <button style={{ width: 200 }} onClick={() => setShowAdvancedSearch(!showAdvancedSearch)}
+   className={`btn ${showAdvancedSearch ? 'btn-secondary' : 'btn-primary'} m-2`}>
+   {!showAdvancedSearch ? "Advanced Search" : "Close Advanced Search"}
+ </button>
+ {loading && <Spinner />}
+ <button onClick={() => setModal(true)} className="btn btn-primary">Get Location</button>
+
+ {modal && (
+   <LocationModal onAllow={handleAllowLocation} onDeny={handleDenyLocation} />
+ )}
+</div>
+          </div>
+          
+<Footer/>
+ 
+        </div>
+      );
 
 
 //filter search brand name product name quantity
 
-    return(
-        <div>
-            <Navbar/>
-            <MyForm
-            fields={showAdvancedSearch?advancedFields:basicFields}
-            initialValues={initialValues}
-            onSubmit={handleSubmit}></MyForm>
-            <button onClick={()=>{setShowAdvancedSearch(!showAdvancedSearch)}}
-            className={`btn ${showAdvancedSearch ? 'btn-secondary' : 'btn-primary'} m-2`}>
-                {!showAdvancedSearch?"Advanced Search":"Search"}
-            </button>
-            {loading&&<Spinner/>}
+    // return(
+    //     <div>
+    //         <Navbar/>
+    //         <button onClick={handleModal}>show modal</button>
+    //         {modal&&<LocationModal onClose={handleModalClose} onAllow={handleAllowLocation} onDeny={handleDenyLocation}/>}
+    //         <MyForm
+    //         fields={showAdvancedSearch?advancedFields:basicFields}
+    //         initialValues={initialValues}
+    //         onSubmit={handleSubmit}
+    //         dropdownOptions={dropdownOptions}
+    //         buttonText="Search"
+    //         >
+           
+    //         </MyForm>
+    //         <button style={{width:200}} onClick={()=>{setShowAdvancedSearch(!showAdvancedSearch)}}
+    //         className={`btn ${showAdvancedSearch ? 'btn-secondary' : 'btn-primary'} m-2`}>
+    //             {!showAdvancedSearch?"Advanced Search":"Close Advanced Search"}
+    //         </button>
+    //         {loading&&<Spinner/>}
 
-            <button onClick={() => GetLocation(handleLocation)} className="btn-primary">Get Location</button>
+    //         <button onClick={() => GetLocation(handleLocation)} className="btn-primary">Get Location</button>
   
             
-        </div>
-    )
+    //     </div>
+    // )
 }
 
 export default SearchBar;
