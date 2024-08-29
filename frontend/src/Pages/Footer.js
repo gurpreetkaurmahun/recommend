@@ -5,7 +5,7 @@ function Footer(){
         <footer class="pt-4 my-md-5 pt-md-5 " >
     <div class="row">
       <div className="newsletter" style={{height:300,marginTop:"-50px",position:"relative",marginBottom:50}}>
-            <h2 style={{marginTop:100}}>Subscribe to our Newletter</h2>
+            <h2 style={{marginTop:100}}>Subscribe to our Newsletter</h2>
             <p>Get information about exclusive offers </p>
             <div >
   <input type="text" placeholder="Enter Your Email" style={{width:400,borderRadius:"20px",height:"45px",border:"none"}}/>
@@ -33,7 +33,7 @@ function Footer(){
       <hr style={{marginTop:100}}></hr>
       <div  style={{position:"relative"}}>
         <p style={{display:"inline-block",position:"absolute",left:100,top:50}}>Copyright 2024 Recommend</p>
-        <button    className="animatedButton" style={{width:300,display:"inline-block",backgroundColor:"transparent"}}> <a href="#top" style={{position:"relative",bottom:"10px",textDecoration:"none",color:"white"}}>To the top</a></button>
+        <button    className="animatedButton" style={{width:300,display:"inline-block",backgroundColor:"transparent",marginLeft:"42%"}}> <a href="#top" style={{position:"relative",bottom:"10px",textDecoration:"none",color:"white"}}>To the top</a></button>
       </div>
     </div>
   </footer>

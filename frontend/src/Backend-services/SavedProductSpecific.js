@@ -17,30 +17,30 @@ const getSavedProducts= async (token)=>{
         return productResponse.data;
 
     }catch (error) {
-        console.error("SavedProduct check error:", error.response ? error.response.data : error.message);
+        console.error("error is",error);
         
     }
   };
 
-const getProductsById=async(id,token)=>{
+  const getProductsById = async (id, token) => {
+    try {
+        let url = `${API_BASE_URL}SavedProduct`;
+        if (id) {
+            url += `/${id}`;
+        }
 
-    try{
-
-        const getProductWithId=await axios.get(
-            `${API_BASE_URL}/SavedProduct/${id}`,
-            {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
+        const response = await axios.get(url, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
             }
-        );
+        });
 
-        console.log("SavedProduct by id Response:",getProductWithId.data);
-        return getProductWithId.data;
-
-    }catch(error){
-        console.error("SavedProduct with id check error:", error.response ? error.response.data : error.message);
+        console.log("SavedProduct Response:", response.data);
+        return response.data;
+    } catch (error) {
+        console.error("SavedProduct error:", error.response ? error.response.data : error.message);
+        throw error;
     }
 };
 
@@ -93,4 +93,4 @@ const deleteSavedProduct=async(consumerId,tempId)=>{
     }
 };
 
-export  {addSavedProduct,deleteSavedProduct};
+export  {addSavedProduct,deleteSavedProduct,getProductsById};

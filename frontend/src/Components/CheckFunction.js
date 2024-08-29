@@ -139,8 +139,7 @@ function CheckForm(){
             <h2>Registration Successful!</h2>
             <p>Please check your email and click the verification link.</p>
             {verifying?<Spinner/>:<button onClick={handleVerificationConfirmation}>I've verified my email</button>}
-            
-            {/* <button onClick={handleResendVerification}>Resend verification email</button> */}
+       
             {error && <p style={{color: 'red'}}>{error}</p>}
           </div>
         );

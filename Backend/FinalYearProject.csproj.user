@@ -2,7 +2,7 @@
 	<PropertyGroup>
 		<UnoPlatformIDE>vscode</UnoPlatformIDE>
 		<UnoPlatformIDEVersion>1.88.0</UnoPlatformIDEVersion>
-		<UnoPlatformExtension>unoplatform.vscode 0.15.4</UnoPlatformExtension>
+		<UnoPlatformExtension>unoplatform.vscode 0.15.6</UnoPlatformExtension>
 		<UnoVSCodeCSharpExtension>ms-dotnettools.csharp 2.39.29</UnoVSCodeCSharpExtension>
 		<UnoVSCodeCSharpDevKitExtension>ms-dotnettools.csdevkit 1.7.27</UnoVSCodeCSharpDevKitExtension>
 	</PropertyGroup>

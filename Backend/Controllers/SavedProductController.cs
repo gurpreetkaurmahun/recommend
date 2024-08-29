@@ -70,80 +70,27 @@ namespace FinalYearProject.Controllers
         public async Task<ActionResult<Dictionary<int, List<object>>>> GetSavedProduct(int consumerId)
         {
 
-            var result= await _savedProductService.GetSavedProductForConsumer(consumerId);
-            if(result!=null){
-                return Ok(new{Message="Retreived SavedProducst",data=result});
-            }
-            else{
-                return BadRequest(new{Message="Falied To retreive saved products"});
-            }
-
+          
+           var result = await _savedProductService.GetSavedProductForConsumer(consumerId);
     
-                }
-    
-
-        // PUT: api/SavedProduct/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        // [HttpPut("{consumerId}/{productId}")]
-        // public async Task<IActionResult> PutSavedProduct(int consumerId, int productId,SavedProduct savedProduct)
-        // {
+            if (result == null)
+            {
+                return BadRequest(new { Message = "Failed to retrieve saved products" });
+            }
             
+            if (result.ContainsKey(consumerId) && result[consumerId].Count == 0)
+            {
+                return Ok(new { Message = "No saved products found for this user", Data = result });
+            }
+            
+            return Ok(new { Message = "Retrieved SavedProducts", Data = result });
+    
+               
+               
+    }
+    
 
-        //     try
-        //     {
-        //          if (!ModelState.IsValid)
-        //         {
-        //             _logger.LogErrorWithMethod($"Invalid request");
-        //             return BadRequest(ModelState);
-        //         }
-
-
-        //         if (consumerId != savedProduct.ConsumerId || productId != savedProduct.ProductId)
-        //         {
-
-        //             _logger.LogErrorWithMethod($"Please recheck the id.");
-        //             return BadRequest();
-        //         }
-
-        //            var existingSavedProduct = await _context.SavedProducts
-        //     .AsNoTracking() // This ensures we're not tracking the entity
-        //     .Include(sp => sp.Product)
-        //     .FirstOrDefaultAsync(sp => sp.ConsumerId == consumerId && sp.ProductId == productId);
-
-        // if (existingSavedProduct == null)
-        // {
-        //     _logger.LogErrorWithMethod("Saved Product not found");
-        //     return NotFound();
-        // }
-
-        // // Update only the DateSaved field
-        // existingSavedProduct.DateSaved = savedProduct.DateSaved;
-
-        // _context.Update(existingSavedProduct); // Use Update method instead of changing entity state
-        // await _context.SaveChangesAsync();
-
-        //      _logger.LogInformationWithMethod($"Saved Product with id:{consumerId} successfully updated"); 
-        //      return Ok(existingSavedProduct);
-
-        //     }
-        //     catch (DbUpdateConcurrencyException ex)
-        //     {
-        //         if (!SavedProductExists(consumerId))
-        //         {
-
-        //             _logger.LogErrorWithMethod($"Saved Product with is:{consumerId} not found in the system");
-        //             return NotFound();
-        //         }
-        //             _logger.LogErrorWithMethod($"Failed with error:{ex.Message}");
-        //           return StatusCode(500,$"Failed with error:{ex.Message}");
-        //     }
-
-        //     catch (Exception ex){
-        //          _logger.LogErrorWithMethod($"Failed with error:{ex.Message}");
-        //           return StatusCode(500,$"Failed with error:{ex.Message}");
-        //     }
-        // }
-
+      
         // POST: api/SavedProduct
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
 [HttpPost]
@@ -178,9 +125,6 @@ public async Task<ActionResult<SavedProduct>> PostSavedProduct([FromBody] JsonEl
            
         }
 
-        // private bool SavedProductExists(int? id)
-        // {
-        //     return _context.SavedProducts.Any(e => e.ConsumerId == id);
-        // }
+       
     }
 }

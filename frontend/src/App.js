@@ -1,4 +1,4 @@
-import logo from './logo.svg';
+
 import './App.css';
 import Login from "./Components/Login";
 import Home from './Pages/Home';
@@ -8,12 +8,14 @@ import CheckForm from "./Components/CheckFunction";
 import Navbar from './Components/Navbar.js';
 import SearchBar from './Components/SearchBar';
 import EditConsumer from './Components/EditConsumer';
-import AllProducts from "./Components/AllProducts.js";
+import AllProducts from './Components/Product/AllProducts.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
-import ClearLocalStorage from './Components/User.js';
+import ViewLocation from './Components/Location/ViewLocation.js';
 import Admin from './Components/Admin.js';
-import MyForm from './Components/Form';
+
+import UserProducts from './Components/UserSavedProduct.js';
+
 function App() {
   return (
     <div className="App">
@@ -30,6 +32,8 @@ function App() {
         <Route path="/edit" element={<EditConsumer/>} />
         <Route path="/All" element={<AllProducts/>} />
         <Route path="/Admin" element={<Admin/>} />
+        <Route path="/view" element={<ViewLocation/>} />
+        <Route path="/user" element={<UserProducts/>} />
     
         
       </Routes>

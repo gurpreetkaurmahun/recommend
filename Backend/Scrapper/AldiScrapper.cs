@@ -96,101 +96,89 @@ namespace SoftwareProject.Scrapper {
     }
 
 
+public async Task<List<Product>> GetProductDetails(List<string> urls, string brand, string product)
+{
+    List<Product> products = new List<Product>();
 
- public async Task<List<Product>> GetProductDetails(List<string> urls, string brand, string product)
+    using var playwright = await Playwright.CreateAsync();
+    await using var browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
+    {
+        Headless = false, // Set to false for debugging, true for production
+        SlowMo = 50
+    });
+
+    foreach (string url in urls)
+    {
+        try
         {
-            List<Product> products = new List<Product>();
+            Console.WriteLine($"Fetching URL: {url}");
 
-            using var playwright = await Playwright.CreateAsync();
-            await using var browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
+            var context = await browser.NewContextAsync(new BrowserNewContextOptions
             {
-                Headless = true // Set to true for production
+                UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
             });
 
-            foreach (string url in urls)
+            var page = await context.NewPageAsync();
+
+            await page.GotoAsync(url, new PageGotoOptions
             {
-                try
-                {
-                    Console.WriteLine($"Fetching URL: {url}");
+                WaitUntil = WaitUntilState.NetworkIdle,
+                Timeout = 60000 // 60 seconds timeout
+            });
 
-                    var context = await browser.NewContextAsync(new BrowserNewContextOptions
-                    {
-                        UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
-                    });
+            // Wait for the price element to be visible
+            await page.WaitForSelectorAsync("span[property='price'][data-qa='product-price'] span.product-price", new PageWaitForSelectorOptions { State = WaitForSelectorState.Visible, Timeout = 30000 });
 
-                    var page = await context.NewPageAsync();
+            var title = await page.EvaluateAsync<string>("() => document.querySelector('h1')?.innerText || 'Title not found'");
+            Console.WriteLine($"Extracted title: {title}");
 
-                    var response = await page.GotoAsync(url, new PageGotoOptions
-                    {
-                        WaitUntil = WaitUntilState.NetworkIdle,
-                        Timeout = 60000 // 60 seconds timeout
-                    });
+            var price = await page.EvaluateAsync<string>(@"() => {
+                const priceElement = document.querySelector('span[property=""price""][data-qa=""product-price""] span.product-price');
+                return priceElement ? priceElement.innerText.trim() : 'Price not found';
+            }");
+            Console.WriteLine($"Extracted price: {price}");
 
-                    if (response.Ok)
-                    {
-                        await page.WaitForSelectorAsync("h1", new PageWaitForSelectorOptions { Timeout = 30000 });
+            var pricePerUnit = await page.EvaluateAsync<string>(@"() => {
+                const element = document.querySelector('div.small.text-gray-small p.m-0 small[property=""price""][data-qa=""product-price""] span');
+                return element ? element.innerText.trim() : 'Price per unit not found';
+            }");
+            Console.WriteLine($"Extracted price per unit: {pricePerUnit}");
 
-                        var title = await page.EvaluateAsync<string>("() => document.querySelector('h1')?.innerText || 'Title not found'");
-                        Console.WriteLine($"Extracted title: {title}");
+            var imageUrl = await page.EvaluateAsync<string>("() => document.querySelector('img.product-main-img')?.src || 'Image not found'");
+            Console.WriteLine($"Extracted image URL: {imageUrl}");
 
-                        bool brandMatch = string.IsNullOrEmpty(brand) || title.Contains(brand, StringComparison.OrdinalIgnoreCase);
-                        bool productMatch = string.IsNullOrEmpty(product) || title.Contains(product, StringComparison.OrdinalIgnoreCase);
+            // Categorize the product
+            var categoryName = _categoryService.CategorizeProduct(title);
+            var category = new Category { CategoryName = categoryName };
 
-                        if (!brandMatch && !productMatch)
-                        {
-                            Console.WriteLine($"Skipping product as it doesn't match the expected brand or product name: {title}");
-                            continue;
-                        }
+            products.Add(new Product
+            {
+                ProductName = title,
+                Price = price,
+                ImageUrl = imageUrl,
+                pricePerUnit = pricePerUnit,
+                ImageLogo = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS__s0KOdG9gCDQSeTtBwgrLCNa2ctqu1TohA&s",
+                Url = url,
+                IsAvailable = true,
+                Date = DateOnly.FromDateTime(DateTime.Now),
+                Category = category,
+                CategoryId = category.CategoryId
+            });
 
-                        var price = await page.EvaluateAsync<string>(@"() => {
-                            const priceElement = document.querySelector('span[property=""price""][data-qa=""product-price""] span.product-price');
-                            return priceElement ? priceElement.innerText.trim() : 'Price not found';
-                        }");
+            await context.CloseAsync();
+            await Task.Delay(TimeSpan.FromSeconds(new Random().Next(5, 15)));
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to get details for URL: {url}. Error: {ex.Message}");
+        }
+    }
 
-                        var imageUrl = await page.EvaluateAsync<string>("() => document.querySelector('img.product-main-img')?.src || 'Image not found'");
-                        Console.WriteLine($"Extracted image URL: {imageUrl}");
+    return products;
+}
 
-                        var pricePerPiece = await page.EvaluateAsync<string>(@"() => {
-                            const element = document.querySelector('div.small.text-gray-small p.m-0 small[property=""price""][data-qa=""product-price""] span');
-                            return element ? element.innerText.trim() : 'Price per piece not found';
-                        }");
 
-                        // Categorize the product
-                        var categoryName = _categoryService.CategorizeProduct(title);
-                        var category = new Category { CategoryName = categoryName };
-
-                        products.Add(new Product
-                        {
-                            ProductName = title,
-                            Price = price,
-                            ImageUrl = imageUrl,
-                            pricePerUnit = pricePerPiece,
-                            ImageLogo = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRCYqauB9RFJqt7rS9eY18Rm9Uen7G0cSDR7w&s",
-                            Url = url,
-                            IsAvailable = true,
-                            Date = DateOnly.FromDateTime(DateTime.Now),
-                            Category = category, // Assign the category
-                            CategoryId = category.CategoryId // Assign the category ID (if available)
-                        });
-                    }
-                    else
-                    {
-                        Console.WriteLine($"Failed to load page: {url}. Status: {response.Status}");
-                    }
-
-                    await context.CloseAsync();
-
-                    await Task.Delay(TimeSpan.FromSeconds(new Random().Next(5, 15)));
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Failed to get details for URL: {url}. Error: {ex.Message}");
-                }
-            }
-
-            return products;
-        }}}
-
+}}
 
 // public async Task<List<Product>> GetProductDetails(List<string> urls,string brand,string product)
 // {

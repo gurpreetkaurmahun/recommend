@@ -18,53 +18,54 @@ namespace  SoftwareProject.Service{
             _logger=logger;
         }
 
-        public async Task<Dictionary<int, List<object>>> GetSavedProductForConsumer(int consumerId){
+       public async Task<Dictionary<int, List<object>>> GetSavedProductForConsumer(int consumerId)
+{
+    try
+    {
+        _logger.LogInformationWithMethod($"Checking saved products for Consumer with id: {consumerId}");
+        var savedProducts = await _context.SavedProducts
+            .Where(sp => sp.ConsumerId == consumerId)
+            .Include(sp => sp.Product)
+            .ToListAsync();
 
-            try{
-                _logger.LogInformationWithMethod($"Checking  saved products for Consumer with id: {consumerId}");
-                var savedProducts = await _context.SavedProducts
-                .Where(sp => sp.ConsumerId == consumerId)
-                .Include(sp => sp.Product)
-                .ToListAsync();
-
-                if (savedProducts == null || !savedProducts.Any())
-                {
-                    _logger.LogErrorWithMethod($"Saved Product with id: doesnot exists");
-                    return null;
-                }
-                _logger.LogInformationWithMethod($"Providing details of product with id:");
-
-            var result = new Dictionary<int, List<object>>
-            {
-                {consumerId,
-                savedProducts.Select(sp => new
-                {
-                        Product = new
-                        {
-                            sp.Product.ProductId,
-                            sp.Product.TempId,
-                            sp.Product.ProductName,
-                            sp.Product.Price,
-                            sp.Product.ImageUrl,
-                            sp.Product.pricePerUnit,
-                            sp.Product.Url,
-                            sp.Product.Date,
-                            sp.Product.IsAvailable,
-                            sp.Product.SupermarketName
-                        }
-                    }).ToList<object>()
-            }
-            };
-                return result;
-            }
-            catch(Exception ex)
-            {
-                _logger.LogErrorWithMethod($"An error Ocurred while retreiving savedProducts for Consumer: {ex}");
-
-                return null;
-            }
-
+        if (savedProducts == null || !savedProducts.Any())
+        {
+            _logger.LogInformationWithMethod($"No saved products found for Consumer with id: {consumerId}");
+            return new Dictionary<int, List<object>> { { consumerId, new List<object>() } };
         }
+
+        _logger.LogInformationWithMethod($"Providing details of saved products for Consumer with id: {consumerId}");
+
+        var result = new Dictionary<int, List<object>>
+        {
+            {consumerId,
+            savedProducts.Select(sp => new
+            {
+                Product = new
+                {
+                    sp.Product.ProductId,
+                    sp.Product.TempId,
+                    sp.Product.ProductName,
+                    sp.Product.Price,
+                    sp.Product.ImageUrl,
+                    sp.Product.pricePerUnit,
+                    sp.Product.Url,
+                    sp.Product.Date,
+                    sp.Product.IsAvailable,
+                    sp.Product.SupermarketName
+                }
+            }).ToList<object>()
+            }
+        };
+
+        return result;
+    }
+    catch(Exception ex)
+    {
+        _logger.LogErrorWithMethod($"An error occurred while retrieving savedProducts for Consumer: {ex}");
+        return null;
+    }
+}
 
     public async Task<(SavedProduct product,string message)> AddSavedProduct([FromBody] JsonElement jsonElement){
 

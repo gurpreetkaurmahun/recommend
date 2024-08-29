@@ -1,23 +1,25 @@
 import React from "react";
 import { useState,useEffect } from "react";
 import MyForm from "./Form.js";
-import GetLocation from "./Location";
-import Spinner from "../Pages/Spinner";
+import GetLocation from "./Location/Location.js";
+
 import Navbar from "./Navbar.js";
 import{ API_BASE_URL} from"../apiConfig.js";
-import {fetchNearbyStores } from"./Supermarket.js";
+import {fetchNearbyStores } from"./Location/Supermarket.js";
 import {useNavigate} from 'react-router-dom';
-import LocationModal from "./LocationModal.js";
-import MiddleElement from "../Pages/MiddleElement.js";
+import LocationModal from "./Location/LocationModal.js";
+
 import ImageSlider from "../Pages/ImageSlider.js";
 import axios from "axios";
 import Footer from "../Pages/Footer.js";
-import SlideUpDiv from "./InfoModal.js";
+import Supermarket from "../assets/background.jpg";
 //shut down browrser and implement advanced search
 
 function SearchBar(){
 
     const[modal,setModal]=useState(false);
+
+  
 
     const advancedFields=[
         { name: 'BrandName', type: 'text', label: 'BrandName' },
@@ -62,6 +64,10 @@ function SearchBar(){
  
 
     useEffect(()=>{
+
+    console.log("local Storage is",localStorage);
+
+
     const storedLatitude = localStorage.getItem('userLatitude');
     const storedLongitude = localStorage.getItem('userLongitude');
     const storedFullLocation = localStorage.getItem('userFullLocation');
@@ -94,33 +100,7 @@ const handleAllowLocation = () => {
 
    
 
-// async function handleLocation(event) {
-//     setLoading(true);
 
-//     await GetLocation(async (locationData) => {
-//       console.log("Location Data:", locationData);
-//       setUserLocation({
-//         Latitude: locationData.latitude,
-//         Longitude: locationData.longitude,
-//         FullLocation: locationData.location
-//       });
-//       localStorage.setItem('userLatitude', locationData.latitude);
-//       localStorage.setItem('userLongitude', locationData.longitude);
-//       localStorage.setItem('userFullLocation', locationData.location);
-
-//       try{
-
-//         console.log("Fetching stores");
-//                 const fetchStores= await fetchNearbyStores(localStorage.getItem('userLatitude'), localStorage.getItem('userLongitude'));
-
-//                 console.log("Stores:",fetchStores);
-
-//       }catch(error){
-//         console.log("Error Fetching stores:",error);
-//       }
-
-     
-//   })};
 
 const handleLocation = async (locationData) => {
     console.log("Location Data:", locationData);
@@ -192,6 +172,12 @@ async function handleSubmit(values) {
             const scrapedProducts = productScrapping.data.products;
             console.log("Scraped Products:", scrapedProducts);
 
+            localStorage.setItem('scrapedProducts', JSON.stringify(scrapedProducts));
+      localStorage.setItem('nearbyStores', JSON.stringify(fetchStores));
+      localStorage.setItem('searchProduct', fullProduct);
+
+      console.log("new local storage",localStorage);
+
            
       try{
 
@@ -224,68 +210,52 @@ async function handleSubmit(values) {
 
 return(
         <div >
+                        {modal && (
+   <LocationModal onAllow={handleAllowLocation} onDeny={handleDenyLocation} />
+ )}
           <Navbar />
           <div style={{position:"relative"}}>
-            <MiddleElement/>
-            <SlideUpDiv/>
+            {/* <MiddleElement/> */}
+           <div className="conatiner" style={{height:700,width:"100%",marginBottom:100}}>
+
+            <img src={ Supermarket} style={{height:700,width:"100%"}}></img>
+           </div>
 
             <ImageSlider/>
 
-         <div style={{position:"absolute",border:"1px solid red",top:200,left:600,backgroundColor:"blue"}}>
 
-<MyForm
-   fields={showAdvancedSearch ? advancedFields : basicFields}
-   initialValues={initialValues}
-   onSubmit={handleSubmit}
-   dropdownOptions={dropdownOptions}
-   buttonText="Search"
- />
- <button style={{ width: 200 }} onClick={() => setShowAdvancedSearch(!showAdvancedSearch)}
-   className={`btn ${showAdvancedSearch ? 'btn-secondary' : 'btn-primary'} m-2`}>
-   {!showAdvancedSearch ? "Advanced Search" : "Close Advanced Search"}
- </button>
- {loading && <Spinner />}
- <button onClick={() => setModal(true)} className="btn btn-primary">Get Location</button>
+         <div style={{position:"absolute",top:"20%",height:"15%",left:"30%",background:"white",borderRadius:"10px",filter: "drop-shadow(5px 5px 6px hwb(314 78% 1%)"}}>
 
- {modal && (
-   <LocationModal onAllow={handleAllowLocation} onDeny={handleDenyLocation} />
- )}
+         <MyForm
+                        fields={showAdvancedSearch ? advancedFields : basicFields}
+                        initialValues={initialValues}
+                        onSubmit={handleSubmit}
+                        dropdownOptions={dropdownOptions}
+                        buttonText="Search"
+                    >
+                        <button
+                            onClick={() => setShowAdvancedSearch(!showAdvancedSearch)}
+                            className="buttonT"
+                            type="button"
+                            style={{ width: 200, background: "linear-gradient(45deg, #f321bf, #ebe1e4)", borderRadius: "20px",
+                         }}
+                        >
+                            {!showAdvancedSearch ? "Advanced Search" : "Close Advanced Search"}
+                        </button>
+                    </MyForm>
+
+
+
 </div>
           </div>
           
-<Footer/>
+            <Footer/>
  
         </div>
       );
 
 
-//filter search brand name product name quantity
 
-    // return(
-    //     <div>
-    //         <Navbar/>
-    //         <button onClick={handleModal}>show modal</button>
-    //         {modal&&<LocationModal onClose={handleModalClose} onAllow={handleAllowLocation} onDeny={handleDenyLocation}/>}
-    //         <MyForm
-    //         fields={showAdvancedSearch?advancedFields:basicFields}
-    //         initialValues={initialValues}
-    //         onSubmit={handleSubmit}
-    //         dropdownOptions={dropdownOptions}
-    //         buttonText="Search"
-    //         >
-           
-    //         </MyForm>
-    //         <button style={{width:200}} onClick={()=>{setShowAdvancedSearch(!showAdvancedSearch)}}
-    //         className={`btn ${showAdvancedSearch ? 'btn-secondary' : 'btn-primary'} m-2`}>
-    //             {!showAdvancedSearch?"Advanced Search":"Close Advanced Search"}
-    //         </button>
-    //         {loading&&<Spinner/>}
-
-    //         <button onClick={() => GetLocation(handleLocation)} className="btn-primary">Get Location</button>
-  
-            
-    //     </div>
-    // )
 }
 
 export default SearchBar;

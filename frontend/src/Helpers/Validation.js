@@ -35,23 +35,20 @@ const validPassword=(password)=>{
 
 
 }
-const validPhone=(PhoneNo)=>{
-    if(PhoneNo===null || PhoneNo.trim()==="" ){
-        alert("Phone no or country code value missing");
+const validPhone = (PhoneNo) => {
+    if (PhoneNo === null || PhoneNo.trim() === "") {
+        throw new Error("Phone number is missing");
     }
 
     const phonePattern = /^\d{10}$/;
     const allSameDigits = /^(\d)\1{9}$/; 
 
-    if(phonePattern.test(PhoneNo) && !allSameDigits.test(PhoneNo)){
+    if (phonePattern.test(PhoneNo) && !allSameDigits.test(PhoneNo)) {
         return true;
     }
 
-    return false;
-
-
+    throw new Error("Invalid phone number");
 }
-
 //location
 const validLatitude=()=>{}
 const validLongitude=()=>{}

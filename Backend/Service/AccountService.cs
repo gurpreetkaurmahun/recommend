@@ -65,13 +65,7 @@ namespace  SoftwareProject.Service{
 
                         _logger.LogInformationWithMethod("Creating an instance of user Details and Location");
 
-                    //     var location=new Location{
-                    //     Longitude = model.Longitude,
-                    //     Latitude = model.Latitude,
-                    //     FullLocation = model.FullLocation
-
-                    // };
-
+                 
                     var consumer=new Consumer{
                         FName=model.FName,
                         LName=model.LName,
@@ -232,7 +226,8 @@ namespace  SoftwareProject.Service{
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expires = DateTime.Now.AddHours(Convert.ToDouble(_configuration["Jwt:ExpireHours"]));
+            // var expires = DateTime.Now.AddHours(Convert.ToDouble(_configuration["Jwt:ExpireHours"]));
+             var expires = DateTime.UtcNow.AddMinutes(30); // Set token expiration to 30 minutes
 
             var token = new JwtSecurityToken(
                 _configuration["Jwt:Issuer"],

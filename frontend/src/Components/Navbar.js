@@ -6,6 +6,8 @@ import { FaRegRegistered } from "react-icons/fa";
 import {useAuth} from "./AuthenticateContext.js";
 import{Link, useNavigate} from "react-router-dom";
 import { AiOutlineLogout } from "react-icons/ai";
+import { IoSearch } from "react-icons/io5";
+import { BsSave2 } from "react-icons/bs";
 
 import "./styles.css";
 
@@ -18,14 +20,17 @@ function Navbar() {
 
   const authContext=useAuth();
 
-  console.log("Login Component Authcontext:",authContext);
+  // console.log("Login Component Authcontext:",authContext);
 
-  const[id,setId]=useState("");
+  const[name,setName]=useState("");
 
   const isAuthenticated=authContext.authenticated;
 
-  console.log("Auth context",authContext);
+  // console.log("Auth context",authContext);
 
+  useEffect(()=>{
+    getUser();
+  },[]);
   useEffect(() => {
     if (indicatorRef.current && listItemRefs.current[activeIndex]) {
       const currentItem = listItemRefs.current[activeIndex];
@@ -37,23 +42,15 @@ function Navbar() {
   const handleItemClick = (index) => {
     setActiveIndex(index);
   };
-
-
-  const handleLogout=()=>{
-
-    try{
-      const logout=authContext.Logout();
-      setActiveIndex(0);
-      navigate("/");
   
-      console.log("Logout result",logout)
-    }
-    catch(error){
-      console.log("Error logging out the user",error);
-    }
-   
+  function getUser(){
+    const userName=localStorage.getItem("userName");
+
+    setName(userName[0]);
 
   }
+
+  
 
   const handleNavigation=(path)=>{
 
@@ -108,10 +105,34 @@ function Navbar() {
           <div style={{ display: "flex" }}><Link to="/" style={{color:"black",textDecoration:"none"}}> <span className="brand"> </span></Link></div>
           <div style={{ display: "flex" }}>
 
-           {!isAuthenticated&&<li
+          <li
               ref={(el) => (listItemRefs.current[2] = el)}
               className={`list ${activeIndex === 2 ? "active" : ""}`}
               onClick={() => handleItemClick(2)}
+              style={{ cursor: "pointer", marginRight: "20px" }}
+            >
+              <a to="/search" style={{ textDecoration: "none", color: "inherit" }}>
+                <span className="icon"><IoSearch  /></span>
+                <span onClick={() => handleNavigation("/search")}  className="text">Search</span>
+              </a>
+            </li>
+
+            {isAuthenticated&& <li
+              ref={(el) => (listItemRefs.current[3] = el)}
+              className={`list ${activeIndex === 3 ? "active" : ""}`}
+              onClick={() => handleItemClick(3)}
+              style={{ cursor: "pointer", marginRight: "20px" }}
+            >
+              <a href="#" style={{ textDecoration: "none", color: "inherit" }}>
+                <span className="icon"> <BsSave2 /></span>
+                <span onClick={()=>handleNavigation("/user")}  className="text">SavedProduct</span>
+              </a>
+            </li>}
+
+           {!isAuthenticated&&<li
+              ref={(el) => (listItemRefs.current[4] = el)}
+              className={`list ${activeIndex === 4? "active" : ""}`}
+              onClick={() => handleItemClick(4)}
               style={{ cursor: "pointer", marginRight: "20px" }}
             >
               <a style={{ textDecoration: "none", color: "inherit" }}>
@@ -121,10 +142,12 @@ function Navbar() {
               </a>
             </li>}
 
+       
+
             {!isAuthenticated&&<li
-              ref={(el) => (listItemRefs.current[3] = el)}
-              className={`list ${activeIndex === 3 ? "active" : ""}`}
-              onClick={() => handleItemClick(3)}
+              ref={(el) => (listItemRefs.current[5] = el)}
+              className={`list ${activeIndex === 5 ? "active" : ""}`}
+              onClick={() => handleItemClick(5)}
               style={{ cursor: "pointer" }}
             >
               <a  style={{ textDecoration: "none", color: "inherit" }}>
@@ -134,14 +157,14 @@ function Navbar() {
             </li>}
 
            {isAuthenticated&& <li
-              ref={(el) => (listItemRefs.current[4] = el)}
-              className={`list ${activeIndex === 4 ? "active" : ""}`}
-              onClick={() => handleItemClick(4)}
+              ref={(el) => (listItemRefs.current[6] = el)}
+              className={`list ${activeIndex === 6 ? "active" : ""}`}
+              onClick={() => handleItemClick(6)}
               style={{ cursor: "pointer", marginRight: "20px" }}
             >
               <a href="#" style={{ textDecoration: "none", color: "inherit" }}>
-                <span className="icon"> <AiOutlineLogout /></span>
-                <span onClick={()=>handleLogout()} className="text">Logout</span>
+                <span className="icon"> {name}</span>
+                <span onClick={()=>{handleNavigation("/user")}} className="text">user</span>
               </a>
             </li>}
           </div>

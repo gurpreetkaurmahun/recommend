@@ -1,8 +1,8 @@
-import React, { useState, useRef } from 'react';
+import React, {  useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, CircleMarker, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import LocationBox from './LocationBox';
+import LocationBox from"./LocationBox.js";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({

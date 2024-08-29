@@ -22,7 +22,7 @@ const getCustomerById=async(id)=>{
     try{
 
         const getCustomerWithId=await axios.get(
-            `${API_BASE_URL}/Consumer/${id}`
+            `${API_BASE_URL}Consumer/${id}`
             // ,
             // {
             //     headers: {
@@ -32,7 +32,7 @@ const getCustomerById=async(id)=>{
             // }
         );
 
-        console.log("ProductLocation by id Response:",getCustomerWithId.data);
+        console.log("Consumer by id Response:",getCustomerWithId.data);
         return getCustomerWithId.data;
 
     }catch(error){

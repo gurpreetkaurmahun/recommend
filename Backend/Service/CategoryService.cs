@@ -7,7 +7,7 @@ namespace  SoftwareProject.Service{
 {
 
     {"Candies",new List<string>{"candy","gummy","marshmallow", }},
-    { "Sweets", new List<string> {  "sweet",  "chocolate", "toffee", "caramel",
+    { "Sweets", new List<string> {  "sweet",  "chocolate", "toffee",
      "bonbon", "lollipop", "fudge", "nougat" } },
 
     { "Fruits", new List<string> { "apple", "banana", "berry", "orange", "clementine", "lemon", "kiwi",

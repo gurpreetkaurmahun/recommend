@@ -141,7 +141,7 @@ public async Task<List<Product>> GetProductDetails(List<string> urls, string bra
             await page.GotoAsync(url, new PageGotoOptions
             {
                 WaitUntil = WaitUntilState.NetworkIdle,
-                Timeout = 60000 // 60 seconds timeout for navigation
+                Timeout = 100000 // 60 seconds timeout for navigation
             });
 
             var productLocal = new Product { Url = url };
@@ -173,16 +173,16 @@ public async Task<List<Product>> GetProductDetails(List<string> urls, string bra
             {
                 // Extract product price
                 var priceSelector = "[data-test-id='pd-retail-price']";
-                await page.WaitForSelectorAsync(priceSelector, new PageWaitForSelectorOptions { State = WaitForSelectorState.Visible, Timeout = 10000 });
+                await page.WaitForSelectorAsync(priceSelector, new PageWaitForSelectorOptions { State = WaitForSelectorState.Visible, Timeout = 30000 });
                 productLocal.Price = await page.TextContentAsync(priceSelector);
 
                 var pricePerPieceSelector = "[data-test-id='pd-unit-price']";
-                await page.WaitForSelectorAsync(pricePerPieceSelector, new PageWaitForSelectorOptions { State = WaitForSelectorState.Visible, Timeout = 10000 });
+                await page.WaitForSelectorAsync(pricePerPieceSelector, new PageWaitForSelectorOptions { State = WaitForSelectorState.Visible, Timeout = 30000 });
                 productLocal.pricePerUnit = await page.TextContentAsync(pricePerPieceSelector);
 
                 // Extract image URL
                 var imageSelector = "img.pd__image[data-test-id='pd-selected-image']";
-                await page.WaitForSelectorAsync(imageSelector, new PageWaitForSelectorOptions { State = WaitForSelectorState.Visible, Timeout = 10000 });
+                await page.WaitForSelectorAsync(imageSelector, new PageWaitForSelectorOptions { State = WaitForSelectorState.Visible, Timeout = 30000 });
                 productLocal.ImageUrl = await page.GetAttributeAsync(imageSelector, "src");
 
                 productLocal.ImageLogo = "https://thegreatbritishporridgeco.co.uk/cdn/shop/articles/5d5fd2cf38c00ef4daae4c38_Sainsburys_Logo_2258x.jpg?v=1588282695";

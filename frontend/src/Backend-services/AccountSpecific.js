@@ -15,6 +15,7 @@ const registerUser= async (customer)=>{
 
     }catch (error) {
         console.error("Registration error:", error.response?.data?.message || error.message);
+        return {err:error.response.data};
     }
   };
 

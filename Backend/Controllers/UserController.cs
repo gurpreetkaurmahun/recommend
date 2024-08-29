@@ -7,9 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SoftwareProject.Models;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 
-using SoftwareProject.Helpers;
 
 namespace FinalYearProject.Controllers{
 
