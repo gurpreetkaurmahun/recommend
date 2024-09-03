@@ -171,6 +171,20 @@ public async Task<(List<object> products, string message)> GetAllProductsAsync()
             return _context.Products.Any(e => e.ProductId == id);
         }
 
+        
+    //      public async Task<(bool result, string message)> DeleteAllProductsAsync()
+    // {
+    //     try
+    //     {
+    //         _context.Products.RemoveRange(_context.Products);
+    //         await _context.SaveChangesAsync();
+    //         return (true, "All products have been successfully deleted.");
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         return (false, $"An error occurred while deleting products: {ex.Message}");
+    //     }}
+
 
     }
 }

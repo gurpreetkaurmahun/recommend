@@ -61,19 +61,6 @@ const addCustomer=async(token,customer)=>{
     }
 };
 
-// const updateCustomer=async(id,editCustomer)=>{
-
-//     try{
-//         const customerUpdate=await axios.put(`${API_BASE_URL}Customer/${id}`,editCustomer
-     
-//     )
-//         console.log("Response for Customer Update:",customerUpdate.data);
-//         return customerUpdate.data;
-
-//     }catch(error){
-//         console.error("Consumer with id check error:", error.response ? error.response.data : error.message);
-//     }
-// };
 
 const updateCustomer = async (id, editCustomer) => {
     try {

@@ -116,6 +116,25 @@ namespace FinalYearProject.Controllers
             
         }
 
+//         [HttpDelete]
+// [Route("delete-all")]
+// public async Task<IActionResult> DeleteAllProducts()
+// {
+//     var (result, message) = await _productService.DeleteAllProductsAsync();
+//     if (result)
+//     {
+//         _logger.LogInformationWithMethod(message);
+//         return Ok(new { message });
+//     }
+//     else
+//     {
+//         _logger.LogErrorWithMethod(message);
+//         return StatusCode(500, new { message });
+//     }
+// }
+
+
+
         
     }
 }

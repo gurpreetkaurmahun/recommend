@@ -17,7 +17,7 @@ function Content(){
     const[products,setProducts]=useState([]);
     const [slideUpDiv,setSlideUpDiv] = useState(false);
 
-     const authContext=useAuth();
+   
 
 
     useEffect(()=>{
@@ -47,7 +47,7 @@ function Content(){
   async function handleSaveProduct(product) {
     const userId=localStorage.getItem("activeUserId");
     if (userId === "") {
-      // ... existing code for non-logged in users ...
+     setSlideUpDiv(true);
     } else {
       try {
         const productData = {

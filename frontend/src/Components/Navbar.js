@@ -102,7 +102,11 @@ function Navbar() {
               </a>
             </li>
           </div>
-          <div style={{ display: "flex" }}><Link to="/" style={{color:"black",textDecoration:"none"}}> <span className="brand"> </span></Link></div>
+          <div style={{ display: "flex" }}><Link to="/" style={{color:"white",textDecoration:"none"}}> 
+         <h1 style={{marginTop:"10%"}}>Recommend</h1>
+          {/* <span className="brand"> </span> */}
+          
+          </Link></div>
           <div style={{ display: "flex" }}>
 
           <li

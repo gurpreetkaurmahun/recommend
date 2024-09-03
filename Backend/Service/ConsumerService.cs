@@ -32,31 +32,36 @@ namespace  SoftwareProject.Service{
             }
 
         }
+public async Task<(Consumer consumer, string message)> GetConsumerAsync(int id)
+{
+    try
+    {
+        _logger.LogInformationWithMethod($"Retrieving Details of Consumer with id: {id}");
+        var consumer = await _context.Consumers
+            .Include(c => c.Reviews)
+            .FirstOrDefaultAsync(c => c.ConsumerId == id);
 
-        public async Task<(Consumer consumer,string message)> GetConsumerAsync(int id){
-
-            try{
-
-                 _logger.LogInformationWithMethod($"Retreiving Details of COnsumer with id: {id}");
-                var consumer = await _context.Consumers.FindAsync(id);
-
-                if (consumer == null)
-                {
-
-                    _logger.LogErrorWithMethod($"Failed to retrieve Consumer with id {id})");
-                    return (null,$"Failed to retrieve Consumer with id {id})");
-                }
-
-                _logger.LogInformationWithMethod($"Customer with Id:{consumer.ConsumerId} retrieved sucessfully!");
-                return (consumer,$"Sucessfully retreived Consumer with id : {id}");
-            }
-            catch(Exception ex){
-                _logger.LogErrorWithMethod($"Failed to rereive Customer with id: {id}, Exception message:{ex.Message}");
-                
-                return (null,$"Failed with error:{ex}");
-
-            }
+        if (consumer == null)
+        {
+            _logger.LogErrorWithMethod($"Failed to retrieve Consumer with id {id}");
+            return (null, $"Failed to retrieve Consumer with id {id}");
         }
+
+        // Break the circular reference
+        foreach (var review in consumer.Reviews)
+        {
+            review.Consumer = null;
+        }
+
+        _logger.LogInformationWithMethod($"Customer with Id:{consumer.ConsumerId} retrieved successfully!");
+        return (consumer, $"Successfully retrieved Consumer with id : {id}");
+    }
+    catch (Exception ex)
+    {
+        _logger.LogErrorWithMethod($"Failed to retrieve Customer with id: {id}, Exception message:{ex.Message}");
+        return (null, $"Failed with error:{ex}");
+    }
+}
 
         public async Task<(bool result,string message)> UpdateConsumer(int id, Consumer consumer){
 
@@ -102,17 +107,6 @@ namespace  SoftwareProject.Service{
 
                 try{
 
-            
-                //check fo rit in account registration
-                // var existingUser=await _userManager.FindByEmailAsync(consumer.IdentityUser.Email);
-
-                // if (existingUser!=null){
-                //     _logger.LogErrorWithMethod($"User with Email:{existingUser.Email}, Use a different Email id");
-                //      return BadRequest();
-                    
-                // }
-
-                 //check for email as wee as well in Identity user.
                 var existingCustomer = await _context.Consumers.FindAsync(consumer.ConsumerId);
 
                 if (existingCustomer!=null){

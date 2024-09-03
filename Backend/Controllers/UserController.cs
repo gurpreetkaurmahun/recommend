@@ -1,23 +1,19 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SoftwareProject.Models;
+
 using Microsoft.AspNetCore.Identity;
 
 
 namespace FinalYearProject.Controllers{
 
-    [Route("api/[controller]")]
+[Route("api/[controller]")]
 [ApiController]
     public class UserController : ControllerBase
 {
     private readonly UserManager<IdentityUser> _userManager;
      private readonly ApplicationDbContext _context;
-        private readonly ILogger<UserController> _logger;
+     private readonly ILogger<UserController> _logger;
 
     public UserController(UserManager<IdentityUser> userManager,ApplicationDbContext context,ILogger<UserController> logger)
     {
@@ -25,6 +21,42 @@ namespace FinalYearProject.Controllers{
         _context=context;
         _logger=logger;
     }
+
+   [HttpGet("{userId}")]
+public async Task<IActionResult> GetUserById(string userId)
+{
+    if (string.IsNullOrEmpty(userId))
+    {
+        _logger.LogError("GetUser: User ID cannot be null or empty.");
+        return BadRequest("User ID cannot be null or empty.");
+    }
+
+    try
+    {
+        // Find the IdentityUser
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+        {
+            _logger.LogWarning($"GetUser: User with ID {userId} not found.");
+            return NotFound("User not found.");
+        }
+
+        // Create a response object with just the ID and email
+        var userInfo = new
+        {
+            UserId = user.Id,
+            Email = user.Email
+        };
+
+        _logger.LogInformation($"GetUser: Successfully retrieved information for user {userId}");
+        return Ok(userInfo);
+    }
+    catch (Exception ex)
+    {
+        _logger.LogError($"GetUser: Error retrieving user {userId}: {ex.Message}");
+        return BadRequest($"Error retrieving user information: {ex.Message}");
+    }
+}
 
     [HttpDelete("{userId}")]
 public async Task<IActionResult> DeleteUser(string userId)
@@ -93,7 +125,5 @@ public async Task<IActionResult> DeleteUser(string userId)
 
     }
 
-
-    // Other actions...
 }
 

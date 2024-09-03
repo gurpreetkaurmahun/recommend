@@ -55,6 +55,7 @@ builder.Services.AddScoped<ConsumerService>();
 builder.Services.AddScoped<WebScrapperService>();
 builder.Services.AddScoped<SavedProductService>();
 builder.Services.AddScoped<CategoryService>();
+builder.Services.AddScoped<ReviewService>();
 
 builder.Services.AddAuthentication(options =>
             {

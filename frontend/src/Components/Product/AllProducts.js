@@ -7,11 +7,11 @@ import { useState,useEffect } from "react";
 import{addSavedProduct,deleteSavedProduct} from "../../Backend-services/SavedProductSpecific.js";
 import { useAuth } from "../AuthenticateContext.js";
 import ProductLink from "./ProductLink.js";
-
+import { Link } from "react-router-dom";
 import Footer from "../../Pages/Footer.js";
 import SlideUpDiv from "../InfoModal.js";
 import {useNavigate} from 'react-router-dom';
-
+import Reviews from "../Reviews/Reviews.js";
 //delete prodcuts(done) , saved products tile, reference reserved, controllers set(alomost), saved product service(done) start working on location, add supermarket logo 
 
 //modal for saved Product 
@@ -25,6 +25,7 @@ function AllProducts(){
     const[availableStores,setAvailableStores]=useState([]);
     const [activeTab, setActiveTab] = useState('moreProducts');
     const [showAllProducts, setShowAllProducts] = useState(false);
+    const [slideUpDiv,setSlideUpDiv] = useState(false);
   
     const[visible,setVisible]=useState(false);
     const navigate=useNavigate();
@@ -170,6 +171,7 @@ function AllProducts(){
       return (
         <div >
           <Navbar />
+          {!slideUpDiv&&<button onClick={()=>setSlideUpDiv(true)}  style={{width:"18%",zIndex:1,position:"fixed",backgroundColor:"#f65dd0",left:"80%",top:"95%",borderRadius:"10px"}}>Products</button>}
           {visible&&<SlideUpDiv  onClose={handleDivCLose}/>}
           <h2 style={{ textAlign: "left",marginLeft:"8%",marginBottom:"2%" }}>Showing results for "{searchProduct}"</h2>
           <div style={{ width: "100%" }}>
@@ -265,8 +267,8 @@ function AllProducts(){
 
           {activeTab === 'reviews' && (
             <div>
-              <input placeholder="type reviews"></input>
-              <p>Reviews will be displayed here.</p>
+              <Reviews/>
+
             </div>
           )}
         </div>

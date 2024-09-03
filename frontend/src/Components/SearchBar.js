@@ -8,11 +8,12 @@ import{ API_BASE_URL} from"../apiConfig.js";
 import {fetchNearbyStores } from"./Location/Supermarket.js";
 import {useNavigate} from 'react-router-dom';
 import LocationModal from "./Location/LocationModal.js";
-
+import TypeWriters from "./TypeWriters.js";
 import ImageSlider from "../Pages/ImageSlider.js";
 import axios from "axios";
 import Footer from "../Pages/Footer.js";
 import Supermarket from "../assets/background.jpg";
+import HomeReview from "./Reviews/HomeReview.js";
 //shut down browrser and implement advanced search
 
 function SearchBar(){
@@ -232,6 +233,7 @@ return(
                         onSubmit={handleSubmit}
                         dropdownOptions={dropdownOptions}
                         buttonText="Search"
+                        layout="inline"
                     >
                         <button
                             onClick={() => setShowAdvancedSearch(!showAdvancedSearch)}
@@ -248,6 +250,31 @@ return(
 
 </div>
           </div>
+         
+          <div  style={{height:700, marginBottom:100, display:"flex"}}>
+        <div style={{backgroundColor:"#e9a8d9", width:"50%"}}>
+            <TypeWriters
+                topString="Reviews...."
+                link="/review"
+                bottomString="See what people have to say about us.."
+                buttonText="View All"
+            />
+        </div>
+        <div className="reviewdiv" style={{ 
+            width: "50%", 
+            height: "500px", 
+            padding: "20px",
+            boxShadow: "5px 5px 15px rgba(0, 0, 0, 0.3)",
+            backgroundColor: "white",
+            borderRadius: "10px",
+            marginLeft:"50px",
+            marginTop:"100px"
+        }}>
+            <div style={{width:"100%", height: "100%", overflow: "auto",marginLeft:"50px"}}>
+            <HomeReview/>
+            </div>
+        </div>
+    </div>
           
             <Footer/>
  

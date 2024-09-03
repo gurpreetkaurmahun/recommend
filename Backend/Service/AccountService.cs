@@ -1,6 +1,5 @@
 using SoftwareProject.Models;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using SoftwareProject.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -233,7 +232,7 @@ namespace  SoftwareProject.Service{
                 _configuration["Jwt:Issuer"],
                 _configuration["Jwt:Issuer"],
                 claims,
-                expires: expires,
+                expires: DateTime.UtcNow.AddMinutes(30),
                 signingCredentials: creds
             );
 

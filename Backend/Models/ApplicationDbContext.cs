@@ -71,7 +71,8 @@ using SoftwareProject.Models;
         .WithMany(l => l.ProductLocations)
         .HasForeignKey(pl => pl.LocationId);
 
-         modelBuilder.Entity<Review>()
+        
+    modelBuilder.Entity<Review>()
         .HasOne(r => r.Consumer)
         .WithMany(c => c.Reviews)
         .HasForeignKey(r => r.ConsumerId);

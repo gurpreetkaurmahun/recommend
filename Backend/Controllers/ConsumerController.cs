@@ -118,3 +118,16 @@ namespace FinalYearProject.Controllers
         
     }
 }
+
+// [
+//     {
+//         "reviewId": 1,
+//         "review": "awesome service",
+//         "reviewDate": "2024-08-09",
+//         "stars": 5,
+//         "consumerId": null,
+//         "consumer": null,
+//         "userEmail": "pinkfloers"
+//     }
+// ]
+

@@ -4,7 +4,7 @@ import Login from "./Components/Login";
 import Home from './Pages/Home';
 import AuthProvider from './Components/AuthenticateContext';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import CheckForm from "./Components/CheckFunction";
+
 import Navbar from './Components/Navbar.js';
 import SearchBar from './Components/SearchBar';
 import EditConsumer from './Components/EditConsumer';
@@ -13,7 +13,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 import ViewLocation from './Components/Location/ViewLocation.js';
 import Admin from './Components/Admin.js';
-
+import ReviewsPage from "../src/Components/Reviews/ReviewsPage.js";
 import UserProducts from './Components/UserSavedProduct.js';
 
 function App() {
@@ -26,7 +26,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/Nav" element={<Navbar />} />
-        <Route path="/register" element={<CheckForm/>} />
+
         <Route path="/login" element={<Login/>} />
         <Route path="/Search" element={<SearchBar/>} />
         <Route path="/edit" element={<EditConsumer/>} />
@@ -34,6 +34,7 @@ function App() {
         <Route path="/Admin" element={<Admin/>} />
         <Route path="/view" element={<ViewLocation/>} />
         <Route path="/user" element={<UserProducts/>} />
+        <Route path="/review" element={<ReviewsPage/>} />
     
         
       </Routes>

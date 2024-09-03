@@ -11,7 +11,7 @@ import{validPhone} from"../Helpers/Validation.js";
 import MyForm from "./Form.js";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import {registerUser,logoutUser,emailVerification} from"../Backend-services/AccountSpecific.js";
-
+import Message from "./Message.js";
 
 
 
@@ -297,6 +297,7 @@ const Login=()=>{
         initialValues={initialValues}
         onSubmit={handleSubmit}
         buttonText="Sign in"
+        layout="vertical"
         /> 
        
         
@@ -319,35 +320,39 @@ const Login=()=>{
        <div style={{flex:1}}>
       
 
-       {showVerificationMessage && (
-    <div  style={{
-      position: "fixed",
-      bottom:"40%",
-      left: "40%",
-      width:"500px",
-      border:"1px solid black",
-      backgroundColor: "#f9f9f9",
-      padding: "20px",
-      boxShadow: "0 -2px 10px rgba(0, 0, 0, 0.1)",
-      transition: "bottom 0.5s ease-in-out",
-      zIndex: 1000
-    }}>
-        <div style={{height:20}}>
+       {showVerificationMessage && <Message value="An Email Verification link has been sent, Please click the link and log in to continue." 
+       onClose={()=>{setShowVerificationMessage(false)}}/>
+      //  (
+//     <div  style={{
+//       position: "fixed",
+//       bottom:"40%",
+//       left: "40%",
+//       width:"500px",
+//       border:"1px solid black",
+//       backgroundColor: "#f9f9f9",
+//       padding: "20px",
+//       boxShadow: "0 -2px 10px rgba(0, 0, 0, 0.1)",
+//       transition: "bottom 0.5s ease-in-out",
+//       zIndex: 1000
+//     }}>
+//         <div style={{height:20}}>
 
-        <button 
-          className="animatedButton" 
-          onClick={onClose} 
-          style={{ width: 40, position: "absolute", top: "-7%", right: "-48%", borderRadius: "50%" }}
-        >
-          <h3 style={{ fontSize: "30px", position: "relative", bottom: "20px", right: "15px" }}>
-            <IoCloseCircleOutline />
-          </h3>
-        </button>
-        </div>
-        <hr></hr>
-        <p>An Email Verification link has been sent, Please click the link and log in to continue.</p>
-    </div>
-)}
+//         <button 
+//           className="animatedButton" 
+//           onClick={onClose} 
+//           style={{ width: 40, position: "absolute", top: "-7%", right: "-48%", borderRadius: "50%" }}
+//         >
+//           <h3 style={{ fontSize: "30px", position: "relative", bottom: "20px", right: "15px" }}>
+//             <IoCloseCircleOutline />
+//           </h3>
+//         </button>
+//         </div>
+//         <hr></hr>
+//         <p>An Email Verification link has been sent, Please click the link and log in to continue.</p>
+//     </div>
+// )
+
+}
        {error && <p style={{color: 'red'}}>{errorMessage}</p>}
        {!registerClick&& <div style={{backgroundColor:"#fc6bd8",minHeight:"1000px",}}>
     
@@ -367,6 +372,7 @@ const Login=()=>{
               initialValues={regValues}
               onSubmit={handleRegSubmit}
               buttonText="Create Account"
+              layout="vertical"
             />
           </div>
         )}

@@ -12,7 +12,7 @@ function ProductLink({image,title,price,link,imageLogo,supermarket}){
             <div style={{ width: "50px", height:"50px", display: "flex", justifyContent: "center", alignItems: "center",marginRight:10}}>
                     <span className="productLink" >
                      <a href={link}>  <AiOutlineRight style={{ fontSize: "20px",color:"black",textDecoration:"none" }} /></a>  
-                     {/* <p>take me to the sight</p> */}
+                   
                     </span>
                 </div>
                 <div style={{borderLeft:"1px solid black",display:"flex"}}>
@@ -32,7 +32,6 @@ function ProductLink({image,title,price,link,imageLogo,supermarket}){
             <p style={{position:"absolute",left:"90%",fontSize:"20px"}} >{price}</p>
             </div>
          
-            {/* <p>{link}</p> */}
             </div>
            
         </div>

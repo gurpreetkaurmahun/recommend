@@ -125,9 +125,9 @@ function Settings({onUserUpdate}){
             position: "relative",
             marginBottom: "200px",
             width: "90%",
-            backgroundColor: "pink",
+       
             padding: "20px",
-            border: "1px solid #ccc",
+        
             borderRadius: "5px"
           }}>
             <h2>User Settings</h2>
@@ -199,6 +199,7 @@ function Settings({onUserUpdate}){
                 initialValues={userValues}
                 onSubmit={handleSubmit}
                 buttonText="update"
+                layout="vertical"
                 /> 
                     
                 </div>
