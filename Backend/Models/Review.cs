@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 namespace SoftwareProject.Models {
 
     public class Review{
@@ -10,11 +11,13 @@ namespace SoftwareProject.Models {
 
         public DateOnly reviewDate{get;set;}
 
-
+        public int stars{get;set;}
         public int? ConsumerId { get; set; }
-        public Consumer? Consumer { get; set; }
+        public virtual Consumer? Consumer { get; set; }
 
         public string UserEmail { get; set; }
+        [NotMapped] // This attribute ensures the property is not mapped to the database
+    public string ConsumerName { get; set; }
         
     }
 }

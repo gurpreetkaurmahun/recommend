@@ -9,6 +9,7 @@ using SoftwareProject.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using SoftwareProject.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +23,18 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 options.UseSqlite(builder.Configuration.GetConnectionString("Connection")));
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp",
+        corsBuilder =>
+        {
+            corsBuilder.WithOrigins("http://localhost:3000")
+                       .AllowAnyHeader()
+                       .AllowAnyMethod()
+                       .AllowCredentials(); // Allow credentials
+        });
+});
+
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
 .AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 
@@ -33,11 +46,17 @@ builder.Services.AddScoped<IWebscrapper,AldiScrapper>();
 builder.Services.AddScoped<IWebscrapper,AsdaScrapper>();
 builder.Services.AddScoped<IWebscrapper,SainsburyScrapper>();
 builder.Services.AddScoped<IWebscrapper,TescoScrapper>();
-// builder.Services.AddScoped<ScrapingService>();
+builder.Services.AddScoped<ScrapingService>();
 builder.Services.AddScoped<AppJwtBearerEvents>();
 builder.Services.AddScoped<RolesController>();
-// builder.Services.AddScoped<LogSupport>();
-// builder.Services.AddScoped<TokenRevocation>();
+builder.Services.AddScoped<ProductService>();
+builder.Services.AddScoped<AccountService>();
+builder.Services.AddScoped<ConsumerService>();
+builder.Services.AddScoped<WebScrapperService>();
+builder.Services.AddScoped<SavedProductService>();
+builder.Services.AddScoped<CategoryService>();
+builder.Services.AddScoped<ReviewService>();
+
 builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -65,6 +84,7 @@ var app = builder.Build();
 //     using var scope = app.Services.CreateScope();
 //     var scraperService = scope.ServiceProvider.GetRequiredService<ScrapingService>();
 //     await scraperService.ScrapeAndSaveProducts();});
+
     // using var scope = app.Services.CreateScope();
     // var services = scope.ServiceProvider;
     // var logger = services.GetRequiredService<ILogger<Program>>();
@@ -175,54 +195,23 @@ var app = builder.Build();
 
   
 // Configure the HTTP request pipeline.
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-
-app.MapControllers();
 app.UseHttpsRedirection();
 
-app.MapGet("/scrapetest/{supermarket}", async (string supermarket) =>
-{
-    IWebscrapper scraper = supermarket.ToLower() switch
-    {
-        "tesco" => new TescoScrapper(),
-        "asda" => new AsdaScrapper(),
-        "sainsbury" => new SainsburyScrapper(),
-        "aldi" => new AldiScrapper(),
-        _ => throw new ArgumentException("Invalid supermarket")
-    };
-
-    try
-    {
-        var links = await scraper.GetProductLinks("eggs");
-        var products = await scraper.GetProductDetails(links);
-        return Results.Ok(new { LinkCount = links.Count, ProductCount = products.Count, Products = products });
-    }
-    catch (Exception ex)
-    {
-        return Results.BadRequest(new { Error = ex.Message, StackTrace = ex.StackTrace });
-    }
-});
-
-
-
-
-
 app.UseRouting();
 
-// Make sure to add authentication middleware
+app.UseCors("AllowReactApp");
+
 app.UseAuthentication();
-
 app.UseAuthorization();
 
+app.MapControllers();
 
-
-app.UseRouting();
-app.UseAuthorization();
 app.Run();
 
 

@@ -244,7 +244,6 @@ namespace FinalYearProject.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("IdentityUserId")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("LName")
@@ -326,6 +325,10 @@ namespace FinalYearProject.Migrations
                     b.Property<DateOnly>("Date")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("ImageLogo")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("ImageUrl")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -342,6 +345,10 @@ namespace FinalYearProject.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("SupermarketName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TempId")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Url")
@@ -396,6 +403,9 @@ namespace FinalYearProject.Migrations
                     b.Property<DateOnly>("reviewDate")
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("stars")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("ReviewId");
 
                     b.HasIndex("ConsumerId");
@@ -414,6 +424,10 @@ namespace FinalYearProject.Migrations
                     b.Property<DateTime>("DateSaved")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("TempId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.HasKey("ConsumerId", "ProductId");
 
                     b.HasIndex("ProductId");
@@ -423,31 +437,22 @@ namespace FinalYearProject.Migrations
 
             modelBuilder.Entity("SoftwareProject.Models.WebScrapper", b =>
                 {
-                    b.Property<int>("ScrapeId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("ProductId")
+                    b.Property<bool>("IsActive")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("ScraperType")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<DateOnly>("ScrappedDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Url")
+                    b.Property<string>("TypeName")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("WebsiteName")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("ScrapeId");
-
-                    b.HasIndex("ProductId");
+                    b.HasKey("Id");
 
                     b.ToTable("WebScrappers");
                 });
@@ -507,9 +512,7 @@ namespace FinalYearProject.Migrations
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "IdentityUser")
                         .WithMany()
-                        .HasForeignKey("IdentityUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("IdentityUserId");
 
                     b.HasOne("SoftwareProject.Models.Location", "Location")
                         .WithOne("Consumer")
@@ -591,15 +594,6 @@ namespace FinalYearProject.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("SoftwareProject.Models.WebScrapper", b =>
-                {
-                    b.HasOne("SoftwareProject.Models.Product", "Product")
-                        .WithMany("WebScrappers")
-                        .HasForeignKey("ProductId");
-
-                    b.Navigation("Product");
-                });
-
             modelBuilder.Entity("SoftwareProject.Models.Consumer", b =>
                 {
                     b.Navigation("Newsletters");
@@ -621,8 +615,6 @@ namespace FinalYearProject.Migrations
             modelBuilder.Entity("SoftwareProject.Models.Product", b =>
                 {
                     b.Navigation("ProductLocations");
-
-                    b.Navigation("WebScrappers");
                 });
 #pragma warning restore 612, 618
         }

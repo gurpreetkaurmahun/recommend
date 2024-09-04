@@ -1,23 +1,48 @@
-import logo from './logo.svg';
+
 import './App.css';
+import Login from "./Components/Login";
+import Home from './Pages/Home';
+import AuthProvider from './Components/AuthenticateContext';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
+import Navbar from './Components/Navbar.js';
+import SearchBar from './Components/SearchBar';
+import EditConsumer from './Components/EditConsumer';
+import AllProducts from './Components/Product/AllProducts.js';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min';
+import ViewLocation from './Components/Location/ViewLocation.js';
+import Admin from './Components/Admin.js';
+import ReviewsPage from "../src/Components/Reviews/ReviewsPage.js";
+import UserProducts from './Components/UserSavedProduct.js';
 
 function App() {
+
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <AuthProvider>
+     
+      <Router>
+  
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/Nav" element={<Navbar />} />
+
+        <Route path="/login" element={<Login/>} />
+        <Route path="/Search" element={<SearchBar/>} />
+        <Route path="/edit" element={<EditConsumer/>} />
+        <Route path="/All" element={<AllProducts/>} />
+       
+        <Route path="/view" element={<ViewLocation/>} />
+        <Route path="/user" element={<UserProducts/>} />
+        <Route path="/review" element={<ReviewsPage/>} />
+    
+        
+      </Routes>
+    </Router>
+      </AuthProvider>
+     
     </div>
   );
 }

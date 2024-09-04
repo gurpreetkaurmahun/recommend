@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace FinalYearProject.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class create : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -196,7 +196,7 @@ namespace FinalYearProject.Migrations
                     Address = table.Column<string>(type: "TEXT", nullable: false),
                     ContactNo = table.Column<string>(type: "TEXT", nullable: false),
                     Dob = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    IdentityUserId = table.Column<string>(type: "TEXT", nullable: false),
+                    IdentityUserId = table.Column<string>(type: "TEXT", nullable: true),
                     LocationId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
@@ -206,8 +206,7 @@ namespace FinalYearProject.Migrations
                         name: "FK_Consumers_AspNetUsers_IdentityUserId",
                         column: x => x.IdentityUserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Consumers_Locations_LocationId",
                         column: x => x.LocationId,
@@ -313,7 +312,7 @@ namespace FinalYearProject.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "SavedProduct",
+                name: "SavedProducts",
                 columns: table => new
                 {
                     ProductId = table.Column<int>(type: "INTEGER", nullable: false),
@@ -322,15 +321,15 @@ namespace FinalYearProject.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SavedProduct", x => new { x.ConsumerId, x.ProductId });
+                    table.PrimaryKey("PK_SavedProducts", x => new { x.ConsumerId, x.ProductId });
                     table.ForeignKey(
-                        name: "FK_SavedProduct_Consumers_ConsumerId",
+                        name: "FK_SavedProducts_Consumers_ConsumerId",
                         column: x => x.ConsumerId,
                         principalTable: "Consumers",
                         principalColumn: "ConsumerId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_SavedProduct_Products_ProductId",
+                        name: "FK_SavedProducts_Products_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "ProductId",
@@ -341,17 +340,16 @@ namespace FinalYearProject.Migrations
                 name: "WebScrappers",
                 columns: table => new
                 {
-                    ScrapeId = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    WebsiteName = table.Column<string>(type: "TEXT", nullable: false),
-                    Url = table.Column<string>(type: "TEXT", nullable: false),
-                    ScrappedDate = table.Column<DateOnly>(type: "TEXT", nullable: false),
-                    ProductId = table.Column<int>(type: "INTEGER", nullable: true),
-                    ScraperType = table.Column<string>(type: "TEXT", nullable: false)
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    TypeName = table.Column<string>(type: "TEXT", nullable: false),
+                    IsActive = table.Column<bool>(type: "INTEGER", nullable: false),
+                    ProductId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_WebScrappers", x => x.ScrapeId);
+                    table.PrimaryKey("PK_WebScrappers", x => x.Id);
                     table.ForeignKey(
                         name: "FK_WebScrappers_Products_ProductId",
                         column: x => x.ProductId,
@@ -433,8 +431,8 @@ namespace FinalYearProject.Migrations
                 column: "ConsumerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SavedProduct_ProductId",
-                table: "SavedProduct",
+                name: "IX_SavedProducts_ProductId",
+                table: "SavedProducts",
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
@@ -471,7 +469,7 @@ namespace FinalYearProject.Migrations
                 name: "Reviews");
 
             migrationBuilder.DropTable(
-                name: "SavedProduct");
+                name: "SavedProducts");
 
             migrationBuilder.DropTable(
                 name: "WebScrappers");

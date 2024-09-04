@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SoftwareProject;
+using SoftwareProject.Service;
 using SoftwareProject.Models;
 using SoftwareProject.Helpers;
 
@@ -17,12 +17,15 @@ namespace FinalYearProject.Controllers
     {
         private readonly ApplicationDbContext _context;
 
-          private readonly ILogger<ProductController> _logger; 
+        private readonly ILogger<ProductController> _logger; 
+        private readonly ProductService _productService;
 
-        public ProductController(ApplicationDbContext context,ILogger<ProductController> logger)
+        public ProductController(ApplicationDbContext context,ILogger<ProductController> logger,ProductService productService)
         {
             _context = context;
             _logger=logger;
+            _productService=productService;
+
         }
 
         // GET: api/Product
@@ -30,20 +33,16 @@ namespace FinalYearProject.Controllers
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
         {
 
-            try{
-                _logger.LogInformationWithMethod($" Retreiving Products===>");
-                var products=await _context.Products.ToListAsync();
-                _logger.LogInformationWithMethod("Sucessfully retreived Products");
+            var (allProducts,message)=await _productService.GetAllProductsAsync();
 
-                return Ok(products);
-
+            if(allProducts!=null){
+                _logger.LogInformationWithMethod(message);
+                return Ok(allProducts);
             }
+            else{
 
-            catch(Exception ex){
-                 _logger.LogErrorWithMethod($"Failed to retrieve Products:{ex.Message}");
-
-                return StatusCode(500,$"Failed with error:{ex.Message}");
-
+                _logger.LogErrorWithMethod(message);
+                return StatusCode(500,message);
             }
            
         }
@@ -54,26 +53,19 @@ namespace FinalYearProject.Controllers
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
 
-            try{
+            var (product,message) = await _productService.GetProductByIdAsync(id) ;
 
-            _logger.LogInformationWithMethod($"Checking system for product with id:{id}");
-            var product = await _context.Products.FindAsync(id);
-
-            if (product == null)
-            {
-                 _logger.LogErrorWithMethod($"Failed to retrieve Product with id {id}");
-                return NotFound();
+            if(product!=null){
+                _logger.LogInformationWithMethod(message);
+                return Ok(product);
             }
-            _logger.LogInformationWithMethod($"Providing details of product with id:{id}");
-            return product;
-            }
-            catch( Exception ex){
-                 _logger.LogErrorWithMethod($"Failed to retrieve Product with id {id}, Error:{ex.Message}");
-
-                return StatusCode(500,$"Failed with error:{ex.Message}");
-
+            else{
+                _logger.LogErrorWithMethod(message);
+                return StatusCode(500,message);
 
             }
+
+           
          
         }
 
@@ -83,43 +75,13 @@ namespace FinalYearProject.Controllers
         public async Task<IActionResult> PutProduct(int id, Product product)
         {
             
+            var (result,message)=await _productService.UpdateProductAsync(id,product);
 
-            try
-            {
-                if (!ModelState.IsValid)
-                {
-                    _logger.LogErrorWithMethod($"Invalid request");
-                    return BadRequest(ModelState);
-                }
-
-                if (id != product.ProductId)
-                {
-                    _logger.LogErrorWithMethod($"Error:Please check the id");
-                    return BadRequest();
-                }
-
-                _logger.LogInformationWithMethod($"Updating Product with id:{id}");
-
-                _context.Entry(product).State = EntityState.Modified;
-                await _context.SaveChangesAsync();
-
-                _logger.LogInformationWithMethod($"Product with id:{id} successfully updated");
-                return Ok(new { message = $"Changes made to  Product with ProductId {product.ProductId}" });
+            if(result){
+                return Ok(new{message});
             }
-            catch (DbUpdateConcurrencyException ex)
-            {
-                if (!ProductExists(id))
-                {
-                      _logger.LogErrorWithMethod($"Product with id:{id} not found");
-                    return NotFound();
-                   
-                }
-                _logger.LogErrorWithMethod($"Failed with error:{ex.Message}");
-                  return StatusCode(500,$"Failed with error:{ex.Message}");
-            }
-            catch (Exception ex){
-                 _logger.LogErrorWithMethod($"Failed with error:{ex.Message}");
-                  return StatusCode(500,$"Failed with error:{ex.Message}");
+            else{
+                return BadRequest(new{message});
             }
         }
 
@@ -128,22 +90,13 @@ namespace FinalYearProject.Controllers
         [HttpPost]
         public async Task<ActionResult<Product>> PostProduct(Product product)
         {
-            try{
+            var(newProduct,message)=await _productService.AddNewProductAsync(product);
 
-                if (!ModelState.IsValid)
-                {
-                    _logger.LogErrorWithMethod($"Invalid request");
-                    return BadRequest(ModelState);
-                }
-                _logger.LogInformationWithMethod($"Product with name:{product.ProductName } added sucessfully");
-                _context.Products.Add(product);
-                await _context.SaveChangesAsync();
-
-                return CreatedAtAction("GetProduct", new { id = product.ProductId }, product);
-
-            }catch(Exception ex){
-                 _logger.LogErrorWithMethod($"Failed with error:{ex.Message}");
-                  return StatusCode(500,$"Failed with error:{ex.Message}");
+            if(newProduct!=null){
+                return Ok(new{product,message});
+            }
+            else{
+                return BadRequest(message);
             }
             
         }
@@ -153,34 +106,35 @@ namespace FinalYearProject.Controllers
         public async Task<IActionResult> DeleteProduct(int id)
         {
 
-            try{
-                _logger.LogInformationWithMethod($"Searching for Product with id:{id}");
-                var product = await _context.Products.FindAsync(id);
-                if (product == null)
-                {
-
-                    _logger.LogErrorWithMethod($"Product with id:{id} not found");
-                    return NotFound();
-                }
-
-                _context.Products.Remove(product);
-                await _context.SaveChangesAsync();
-
-                _logger.LogInformationWithMethod($"Product with id:{id} deleted sucessfully");
-
-                return NoContent();
-
-            }catch(Exception ex){
-
-                 _logger.LogErrorWithMethod($"Failed with error:{ex.Message}");
-                  return StatusCode(500,$"Failed with error:{ex.Message}");
+            var (result,message)= await _productService.DeleteProductAsync(id);
+            if(result){
+                return Ok(new{message});
+            }
+            else{
+                return BadRequest(message);
             }
             
         }
 
-        private bool ProductExists(int id)
-        {
-            return _context.Products.Any(e => e.ProductId == id);
-        }
+//         [HttpDelete]
+// [Route("delete-all")]
+// public async Task<IActionResult> DeleteAllProducts()
+// {
+//     var (result, message) = await _productService.DeleteAllProductsAsync();
+//     if (result)
+//     {
+//         _logger.LogInformationWithMethod(message);
+//         return Ok(new { message });
+//     }
+//     else
+//     {
+//         _logger.LogErrorWithMethod(message);
+//         return StatusCode(500, new { message });
+//     }
+// }
+
+
+
+        
     }
 }

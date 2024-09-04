@@ -24,7 +24,7 @@ using SoftwareProject.Models;
 
         public DbSet<WebScrapper> WebScrappers{get;set;}
 
-        public DbSet<Newsletter> Newsletters{get;set;}
+        
 
         public DbSet<SavedProduct> SavedProducts{get;set;}
 
@@ -36,10 +36,7 @@ using SoftwareProject.Models;
         {
             base.OnModelCreating(modelBuilder);
 
-          modelBuilder.Entity<Newsletter>()
-        .HasOne(n => n.Consumer)
-        .WithMany(c => c.Newsletters)
-        .HasForeignKey(n => n.ConsumerId);
+       
 
      modelBuilder.Entity<Consumer>()
         .HasOne(c => c.Location)
@@ -51,10 +48,7 @@ using SoftwareProject.Models;
         .WithMany()
         .HasForeignKey(p => p.CategoryId);
 
-    modelBuilder.Entity<WebScrapper>()
-        .HasOne(w => w.Product)
-        .WithMany(p => p.WebScrappers)
-        .HasForeignKey(w => w.ProductId);
+
 
     modelBuilder.Entity<Product>()
         .HasOne(p => p.Consumer)
@@ -74,7 +68,8 @@ using SoftwareProject.Models;
         .WithMany(l => l.ProductLocations)
         .HasForeignKey(pl => pl.LocationId);
 
-         modelBuilder.Entity<Review>()
+        
+    modelBuilder.Entity<Review>()
         .HasOne(r => r.Consumer)
         .WithMany(c => c.Reviews)
         .HasForeignKey(r => r.ConsumerId);

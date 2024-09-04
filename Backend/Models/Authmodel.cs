@@ -24,11 +24,11 @@ namespace SoftwareProject {
 
         public DateTime Dob{get;set;}
 
-        public double Latitude { get; set; }
+        public double? Latitude { get; set; }
 
-        public double Longitude { get; set; }
+        public double? Longitude { get; set; }
 
-        public string FullLocation { get; set; }
+        public string? FullLocation { get; set; }
 
    
 }
