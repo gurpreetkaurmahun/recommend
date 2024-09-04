@@ -1,11 +1,9 @@
 import React from "react";
-import { AiOutlineRight } from "react-icons/ai";
 
-import {useState,useEffect} from "react";
 
 function ReviewLink({icon,userName,days,star,content,isOwner,onDelete,onEdit}){
-
-    console.log("Review link props:",isOwner);
+console.log("eviewlinkpropd:",icon,userName,days,star,content,isOwner,onDelete,onEdit)
+ 
 
 
     const renderStars = (rating) => {

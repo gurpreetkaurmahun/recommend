@@ -3,21 +3,7 @@ import axios from "axios";
 import{ API_BASE_URL} from"../apiConfig.js";
 import { useState } from "react";
 
-//Getusers as well:Important
 
-// function Roles({token}){
-
-//     const[roles,setRoles]=useState("");
-//     const[admin,isAdmin]=useState(false);
-
-//     useEffect(()=>{
-//         if(token){
-//             rolecheck();
-
-//             console.log("token for roles",token)
-//         }
-//         console.log("token for roles",token)
-//     },[token]);
 
 
     const GetRoles=async (token)=> {
@@ -33,7 +19,7 @@ import { useState } from "react";
             );
     
             setRoles("User logged in: " + JSON.stringify(roleResponse.data));
-            console.log("roles",roleResponse.data);
+         
             return roleResponse.data;
 
         } catch (error) {

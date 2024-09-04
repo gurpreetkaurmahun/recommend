@@ -23,11 +23,11 @@ namespace SoftwareProject.Models {
         // Navigation property
         public  IdentityUser? IdentityUser { get; set; }
 
-        public  ICollection<Newsletter>? Newsletters { get; set; }
+    
 
         public  ICollection<Product>? Products { get; set; }
 
-         public virtual ICollection<Review>? Reviews { get; set; }
+        public virtual ICollection<Review>? Reviews { get; set; }
         
         public int? LocationId { get; set; }
 

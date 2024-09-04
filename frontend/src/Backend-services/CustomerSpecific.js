@@ -23,13 +23,6 @@ const getCustomerById=async(id)=>{
 
         const getCustomerWithId=await axios.get(
             `${API_BASE_URL}Consumer/${id}`
-            // ,
-            // {
-            //     headers: {
-            //         'Authorization': `Bearer ${token}`,
-            //         'Content-Type': 'application/json'
-            //     }
-            // }
         );
 
         console.log("Consumer by id Response:",getCustomerWithId.data);

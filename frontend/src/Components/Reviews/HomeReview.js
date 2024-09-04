@@ -30,16 +30,21 @@ function HomeReview() {
 
     async function fetchReviews() {
         try {
+            console.log("Fetching reviews...");
             const response = await getReviews();
+            console.log("Response from getReviews:", response);
             if (response && response.reviews && Array.isArray(response.reviews)) {
+                console.log("Setting reviews:", response.reviews);
                 setReviews(response.reviews);
             } else {
+                console.log("No reviews found or invalid response format");
                 setReviews([]);
             }
         } catch (error) {
             console.error("Error fetching reviews:", error);
         }
     }
+
 
     if (reviews.length === 0) {
         return <div>Loading reviews...</div>;

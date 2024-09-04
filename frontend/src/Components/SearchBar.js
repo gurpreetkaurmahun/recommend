@@ -2,7 +2,7 @@ import React from "react";
 import { useState,useEffect } from "react";
 import MyForm from "./Form.js";
 import GetLocation from "./Location/Location.js";
-
+import Message from "./Message.js";
 import Navbar from "./Navbar.js";
 import{ API_BASE_URL} from"../apiConfig.js";
 import {fetchNearbyStores } from"./Location/Supermarket.js";
@@ -19,6 +19,8 @@ import HomeReview from "./Reviews/HomeReview.js";
 function SearchBar(){
 
     const[modal,setModal]=useState(false);
+    const [error,setError]=useState(false);
+    const[displayMessage,setDisplayMessage]=useState("");
 
   
 
@@ -62,11 +64,10 @@ function SearchBar(){
     const [nearbyStores, setNearbyStores] = useState([]);
     const navigate=useNavigate();
 
- 
 
     useEffect(()=>{
 
-    console.log("local Storage is",localStorage);
+  
 
 
     const storedLatitude = localStorage.getItem('userLatitude');
@@ -78,13 +79,7 @@ function SearchBar(){
     if((!storedLatitude || !storedLongitude || storedLatitude === "null" || storedLongitude === "null")){
         setModal(true);
     }
-    else{
-        console.log("presenting userlocation");
-        console.log("Local Latitude",storedLatitude);
-        console.log("LocalLongitude:",storedLongitude);
-        console.log("Local Full Location:",storedFullLocation);
-
-    }
+ 
 
     
 },[]);
@@ -135,10 +130,9 @@ async function handleSubmit(values) {
     console.log("Values are:", values);
   
 
-    // const fullProduct=values.BrandName+ " "+values.Product+ " " +values.Quantity;
     const fullProduct = `${values.BrandName}${values.Product}${values.Quantity}`.trim();
     if(fullProduct===""){
-        alert("eneter product to scrape");
+       setError(true);
         return;
     }
 
@@ -147,7 +141,6 @@ async function handleSubmit(values) {
         product: values.Product
     };
 
-    console.log("Full Product is:", fullProduct);
     try {
       
         setLoading(true);
@@ -162,11 +155,7 @@ async function handleSubmit(values) {
             fetchNearbyStores(localStorage.getItem('userLatitude'), localStorage.getItem('userLongitude'))
         ]);
 
-        console.log("Scraping response:", productScrapping.data);
-        console.log("Stores:", fetchStores);
-
-
-        console.log("Scraping response:", productScrapping.data);
+     
         
         if (productScrapping.data.products && productScrapping.data.products.length > 0) {
 
@@ -174,8 +163,8 @@ async function handleSubmit(values) {
             console.log("Scraped Products:", scrapedProducts);
 
             localStorage.setItem('scrapedProducts', JSON.stringify(scrapedProducts));
-      localStorage.setItem('nearbyStores', JSON.stringify(fetchStores));
-      localStorage.setItem('searchProduct', fullProduct);
+            localStorage.setItem('nearbyStores', JSON.stringify(fetchStores));
+            localStorage.setItem('searchProduct', fullProduct);
 
       console.log("new local storage",localStorage);
 
@@ -183,10 +172,9 @@ async function handleSubmit(values) {
       try{
 
         console.log("Fetching stores");
-                // const fetchStores= await fetchNearbyStores(localStorage.getItem('userLatitude'), localStorage.getItem('userLongitude'));
+            
                 setNearbyStores(fetchStores);
-                console.log("Stores:",fetchStores);
-                console.log("Nearby Stores",nearbyStores);
+             
 
             setStatus("Scraping Completed");
             navigate("/all", { state: { searchResults: scrapedProducts,nearbyStores:fetchStores,searchProduct:fullProduct} });
@@ -215,6 +203,7 @@ return(
    <LocationModal onAllow={handleAllowLocation} onDeny={handleDenyLocation} />
  )}
           <Navbar />
+          {error&& <Message value="Please enter a product to search" onClose={()=>setError(false)}/>}
           <div style={{position:"relative"}}>
             {/* <MiddleElement/> */}
            <div className="conatiner" style={{height:700,width:"100%",marginBottom:100}}>

@@ -4,7 +4,7 @@ import {registerUser,loginUser,logoutUser} from"../Backend-services/AccountSpeci
 import {validEmail,validPassword} from "../Helpers/Validation.js";
 import { jwtDecode } from 'jwt-decode';
 import Message from "./Message.js";
-
+import {getCustomerById} from "../Backend-services/CustomerSpecific.js";
 export  const AuthContext=createContext();
 
 export  const useAuth=()=>useContext(AuthContext);
@@ -59,6 +59,8 @@ export default function AuthProvider({children}){
         }
     }, [authenticated, token, activeUserId, identityId]);
 
+    
+
 
     async function Login(email, password) {
         try {
@@ -67,7 +69,7 @@ export default function AuthProvider({children}){
             if (!validPassword(emailBody.Password)) return { error: "Invalid password" };
     
             const loginResponse = await loginUser(emailBody);
-            console.log("Full login response:", loginResponse); // Log the entire response
+           
     
             if (loginResponse.error) return { error: loginResponse.error.message };
     
@@ -82,9 +84,12 @@ export default function AuthProvider({children}){
                     setActiveUserId(parseInt(loginResponse.message.consumerId, 10));
                     setToken(loginResponse.message.token);
                     setIdentityId(loginResponse.message.identityUserId);
-                    
+                    const user= await getCustomerById(loginResponse.message.consumerId, 10);
+                 
+             
+                    localStorage.setItem("userName",user.consumer.fName);
                     // Verify token is stored correctly
-                    console.log("Stored token:", localStorage.getItem("userToken"));
+                  console.log("login slocal storage",localStorage);
                     
                     setTokenExpirationTimer(decodedToken.exp * 1000 - Date.now());
                     return { result: true, token: loginResponse.message.token };

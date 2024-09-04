@@ -11,16 +11,18 @@ function WriteReview({onClose}){
     const[isUser,setIsUser]=useState(false);
     const[error,setError]=useState("");
     const[message,setShowMessage]=useState(false);
+    const [editingReview, setEditingReview] = useState(null);
 
 
-
-    useEffect(()=>{
-        const userId=localStorage.getItem("activeUserId");
-        if(user!=null){
+    useEffect(() => {
+        const userId = localStorage.getItem("activeUserId");
+        console.log("Retrieved user ID:", userId);
+        if (userId) {
             setUser(userId);
+        } else {
+            console.log("No user ID found in localStorage");
         }
-
-    },[]);
+    }, []);
 
 
     const fields=[
@@ -49,35 +51,40 @@ function WriteReview({onClose}){
        }
 
        async function handleSubmit(values) {
-        console.log("review values:", values);
+        // Validate input
+        if (!values.Review || !values.Stars || !values.Email || !values.ScreenName) {
+            setError("Please fill out all fields");
+            return;
+        }
+    
+        const stars = parseInt(values.Stars, 10);
+        if (isNaN(stars) || stars < 1 || stars > 5) {
+            setError("Stars must be a number between 1 and 5");
+            return;
+        }
+    
         const review = {
-            "review": values.Review,
-            "reviewDate": new Date().toISOString(),
-            "stars": values.Stars,
-            "consumerId": user,
-            "userEmail": values.Email,
-            "consumerName": values.ScreenName
+            review: values.Review.trim(),
+            reviewDate: new Date().toISOString().split('T')[0], // Format: YYYY-MM-DD
+            stars: stars,
+            consumerId: parseInt(user, 10),
+            userEmail: values.Email.trim(),
+            consumerName: values.ScreenName.trim()
         };
     
-        console.log("Review object to be passed is :", review);
         try {
-            const response = await addReview(review);
-    
-            if (response.success) {
+            const result = await addReview(review);
+            if (result.success) {
                 setShowMessage(true);
-                onClose(); // Close the form
-                // navigate("/review"); // This line is not needed if you're already on the review page
+                onClose();
             } else {
-                setError("Failed to post review. Please try again.");
+                setError(result.error || "Failed to post review. Please try again.");
             }
-    
-            console.log("Review Response:", response);
         } catch (error) {
-            console.error("Error posting review:", error);
-            setError("An error occurred while posting the review.");
+            console.error("Error in handleSubmit:", error);
+            setError("An unexpected error occurred. Please try again.");
         }
     }
-
        return(
         <div style={{
             position: "fixed", 

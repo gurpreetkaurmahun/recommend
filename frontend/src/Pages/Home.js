@@ -29,8 +29,7 @@ function Home() {
             /></div>
            </div></div>
       <Content/>
-     
-    <div  style={{height:700, marginBottom:100, display:"flex"}}>
+      <div  style={{height:700, marginBottom:100, display:"flex"}}>
         <div style={{backgroundColor:"#e9a8d9", width:"50%"}}>
             <TypeWriters
                 topString="Reviews...."
@@ -54,7 +53,6 @@ function Home() {
             </div>
         </div>
     </div>
-
       <Footer/>
 
       

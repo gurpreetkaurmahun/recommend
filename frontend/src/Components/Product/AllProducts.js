@@ -12,9 +12,7 @@ import Footer from "../../Pages/Footer.js";
 import SlideUpDiv from "../InfoModal.js";
 import {useNavigate} from 'react-router-dom';
 import Reviews from "../Reviews/Reviews.js";
-//delete prodcuts(done) , saved products tile, reference reserved, controllers set(alomost), saved product service(done) start working on location, add supermarket logo 
 
-//modal for saved Product 
 
 
 function AllProducts(){
@@ -22,7 +20,7 @@ function AllProducts(){
     const[products,setProducts]=useState([]);
     const [searchProduct,setSearchProduct]=useState("");
     const [nearbyStores, setNearbyStores] = useState([]);
-    const[availableStores,setAvailableStores]=useState([]);
+
     const [activeTab, setActiveTab] = useState('moreProducts');
     const [showAllProducts, setShowAllProducts] = useState(false);
     const [slideUpDiv,setSlideUpDiv] = useState(false);
@@ -45,7 +43,7 @@ function AllProducts(){
         productData = storedProducts ? JSON.parse(storedProducts) : null;
       }
     
-      console.log("Product Data", productData);
+  
     
       if (productData && productData.length > 0) {
         setProducts(productData);
@@ -65,28 +63,13 @@ function AllProducts(){
         }
       }
     
-      // Don't clear localStorage here
+      
     }, [location, navigate, authContext.activeUserId]);
 
 
-      useEffect(()=>{
-        const uniqueStores=[...new Set(products.map(product=>product.supermarket))];
-        setAvailableStores(uniqueStores);
-        console.log("Unique Stores",availableStores);
-
-      },[products]);
-
       
-    
 
 
-
-
-    const storesWithProduct = nearbyStores.filter(store =>
-        console.log("Supermarket name",store.supermarketName) );
-
-        
-    console.log("Stores",storesWithProduct);
     
 
 
@@ -107,7 +90,7 @@ function AllProducts(){
             ConsumerId: parseInt(userId, 10),
             DateSaved: new Date().toISOString()
           });
-          console.log("product saved is:", save);
+   
         
 
           setProducts(prevProducts => 
@@ -161,7 +144,7 @@ function AllProducts(){
     });
 
 
-    //div closure for the slide up div
+  
 
     function handleDivCLose(){
       setVisible(false);
@@ -172,7 +155,7 @@ function AllProducts(){
         <div >
           <Navbar />
           {!slideUpDiv&&<button onClick={()=>setSlideUpDiv(true)}  style={{width:"18%",zIndex:1,position:"fixed",backgroundColor:"#f65dd0",left:"80%",top:"95%",borderRadius:"10px"}}>Products</button>}
-          {visible&&<SlideUpDiv  onClose={handleDivCLose}/>}
+          {visible&&<SlideUpDiv  onClose={handleDivCLose} content="save products" />}
           <h2 style={{ textAlign: "left",marginLeft:"8%",marginBottom:"2%" }}>Showing results for "{searchProduct}"</h2>
           <div style={{ width: "100%" }}>
                 {/* Display one product from each supermarket */}
@@ -267,7 +250,8 @@ function AllProducts(){
 
           {activeTab === 'reviews' && (
             <div>
-              <Reviews/>
+                
+              <Reviews key="reviews-component"/>
 
             </div>
           )}

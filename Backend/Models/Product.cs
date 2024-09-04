@@ -35,8 +35,6 @@ namespace SoftwareProject.Models {
 
         public ICollection<ProductLocation>? ProductLocations { get; set; }
 
-        // public  ICollection<WebScrapper>? WebScrappers { get; set; }
-
 
 
       

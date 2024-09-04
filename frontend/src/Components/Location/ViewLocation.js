@@ -16,7 +16,7 @@ function ViewLocation() {
       try {
         const parsedStores = JSON.parse(storedStores);
         setNearbyStores(parsedStores);
-        console.log("Retrieved nearbyStores:", parsedStores);
+      
       } catch (error) {
         console.error("Error parsing nearbyStores:", error);
       }

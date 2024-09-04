@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import { IoCloseCircleOutline } from "react-icons/io5";
 
-const SlideUpDiv = ({ onClose }) => {
+const SlideUpDiv = ({ onClose,content }) => {
   const [isUser, setIsUser] = useState(false);
 
   useEffect(() => {
@@ -26,7 +26,7 @@ const SlideUpDiv = ({ onClose }) => {
         <hr />
       </div>
       
-      <h4 style={{ marginTop: 50 }}>Become a member to save products</h4>
+      <h4 style={{ marginTop: 50 }}>Become a member to {content}</h4>
       <p style={{ marginBottom: "10px" }}>
         Recommend.. app membership is great if you are someone who enjoys shopping smart!
       </p>

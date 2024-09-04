@@ -134,6 +134,7 @@ function UserProducts() {
               console.log("Local Storage before Logout", localStorage);
               localStorage.removeItem("userToken");
               localStorage.removeItem("activeUserId");
+              localStorage.removeItem("userName");
         
               if (window.inactivityTimer) {
                 clearTimeout(window.inactivityTimer);

@@ -7,7 +7,7 @@ function GetLocation(onLocationReceived  ){
   
       const APIkey = "b294cd0df2bc401cb5103db698a0f3e6";
 
-    //     })
+ 
       function getLocationInfo(latitude, longitude) {
         const url = `https://api.opencagedata.com/geocode/v1/json?q=${latitude},${longitude}&key=${APIkey}`;
         fetch(url)

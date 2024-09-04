@@ -159,7 +159,7 @@ function Settings({onUserUpdate}){
         </button>
         </div>
         <hr></hr>
-        <p>An Email Verification link has been sent, Please click the link and log in to continue.</p>
+        <p>Acoount updated</p>
     </div>
 )}
             <div style={{ display: 'flex', borderBottom: '1px solid #ccc' }}>

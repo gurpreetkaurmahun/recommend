@@ -17,6 +17,8 @@ import ReviewsPage from "../src/Components/Reviews/ReviewsPage.js";
 import UserProducts from './Components/UserSavedProduct.js';
 
 function App() {
+
+
   return (
     <div className="App">
       <AuthProvider>
@@ -31,7 +33,7 @@ function App() {
         <Route path="/Search" element={<SearchBar/>} />
         <Route path="/edit" element={<EditConsumer/>} />
         <Route path="/All" element={<AllProducts/>} />
-        <Route path="/Admin" element={<Admin/>} />
+       
         <Route path="/view" element={<ViewLocation/>} />
         <Route path="/user" element={<UserProducts/>} />
         <Route path="/review" element={<ReviewsPage/>} />

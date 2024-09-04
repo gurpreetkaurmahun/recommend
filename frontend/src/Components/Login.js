@@ -9,7 +9,7 @@ import Navbar from "./Navbar.js";
 import { ImNewspaper } from "react-icons/im";
 import{validPhone} from"../Helpers/Validation.js";
 import MyForm from "./Form.js";
-import { IoCloseCircleOutline } from "react-icons/io5";
+
 import {registerUser,logoutUser,emailVerification} from"../Backend-services/AccountSpecific.js";
 import Message from "./Message.js";
 
@@ -30,7 +30,7 @@ const Login=()=>{
     const[loginClick,setLoginClick]=useState(false);
     const [verificationId, setVerificationId] = useState(null);
     const [verificationToken, setVerificationToken] = useState(null);
-    const[verificationMessage,setVerificationMessage]=useState("");
+
     const[showVerificationMessage,setShowVerificationMessage]=useState(false);
 
     const [inactivityTimer, setInactivityTimer] = useState(null);
@@ -155,35 +155,31 @@ const Login=()=>{
       };
       async function handleSubmit(values) {
         console.log("Login Values", values);
-      
         try {
           const success = await authContext.Login(values.Email, values.Password);
+          console.log("Full login response:", success);
       
-          console.log("Success Login message is:", success);
-          if (success.result) {
-            const token = success.token;
-            if (token) {
-              localStorage.setItem("userToken", token);
-              console.log("Local Storage after Login", localStorage);
-              console.log("Welcome User", token);
+          if (success.result && success.token) {
+            console.log("Token received:", success.token);
+            localStorage.setItem("userToken", success.token);
+            const storedToken = localStorage.getItem("userToken");
+            console.log("Token stored in localStorage:", storedToken);
+      
+            if (storedToken === success.token) {
+              console.log("Token successfully stored");
               await handleSuccessfulLogin();
             } else {
-              console.error("Token is not available after login.");
-              setError(true);
-              setErrorMessage("Login failed. Token not received.");
+              throw new Error("Token storage failed");
             }
           } else {
-            setError(true);
-            setErrorMessage(success.error || "Login failed. Please check your credentials.");
-            console.log("Login failed. Please check your credentials.");
+            throw new Error(success.error || "Login failed. No token received.");
           }
         } catch (err) {
           console.error("Login error:", err);
           setError(true);
-          setErrorMessage("An error occurred during login. Please try again.");
+          setErrorMessage(err.message || "An error occurred during login. Please try again.");
         }
       }
-
 
     ///handle registration important
 
@@ -212,7 +208,7 @@ const Login=()=>{
           if (response.result) {
               setError(false);
               setErrorMessage('');
-              setVerificationMessage(response.message);
+         
               setShowVerificationMessage(true);
               setNewUser(customer.Email);
               
@@ -289,7 +285,7 @@ const Login=()=>{
         <Navbar/>
         <div style={{display:"flex",marginTop:"-40px"}}>
        <div style={{flex:1}}>
-       {error && <p style={{color: 'red'}}>{errorMessage}</p>}
+ 
        {!loginClick&&<div >  
         <h1 style={{padding:"200px 0px 50px"}}> Sign In </h1>
         <MyForm
@@ -320,40 +316,10 @@ const Login=()=>{
        <div style={{flex:1}}>
       
 
-       {showVerificationMessage && <Message value="An Email Verification link has been sent, Please click the link and log in to continue." 
-       onClose={()=>{setShowVerificationMessage(false)}}/>
-      //  (
-//     <div  style={{
-//       position: "fixed",
-//       bottom:"40%",
-//       left: "40%",
-//       width:"500px",
-//       border:"1px solid black",
-//       backgroundColor: "#f9f9f9",
-//       padding: "20px",
-//       boxShadow: "0 -2px 10px rgba(0, 0, 0, 0.1)",
-//       transition: "bottom 0.5s ease-in-out",
-//       zIndex: 1000
-//     }}>
-//         <div style={{height:20}}>
-
-//         <button 
-//           className="animatedButton" 
-//           onClick={onClose} 
-//           style={{ width: 40, position: "absolute", top: "-7%", right: "-48%", borderRadius: "50%" }}
-//         >
-//           <h3 style={{ fontSize: "30px", position: "relative", bottom: "20px", right: "15px" }}>
-//             <IoCloseCircleOutline />
-//           </h3>
-//         </button>
-//         </div>
-//         <hr></hr>
-//         <p>An Email Verification link has been sent, Please click the link and log in to continue.</p>
-//     </div>
-// )
-
+       {showVerificationMessage && <Message value="An Email Verification link has been sent, Please click the link and log in to continue." onClose={()=>{setShowVerificationMessage(false)}}/>
+ 
 }
-       {error && <p style={{color: 'red'}}>{errorMessage}</p>}
+    {error && <Message value={errorMessage} onClose={()=>{setError(false)}} />}
        {!registerClick&& <div style={{backgroundColor:"#fc6bd8",minHeight:"1000px",}}>
     
             <h1 style={{padding:"200px 0px 50px"}}>Is this your first visit?</h1>

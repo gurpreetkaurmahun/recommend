@@ -5,9 +5,9 @@ import { IoLogIn } from "react-icons/io5";
 import { FaRegRegistered } from "react-icons/fa";
 import {useAuth} from "./AuthenticateContext.js";
 import{Link, useNavigate} from "react-router-dom";
-import { AiOutlineLogout } from "react-icons/ai";
 import { IoSearch } from "react-icons/io5";
 import { BsSave2 } from "react-icons/bs";
+import {getCustomerById} from "../Backend-services/CustomerSpecific.js";
 
 import "./styles.css";
 
@@ -19,18 +19,29 @@ function Navbar() {
   const listItemRefs = useRef([]);
 
   const authContext=useAuth();
-
-  // console.log("Login Component Authcontext:",authContext);
-
+  
   const[name,setName]=useState("");
 
   const isAuthenticated=authContext.authenticated;
 
-  // console.log("Auth context",authContext);
 
-  useEffect(()=>{
-    getUser();
-  },[]);
+  useEffect(() => {
+    // This effect will run on mount and whenever isAuthenticated changes
+    if (isAuthenticated) {
+      getUser();
+    } else {
+      setName("");
+    }
+  }, [isAuthenticated]);
+  
+  useEffect(() => {
+
+    const user=localStorage.getItem("userName");
+    if (user) {
+      setName(user[0]);
+    }
+  }, []);
+
   useEffect(() => {
     if (indicatorRef.current && listItemRefs.current[activeIndex]) {
       const currentItem = listItemRefs.current[activeIndex];
@@ -43,11 +54,15 @@ function Navbar() {
     setActiveIndex(index);
   };
   
-  function getUser(){
-    const userName=localStorage.getItem("userName");
+  function getUser() {
+    const userName = localStorage.getItem("userName");
 
-    setName(userName[0]);
-
+    if (userName) {
+      setName(userName[0].toUpperCase());
+    } else {
+      // Handle the case where userName is null or undefined
+      setName("");
+    }
   }
 
   

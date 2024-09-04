@@ -24,7 +24,7 @@ using SoftwareProject.Models;
 
         public DbSet<WebScrapper> WebScrappers{get;set;}
 
-        public DbSet<Newsletter> Newsletters{get;set;}
+        
 
         public DbSet<SavedProduct> SavedProducts{get;set;}
 
@@ -36,10 +36,7 @@ using SoftwareProject.Models;
         {
             base.OnModelCreating(modelBuilder);
 
-          modelBuilder.Entity<Newsletter>()
-        .HasOne(n => n.Consumer)
-        .WithMany(c => c.Newsletters)
-        .HasForeignKey(n => n.ConsumerId);
+       
 
      modelBuilder.Entity<Consumer>()
         .HasOne(c => c.Location)

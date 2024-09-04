@@ -17,17 +17,20 @@ function ReviewsPage(){
     const[reviewLink,setReviewLink]=useState(false);
     const[logError,setLogError]=useState(false);
     const [slideUpDiv,setSlideUpDiv] = useState(false);
-
+    const [editingReview, setEditingReview] = useState(null);
 
     useEffect(()=>{
         fetchReviews();
+        
     },[])
    
     useEffect(() => {
         const user = localStorage.getItem("activeUserId");
         if (user) {
             setCurrentUserId(user);
-            setLogError(false); // Ensure logError is set to false when user is signed in
+
+            console.log("user:",user)
+            setLogError(false); 
         } else {
             setLogError(true);
         }
@@ -38,15 +41,10 @@ function ReviewsPage(){
     useEffect(() => {
         console.log("Current user ID:", currentUserId);
         console.log("Reviews:", reviews);
-        reviews.forEach(review => {
-            console.log(`Review ID: ${review.reviewId}, Consumer ID: ${review.consumerId}, Is Owner: ${Number(review.consumerId) === Number(currentUserId)}`);
-        });
+       
     }, [reviews, currentUserId]);
 
-    useEffect(() => {
-        console.log("Updated reviews:", reviews);
-        
-    }, [reviews]);
+
 
     async function fetchReviews() {
         try {
@@ -76,7 +74,7 @@ function ReviewsPage(){
     async function handleDelete(reviewId) {
         try {
            const response= await deleteReview(reviewId);
-           console.log("Delete review response",response)
+           
             fetchReviews(); // Refresh the reviews after deleting
         } catch (error) {
             console.error("Error deleting review:", error);
@@ -87,13 +85,24 @@ function ReviewsPage(){
             setReviewLink(true);
         } else {
             setLogError(true);
+            setSlideUpDiv(true);  // Open the SlideUpDiv when a non-logged-in user tries to write a review
         }
     };
+    function handleEdit(review) {
+        setEditingReview(review);
+        setReviewLink(true);
+    }
 
-   function handleEdit(reviewId){
-    console.log("handle review clisked for id:",reviewId);
-   }
-    
+    async function handleUpdateReview(reviewId, updatedReviewData) {
+        try {
+            await updateReviews(reviewId, updatedReviewData);
+            setEditingReview(null);
+            fetchReviews();
+        } catch (error) {
+            console.error("Error updating review:", error);
+        }
+    }
+
     return (
         <div>
             <Navbar />
@@ -113,8 +122,8 @@ function ReviewsPage(){
                     Products
                 </button>
             )}
-            {slideUpDiv && <SlideUpDiv onClose={() => setSlideUpDiv(false)} />}
-            <div style={{ width: "80%", marginBottom: "5%", display: "flex", border: "1px solid green", marginLeft: "20%" }}>
+            {slideUpDiv && <SlideUpDiv onClose={() => setSlideUpDiv(false)} content=" write reviews" />}
+            <div style={{ width: "80%", marginBottom: "5%", display: "flex",  marginLeft: "20%" }}>
                 <h1>Reviews</h1>
                 <button onClick={handleWriteReviewClick} className="buttonT" style={{ position: "relative", marginLeft: "65%" }}>Write Review</button>
             </div>
@@ -122,16 +131,25 @@ function ReviewsPage(){
 
             {reviewLink && currentUserId && (
                 <WriteReview 
-             
+                    initialReview={editingReview}
+                    onSubmit={(reviewData) => {
+                        if (editingReview) {
+                            handleUpdateReview(editingReview.reviewId, reviewData);
+                        } else {
+                            addReview(reviewData);
+                        }
+                        setReviewLink(false);
+                        fetchReviews();
+                    }}
                     onClose={() => {
                         setReviewLink(false);
-                        fetchReviews(); // Refresh the reviews list after closing the form
+                        setEditingReview(null);
+                        fetchReviews();
                     }} 
                 />
             )}
 
-
-            {logError && !currentUserId && <SlideUpDiv onClose={() => setLogError(false)} />}
+         
 
 
             <div style={{ width: "70%", backgroundColor: "white", marginBottom: "30px", borderRadius: "20px", filter: "drop-shadow(5px 5px 6px hwb(314 78% 1%))", marginLeft: "20%" }}>
@@ -146,7 +164,7 @@ function ReviewsPage(){
                                 content={review.review}
                                 isOwner={Number(review.consumerId) === Number(currentUserId)}
                                 onDelete={() => handleDelete(review.reviewId)}
-                                onEdit={()=>handleEdit(review.reviewId)}
+                                onEdit={() => handleEdit(review)}
                             />
                         </div>
                     ))

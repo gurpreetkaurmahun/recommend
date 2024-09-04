@@ -17,7 +17,7 @@ namespace SoftwareProject.Controllers
 [Route("api/[controller]")]
 [ApiController]
 
-// [Authorize(Roles ="Admin")]
+
  public class AccountController : ControllerBase{
    
 
