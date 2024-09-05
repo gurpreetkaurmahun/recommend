@@ -1,7 +1,7 @@
 import React from "react";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Supermarket from "../assets/background.jpg";
+
 import Footer from "./Footer";
 import Navbar from "../Components/Navbar";
 import Content from "./Content";

@@ -64,6 +64,7 @@ function SearchBar(){
     const [nearbyStores, setNearbyStores] = useState([]);
     const navigate=useNavigate();
 
+ 
 
     useEffect(()=>{
 
