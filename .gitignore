@@ -13,10 +13,12 @@
 
 /frontend/coverage
 /frontend/build
+/frontend/.DS_Store
 
 # Backend Related
 /Backend/bin
 /Backend/obj
+/Backend/.DS_Store
 
 
 
