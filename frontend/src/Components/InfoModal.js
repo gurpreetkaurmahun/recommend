@@ -11,22 +11,22 @@ const SlideUpDiv = ({ onClose,content }) => {
   }, []);
 
   return (
-    <div className="slide-up-div active" style={{ width: "18%", marginLeft: "80%", borderRadius: "20px" }}>
+    <div className="slide-up-div active modalDiv" >
       <div>
         <p>Products</p>
         <button 
-          className="animatedButton" 
+          className="animatedButton infoButton" 
           onClick={onClose} 
-          style={{ width: 40, position: "absolute", top: "-7%", right: "-48%", borderRadius: "50%" }}
+  
         >
-          <h3 style={{ fontSize: "30px", position: "relative", bottom: "20px", right: "15px" }}>
+          <h3 className='buttonIcon' >
             <IoCloseCircleOutline />
           </h3>
         </button>
         <hr />
       </div>
       
-      <h4 style={{ marginTop: 50 }}>Become a member to {content}</h4>
+      <h4 >Become a member to {content}</h4>
       <p style={{ marginBottom: "10px" }}>
         Recommend.. app membership is great if you are someone who enjoys shopping smart!
       </p>
@@ -34,16 +34,7 @@ const SlideUpDiv = ({ onClose,content }) => {
       {!isUser ? (
         <button className="animatedButton" style={{ width: "90%", height: 30, padding: 20, margin: 0 }}>
           <Link 
-            style={{ 
-              fontSize: "12px", 
-              letterSpacing: 1, 
-              display: "flex", 
-              justifyContent: 'center', 
-              textAlign: "center", 
-              textDecoration: "none" 
-            }} 
-            to="/login"
-          >
+          className='linkButton' to="/login">
             Become a member or SignIn
           </Link>
         </button>

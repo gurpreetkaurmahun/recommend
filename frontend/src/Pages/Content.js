@@ -101,14 +101,18 @@ function Content(){
         <div>
 
 
-<div style={{ position: "relative",marginTop:100}}>
+<div className="mainContent" >
 
-       {!slideUpDiv&&<button onClick={()=>setSlideUpDiv(true)}  style={{width:"18%",zIndex:1,position:"fixed",backgroundColor:"#f65dd0",left:"80%",top:"95%",borderRadius:"10px"}}>Products</button>}
+       {!slideUpDiv&&<button onClick={()=>setSlideUpDiv(true)} 
+       className="modalTitleDiv"
+
+        
+        >Products</button>}
         {slideUpDiv && <SlideUpDiv  onClose={()=>setSlideUpDiv(false)}/>}
-        <h2 style={{marginRight:"68%",margin:"5%% 68% 2% 0%"}}>Shop in  Candies</h2>
-        <div style={{ position: "absolute", top: 250, left: 300, zIndex: 10}}>
-          <h2 style={{ fontWeight: 400, fontSize: "60px", color: "white" }}>
-            Taste the sweet difference <span style={{ fontWeight: 600, fontSize: "60px" }}>🍬</span>
+        <h2 className="contentH1" >Shop in  Candies</h2>
+        <div className="contentTitle top" >
+          <h2 className="contentText">
+            Taste the sweet difference <span >🍬</span>
           </h2>
           <Link
             onClick={handleClick}
@@ -123,16 +127,16 @@ function Content(){
             Search
           </Link>
         </div>
-        <video src={Candies} autoPlay loop muted style={{ width: "80%", height: "700px", objectFit: "cover", zIndex: 1 }} />
+        <video className="contentVideo" src={Candies} autoPlay loop muted  />
         <div style={{ marginTop: 80 }}>{renderProductsByCategory("Candies")}</div>
       </div>
 
 
-      <h2 style={{margin:"5% 68% 2% 0%"}}>Shop in  Fruits</h2>
-      <div style={{position:"relative"}}>
-      <div style={{ position: "absolute", top: 250, left: 300, zIndex: 10 }}>
-          <h2 style={{ fontWeight: 400, fontSize: "60px", color: "white" }}>
-            Wellness of Fruits <span style={{ fontWeight: 600, fontSize: "60px" }}>🍬</span>
+      <h2 className="contentH1 contentH "  >Shop in  Fruits</h2>
+      <div className="mainContent">
+      <div className="contentTitle">
+          <h2 className="contentText">
+            Wellness of Fruits <span >🍬</span>
           </h2>
           <Link
             onClick={handleClick}
@@ -147,15 +151,15 @@ function Content(){
             Search
           </Link>
         </div>
-        <video src={Fruits} autoPlay loop muted style={{ width: "80%", height: "700px", objectFit: "cover" }} />
+        <video className="contentVideo" src={Fruits} autoPlay loop muted  />
         <div style={{ marginTop: 80 }}>{renderProductsByCategory("Fruits")}</div>
       </div>
 
-      <h2 style={{marginRight:"68%",margin:"5% 68% 2% 0%"}}>Shop in  Coffee</h2>
-      <div style={{ position: "relative" }}>
-        <div style={{ position: "absolute", top: 250, left: 300, zIndex: 10 }}>
-          <h2 style={{ fontWeight: 400, fontSize: "60px", color: "white" }}>
-            Brew Your Perfect Cup <span style={{ fontWeight: 600, fontSize: "60px" }}>☕</span>
+      <h2 className="contentH1 contentH " >Shop in  Coffee</h2>
+      <div className="mainContent" >
+        <div className="contentTitle">
+          <h2 className="contentText">
+            Brew Your Perfect Cup <span >☕</span>
           </h2>
           <Link
             to="/Search"
@@ -170,7 +174,7 @@ function Content(){
             Search
           </Link>
         </div>
-        <video src={Coffee} autoPlay loop muted style={{ width: "80%", height: "700px", objectFit: "cover", zIndex: 1 }} />
+        <video className="contentVideo" src={Coffee} autoPlay loop muted  />
         <div style={{ marginTop: 80 }}>{renderProductsByCategory(" Coffee")}</div>
       </div>
       

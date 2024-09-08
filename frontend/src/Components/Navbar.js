@@ -29,6 +29,7 @@ function Navbar() {
     // This effect will run on mount and whenever isAuthenticated changes
     if (isAuthenticated) {
       getUser();
+      console.log("Local Storage",localStorage);
     } else {
       setName("");
     }
@@ -73,33 +74,15 @@ function Navbar() {
   }
   return (
     <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        minHeight: "150px",
-        backgroundColor: "white",
-      }}
-      id="top"
-    >
-      <div className="navigation" style={{ width: "100%", position: "relative",backgroundColor:"white" }}>
-        <ul
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            width: "100%",
-            padding: "0 20px",
-            listStyleType: "none",
-          }}
-        >
+
+    className="navbarOuter" id="top">
+      <div className="navigation" >
+        <ul>
           <div style={{ display: "flex" }}>
             <li
               ref={(el) => (listItemRefs.current[0] = el)}
               className={`list ${activeIndex === 0 ? "active" : ""}`}
-              onClick={() => handleItemClick(0)}
-              style={{ cursor: "pointer", marginRight: "20px" }}
-            >
+              onClick={() => handleItemClick(0)}>
               <a to="/" style={{ textDecoration: "none", color: "inherit" }}>
                 <span className="icon"><SlHome /></span>
                 <span onClick={() => handleNavigation("/")}  className="text">Home</span>
@@ -108,9 +91,7 @@ function Navbar() {
             <li
               ref={(el) => (listItemRefs.current[1] = el)}
               className={`list ${activeIndex === 1 ? "active" : ""}`}
-              onClick={() => handleItemClick(1)}
-              style={{ cursor: "pointer", marginRight: "20px" }}
-            >
+              onClick={() => handleItemClick(1)}>
               <a href="#" style={{ textDecoration: "none", color: "inherit" }}>
                 <span className="icon"><FaAnglesRight /></span>
                 <span className="text">About</span>
@@ -119,7 +100,7 @@ function Navbar() {
           </div>
           <div style={{ display: "flex" }}><Link to="/" style={{color:"white",textDecoration:"none"}}> 
          <h1 style={{marginTop:"10%"}}>Recommend</h1>
-          {/* <span className="brand"> </span> */}
+         
           
           </Link></div>
           <div style={{ display: "flex" }}>
@@ -128,8 +109,7 @@ function Navbar() {
               ref={(el) => (listItemRefs.current[2] = el)}
               className={`list ${activeIndex === 2 ? "active" : ""}`}
               onClick={() => handleItemClick(2)}
-              style={{ cursor: "pointer", marginRight: "20px" }}
-            >
+             >
               <a to="/search" style={{ textDecoration: "none", color: "inherit" }}>
                 <span className="icon"><IoSearch  /></span>
                 <span onClick={() => handleNavigation("/search")}  className="text">Search</span>
@@ -139,9 +119,7 @@ function Navbar() {
             {isAuthenticated&& <li
               ref={(el) => (listItemRefs.current[3] = el)}
               className={`list ${activeIndex === 3 ? "active" : ""}`}
-              onClick={() => handleItemClick(3)}
-              style={{ cursor: "pointer", marginRight: "20px" }}
-            >
+              onClick={() => handleItemClick(3)}>
               <a href="#" style={{ textDecoration: "none", color: "inherit" }}>
                 <span className="icon"> <BsSave2 /></span>
                 <span onClick={()=>handleNavigation("/user")}  className="text">SavedProduct</span>
@@ -151,9 +129,7 @@ function Navbar() {
            {!isAuthenticated&&<li
               ref={(el) => (listItemRefs.current[4] = el)}
               className={`list ${activeIndex === 4? "active" : ""}`}
-              onClick={() => handleItemClick(4)}
-              style={{ cursor: "pointer", marginRight: "20px" }}
-            >
+              onClick={() => handleItemClick(4)} >
               <a style={{ textDecoration: "none", color: "inherit" }}>
                <span className="icon"><IoLogIn /></span>
                 
@@ -195,16 +171,9 @@ function Navbar() {
             console.log("Path clicked",paths);
             handleNavigation(paths[activeIndex]);
           }}
-          className="indicator"
-          style={{
-            position: "absolute",
-           
-            top: "-45%", // Adjust based on your design
-            transition: "left 0.5s, width 0.5s",
-            height: "60px", // Adjust height as needed
-            background: "linear-gradient(45deg, #f321bf, #ebe1e4)",
-          }}
-        ></div>
+          className="indicator">
+
+        </div>
       </div>
     </div>
   );

@@ -30,11 +30,12 @@ const Login=()=>{
     const[loginClick,setLoginClick]=useState(false);
     const [verificationId, setVerificationId] = useState(null);
     const [verificationToken, setVerificationToken] = useState(null);
-
     const[showVerificationMessage,setShowVerificationMessage]=useState(false);
-
     const [inactivityTimer, setInactivityTimer] = useState(null);
     const[newUser,setNewUser]=useState("");
+    const navigate=useNavigate();
+    const[error,setError]=useState(false);
+    const[errorMessage,setErrorMessage]=useState("");
 
 
    const fields=[
@@ -88,14 +89,6 @@ const Login=()=>{
     
 });
 
-
-
-
-
-
-    const navigate=useNavigate();
-    const[error,setError]=useState(true);
-    const[errorMessage,setErrorMessage]=useState("");
 
 
   useEffect(() => {
@@ -283,11 +276,11 @@ const Login=()=>{
     return(
         <div>
         <Navbar/>
-        <div style={{display:"flex",marginTop:"-40px"}}>
+        <div  className="loginReg">
        <div style={{flex:1}}>
  
-       {!loginClick&&<div >  
-        <h1 style={{padding:"200px 0px 50px"}}> Sign In </h1>
+       {!loginClick&&<div className="signIn" >  
+        <h1 className="SignIn" > Sign In </h1>
         <MyForm
         fields={fields}
         initialValues={initialValues}
@@ -299,9 +292,9 @@ const Login=()=>{
         
         </div>}
 
-        {loginClick&&  <div style={{flex:1,backgroundColor:"#fc6bd8",minHeight:"1000px"}}>
+        {loginClick&&  <div className="welcomeDiv" >
 
-        <h1 style={{padding:"200px 0px 50px"}}>Welcome Back!</h1>
+        <h1 className="SignIn">Welcome Back!</h1>
         <p style={{padding:"30px 0px 30px"}}> To keep connected with <span className="brand"> </span> please login </p>
         <button onClick={handleLoginClick} className="buttonT"> SignIn</button>
         </div>
@@ -316,16 +309,14 @@ const Login=()=>{
        <div style={{flex:1}}>
       
 
-       {showVerificationMessage && <Message value="An Email Verification link has been sent, Please click the link and log in to continue." onClose={()=>{setShowVerificationMessage(false)}}/>
- 
-}
+  {showVerificationMessage && <Message value="An Email Verification link has been sent, Please click the link and log in to continue." onClose={()=>{setShowVerificationMessage(false)}}/>}
     {error && <Message value={errorMessage} onClose={()=>{setError(false)}} />}
-       {!registerClick&& <div style={{backgroundColor:"#fc6bd8",minHeight:"1000px",}}>
+       {!registerClick&& <div className="regDiv" >
     
-            <h1 style={{padding:"200px 0px 50px"}}>Is this your first visit?</h1>
+            <h1 className="SignIn">Is this your first visit?</h1>
             <button onClick={handleRegistration} className="buttonT"> Create Account</button>
             <p style={{padding:"30px 0px 30px"}}> You'll gain</p>
-            <ul style={{width:"500px",position:"relative",left:"380px"}}>
+            <ul className="benefits" >
                 <li style={{listStyle:"none",textAlign:"left",marginLeft:"-22px"}}><div style={{display:"inline-block",fontSize:"30px",marginRight:"10px"}}> <HiOutlineSaveAs /></div> Save Products</li>
                 <li style={{listStyle:"none",textAlign:"left",marginLeft:"-20px"}}><div style={{display:"inline-block",fontSize:"30px",marginRight:"10px"}}> <ImNewspaper /></div> Newsletter Signup</li>
             </ul></div>}

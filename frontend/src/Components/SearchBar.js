@@ -206,8 +206,8 @@ return(
           <Navbar />
           {error&& <Message value="Please enter a product to search" onClose={()=>setError(false)}/>}
           <div style={{position:"relative"}}>
-            {/* <MiddleElement/> */}
-           <div className="conatiner" style={{height:700,width:"100%",marginBottom:100}}>
+           
+           <div className="searchContainer" >
 
             <img src={ Supermarket} style={{height:700,width:"100%"}}></img>
            </div>
@@ -215,7 +215,7 @@ return(
             <ImageSlider/>
 
 
-         <div style={{position:"absolute",top:"20%",height:"15%",left:"30%",background:"white",borderRadius:"10px",filter: "drop-shadow(5px 5px 6px hwb(314 78% 1%)"}}>
+         <div className="searchForm" >
 
          <MyForm
                         fields={showAdvancedSearch ? advancedFields : basicFields}
@@ -241,7 +241,7 @@ return(
 </div>
           </div>
          
-          <div  style={{height:700, marginBottom:100, display:"flex"}}>
+          <div className="reviewContent"  >
         <div style={{backgroundColor:"#e9a8d9", width:"50%"}}>
             <TypeWriters
                 topString="Reviews...."
@@ -250,16 +250,7 @@ return(
                 buttonText="View All"
             />
         </div>
-        <div className="reviewdiv" style={{ 
-            width: "50%", 
-            height: "500px", 
-            padding: "20px",
-            boxShadow: "5px 5px 15px rgba(0, 0, 0, 0.3)",
-            backgroundColor: "white",
-            borderRadius: "10px",
-            marginLeft:"50px",
-            marginTop:"100px"
-        }}>
+        <div className="reviewdiv" >
             <div style={{width:"100%", height: "100%", overflow: "auto",marginLeft:"50px"}}>
             <HomeReview/>
             </div>

@@ -43,7 +43,7 @@ console.log("local storage,",localStorage)
 
             <div style={{display:"flex"}}>
             <p>{renderStars(star)}</p>
-            <p style={{position:"absolute",left:"85%"}}> posted {days} days ago</p>
+            <p className="reviewLinkPara" > posted {days} days ago</p>
            
 
             </div>

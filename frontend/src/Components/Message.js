@@ -3,18 +3,7 @@ import { IoCloseCircleOutline } from "react-icons/io5";
 
 function Message({value,onClose}){
     return(
-        <div  style={{
-            position: "fixed",
-            bottom:"40%",
-            left: "40%",
-            width:"500px",
-            border:"1px solid black",
-            backgroundColor: "#f9f9f9",
-            padding: "20px",
-            boxShadow: "0 -2px 10px rgba(0, 0, 0, 0.1)",
-            transition: "bottom 0.5s ease-in-out",
-            zIndex: 1000
-          }}>
+        <div className="message" >
               <div style={{height:20}}>
       
               <button 

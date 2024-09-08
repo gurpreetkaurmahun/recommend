@@ -15,21 +15,23 @@ function Home() {
   return (
     <div>
       <Navbar />
-      <div style={{position:"relative"}}>
-            {/* <MiddleElement/> */}
-           <div className="conatiner" style={{height:700,width:"100%",marginBottom:100,display:"flex"}}>
+      <div className="homeFirstElement"style={{position:"relative"}}>
+       
+           <div className="firstElement" >
 
-            <img src="https://img.freepik.com/premium-photo/full-paper-bag-healthy-food-white-background-basket-full-fresh-vegetables-fruits-concept-proper-nutrition-cheese-cereals-food-delivery-your-home-different-foods_167368-172.jpg" style={{height:700,width:"50%"}}></img>
-            <div style={{backgroundColor:"#e9a8d9",width:"50%"}}>
+            <img src="https://img.freepik.com/premium-photo/full-paper-bag-healthy-food-white-background-basket-full-fresh-vegetables-fruits-concept-proper-nutrition-cheese-cereals-food-delivery-your-home-different-foods_167368-172.jpg"></img>
+            <div className="secondElement">
                <TypeWriters
               topString="Recommend...."
               link="/search"
               bottomString="Compare, Choose, and Save!"
               buttonText="Lets Get started"
             /></div>
-           </div></div>
+           </div>
+           
+           </div>
       <Content/>
-      <div  style={{height:700, marginBottom:100, display:"flex"}}>
+      <div className="reviewContent"  >
         <div style={{backgroundColor:"#e9a8d9", width:"50%"}}>
             <TypeWriters
                 topString="Reviews...."
@@ -38,16 +40,7 @@ function Home() {
                 buttonText="View All"
             />
         </div>
-        <div className="reviewdiv" style={{ 
-            width: "50%", 
-            height: "500px", 
-            padding: "20px",
-            boxShadow: "5px 5px 15px rgba(0, 0, 0, 0.3)",
-            backgroundColor: "white",
-            borderRadius: "10px",
-            marginLeft:"50px",
-            marginTop:"100px"
-        }}>
+        <div className="reviewdiv" >
             <div style={{width:"100%", height: "100%", overflow: "auto",marginLeft:"50px"}}>
             <HomeReview/>
             </div>

@@ -154,13 +154,14 @@ function AllProducts(){
       return (
         <div >
           <Navbar />
-          {!slideUpDiv&&<button onClick={()=>setSlideUpDiv(true)}  style={{width:"18%",zIndex:1,position:"fixed",backgroundColor:"#f65dd0",left:"80%",top:"95%",borderRadius:"10px"}}>Products</button>}
+          {!slideUpDiv&&<button onClick={()=>setSlideUpDiv(true)} className="modalTitleDiv">Products</button>}
+          {slideUpDiv && <SlideUpDiv  onClose={()=>setSlideUpDiv(false)}/>}
           {visible&&<SlideUpDiv  onClose={handleDivCLose} content="save products" />}
           <h2 style={{ textAlign: "left",marginLeft:"8%",marginBottom:"2%" }}>Showing results for "{searchProduct}"</h2>
           <div style={{ width: "100%" }}>
                 {/* Display one product from each supermarket */}
 
-                <div style={{ marginLeft: 150,display:"flex",justifyContent:"left",width:"80%",height:"500px", backgroundColor: '#f0f0f0'}}>
+                <div className="oneProduct" >
 
                 {firstProducts.map(product => (
                     <Product
@@ -178,15 +179,12 @@ function AllProducts(){
                     />
                 ))}
 
-<button className="buttonT" style={{width:"230px",position:"absolute",top:"80%",left:"70%"}} onClick={()=>navigate("/view")}> Nearby Locations</button>
+      <div>
+      <button className="buttonT allProductButton"  onClick={()=>navigate("/view")}> Nearby Locations</button>
+      </div>
                 </div>
                
-     <div style={{
-        marginLeft: 150,
-        width: "70%",
-        marginTop: 100,
-      
-      }}>
+     <div className="allProductTab">
         {/* Tab headers */}
         <div style={{ display: 'flex', borderBottom: '1px solid #ccc' }}>
           <button 
@@ -194,6 +192,7 @@ function AllProducts(){
             style={{
             width:"300px",
               padding: '10px 20px',
+         
               backgroundColor: activeTab === 'moreProducts' ? '#f0f0f0' : 'white',
               border: 'none',
               borderBottom: activeTab === 'moreProducts' ? '2px solid #000' : 'none',
@@ -229,9 +228,10 @@ function AllProducts(){
                     pricePerUnit={product.pricePerUnit}
                     image={product.imageUrl}
                     link={product.url}
-                    category={product.category.categoryName}
+                    // category={product.category.categoryName}
                     imageLogo={product.imageLogo}
                     isSaved={product.isSaved}
+                    onSave={() => handleProductSave(product)}
                   />
                 </div>
               ))}

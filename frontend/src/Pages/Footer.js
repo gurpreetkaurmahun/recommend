@@ -32,8 +32,8 @@ function Footer(){
 
       <hr style={{marginTop:100}}></hr>
       <div  style={{position:"relative"}}>
-        <p style={{display:"inline-block",position:"absolute",left:100,top:50}}>Copyright 2024 Recommend</p>
-        <button    className="animatedButton" style={{width:300,display:"inline-block",backgroundColor:"transparent",marginLeft:"42%"}}> <a href="#top" style={{position:"relative",bottom:"10px",textDecoration:"none",color:"white"}}>To the top</a></button>
+        <p className="footerPara" >Copyright 2024 Recommend</p>
+        <button    className="animatedButton footerButton" > <a href="#top" style={{position:"relative",bottom:"10px",textDecoration:"none",color:"white"}}>To the top</a></button>
       </div>
     </div>
   </footer>

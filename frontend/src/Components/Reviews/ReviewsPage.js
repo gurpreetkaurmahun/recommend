@@ -108,24 +108,17 @@ function ReviewsPage(){
             <Navbar />
             {!slideUpDiv && (
                 <button
+                    className="productDiv"
                     onClick={() => setSlideUpDiv(true)}
-                    style={{
-                        width: "18%",
-                        zIndex: 1,
-                        position: "fixed",
-                        backgroundColor: "#f65dd0",
-                        left: "80%",
-                        top: "95%",
-                        borderRadius: "10px"
-                    }}
+                  
                 >
                     Products
                 </button>
             )}
             {slideUpDiv && <SlideUpDiv onClose={() => setSlideUpDiv(false)} content=" write reviews" />}
-            <div style={{ width: "80%", marginBottom: "5%", display: "flex",  marginLeft: "20%" }}>
+            <div className="reviewPage" >
                 <h1>Reviews</h1>
-                <button onClick={handleWriteReviewClick} className="buttonT" style={{ position: "relative", marginLeft: "65%" }}>Write Review</button>
+                <button onClick={handleWriteReviewClick} className="buttonT reviewButton" >Write Review</button>
             </div>
             
 

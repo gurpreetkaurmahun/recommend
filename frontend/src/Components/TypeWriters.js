@@ -7,7 +7,7 @@ import { LiaSearchSolid } from "react-icons/lia";
 function TypeWriters({topString,bottomString,link,buttonText}){
     return(
         <div className="Typewriter"   >
-                <h1 style={{textAlign:"center",display:"flex",alignItems:"center",color:"white",fontSize:"110px",marginLeft:100,marginTop:"20%"}}>
+                <h1 className="h1Top">
 
                     <TypeWriter
                     options={{
@@ -19,8 +19,8 @@ function TypeWriters({topString,bottomString,link,buttonText}){
                     }}
                     />
                 </h1>
-                <h1 style={{color:"white"}}>{bottomString}</h1>
-                <button style={{width:200,background:"transparent"}}> <Link to={link} style={{textDecoration:"none",color:"white"}}> {buttonText} <span style={{color:"white",fontSize:"20px",fontWeight:"bold"}}><LiaSearchSolid />
+                <h1 className="h1bottom"style={{color:"white"}}>{bottomString}</h1>
+                <button className="typeButton"> <Link to={link} style={{textDecoration:"none",color:"white"}}> {buttonText} <span ><LiaSearchSolid />
 </span></Link></button>
                 
 

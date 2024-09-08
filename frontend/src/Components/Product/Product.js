@@ -1,7 +1,7 @@
 import React from "react";
 import { MdFavoriteBorder, MdDelete } from "react-icons/md";
 //Addlocation Icon
-function Product({title,price,image,link,pricePerUnit,supermarket,imageLogo,category,onSave,onDelete,isSaved}){
+function Product({title,price,image,link,pricePerUnit,supermarket,onSave,onDelete,isSaved}){
 
     // console.log('Product Component Props:', { title, price, image, link, pricePerUnit, supermarket, imageLogo });
 
@@ -87,23 +87,7 @@ function Product({title,price,image,link,pricePerUnit,supermarket,imageLogo,cate
           </button>
         )}
       </div>
-  {/* <div class="card-body">
-    <button  onClick={onSave}class="btn btn-light" style={{width:80,display:"inline-block",marginRight:20,     height: 50,  // Adjust height as needed
-                width: 50,   // Adjust width as needed
-                position: "absolute", 
-                top: 0, 
-                right: "-20px", 
-                borderRadius:"50%",
-                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.8)"
-                }}>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-heart-half" viewBox="0 0 16 16">
-  <path d="M8 2.748v11.047c3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
-</svg>
-                </button>
 
-    {/* <button onClick={onDelete}class="btn btn-light" style={{width:80, display:"inline-block",marginRight:20}}>Delete</button> */}
-   
-  {/* </div> */} 
 </div>
 </div>
 </div>

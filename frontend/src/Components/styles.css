@@ -258,10 +258,19 @@ button{
   justify-content: center;
   align-items: center;
   border-radius: 10px;
+  width: 100%;
+  position: relative;
+  background-color:white;
 }
 .navigation ul {
   display: flex;
   width: 350px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0 20px;
+  list-style-type: none;
 }
 .navigation ul li {
   position: relative;
@@ -269,6 +278,8 @@ button{
   height: 70px;
   list-style: none;
   z-index: 1;
+  cursor: pointer;
+  margin-right: 20px;
 }
 .navigation ul li a {
   position: relative;
@@ -333,6 +344,11 @@ button{
   justify-content: center;
   align-items: center;
   transition: .5s;
+  position: absolute;
+  top: -45%;
+  transition: left 0.5s, width 0.5s;
+  height: 60px;
+  background: linear-gradient(45deg, #f321bf, #ebe1e4);
 }
 .indicator::before {
   content: '';
@@ -449,6 +465,12 @@ animation-iteration-count: infinite;
   height: 10px;
   background: linear-gradient(90deg,transparent,#03e9f4);
   animation: animate1 1s linear infinite;
+}
+.modalDiv{
+  width: 18%;
+  margin-left: 80%;
+  border-radius: 20px;
+  border:"3px solid red"
 }
 @keyframes animate1{
   0%{
@@ -587,4 +609,604 @@ animation-iteration-count: infinite;
 }
 
 
+/* //Navbar */
+
+.navbarOuter{
+  display: flex;
+  justify-content: "center";
+  align-items: center;
+  min-height: 150px;
+  background-color: white
+}
+
+/* Home */
+.firstElement{
+  height:700px;
+  width:100%;
+  margin-bottom:100px;
+  display:flex
+}
+.firstElement > img{
+  height:100%;
+  width:50%;
+}
+.secondElement{
+  background-color:#e9a8d9;
+  width:50%
+}
+.Typewriter > h1{
+  text-align:center;
+  display:flex;
+  align-items:center;
+  color:white;
+  font-size:100px;
+  margin-left:100px;
+  margin-top:20%;
+}
+.Typewriter > .h1bottom{
+  margin-top: 1%;
+font-size: 40px;
+
+}
+
+.typeButton{width:200px;
+background:transparent}
+
+.typeButton > span{
+  color:white;
+  font-size:20px;
+  font-weight:bold;
+}
+.mainContent{
+  position: relative;
+  margin-top:100px;
+
+  
+}
+h2.contentH1 {
+  margin: 0;  /* Reset all margins */
+ 
+  margin-right: 62%;
+  margin-bottom: -20px;
+}
+h2.contentH {
+  margin: 0;  /* Reset all margins */
+ 
+  margin-right: 62%;
+  margin-bottom: -120px;
+}
+.contentTitle{
+  position: absolute;
+  top: 250px;
+  left: 300px;
+  z-index: 10;
+
+}
+.contentText{
+  font-weight: 400;
+  font-size: 60px;
+  color: white;
+}
+.contentText>span{
+  font-weight: 600;
+  font-size: 60px;
+}
+.contentVideo{
+  width: 80%;
+  height: 700px;
+   object-fit: "cover";
+    z-index: 1
+}
+.reviewContent{
+  height:700px;
+  margin-bottom:100;
+  display:flex;
+}
+.reviewdiv{
+  width: 50%;
+  height: 500px;
+  padding: 20px;
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
+  background-color: white;
+  border-radius: 10px;
+  margin-left:50px;
+  margin-top:100px;
+}
+
+
+
+/* //footer */
+.footerButton{
+  width:300px;
+  display:inline-block;
+  background-color:transparent;
+  margin-left:42%;
+}
+.footerPara{
+  display:inline-block;
+  position:absolute;
+  left:100px;
+  top:50px;
+}
+.searchContainer{
+  height:700px;
+
+  width:100%;
+  margin-bottom:100px;
+}
+.searchForm{
+
+  position:absolute;
+  top:20%;
+  height:15%;
+  left:30%;
+  background:white;
+  border-radius:10px;
+  filter: drop-shadow 5px 5px 6px hwb(314 78% 1%)
+}
+.loginReg{
+  display:flex;
+  margin-top:-40px;
+
+}
+
+/* Login Registration */
+
+.welcomeDiv{
+  flex:1;
+  background-color:#fc6bd8;
+  min-height:1000px;
+}
+.SignIn{
+  padding:200px 0px 50px;
+}
+.benefits{
+  width:500px;
+  position:relative;
+  left:45%;
+
+}
+.regDiv{  background-color:#fc6bd8;min-height: 1000px;}
+.message{
+  position: fixed;
+  bottom:40%;
+  left: 40%;
+  width:500px;
+  border:1px solid black;
+  background-color: #f9f9f9;
+  padding: 20px;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  transition: bottom 0.5s ease-in-out;
+  z-index: 1000
+}
+.reviewButton{
+  position: relative;
+   margin-left: 65%;
+}
+
+/* Review */
+.reviewPage{
+  width: 80%;
+  margin-bottom: 5%;
+  display: flex;
+   margin-left: 20%;
+}
+
+/* Modal */
+.modalTitleDiv{
+  width:18%;
+  z-index:1;
+  position:fixed;
+  background-color:#f65dd0;
+  left:80%;
+  top:95%;
+  border-radius:10px;
+}
+.modalDiv{
+  width: 18%;
+  margin-left: 80%;
+  border-radius: 20px;
+  
+
+}
+.modalDiv>h4{
+
+  margin-top: 50px;
+}
+.linkButton{
+  font-size: 12px;
+  letter-spacing: 1;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  text-decoration: none;
+}
+.buttonIcon{
+  font-size: 30px; position: relative; bottom: 20px; right: 15px; 
+}
+.infoButton{width: 40px;position: absolute;top: -7%; right:-48%;border-radius: 50%}
+.productDiv{
+  width: 18%;
+  z-index: 1;
+  position:fixed;
+  background-color: #f65dd0;
+  left:80%;
+  top: 95%;
+  border-radius: 10px;
+}
+
+.reviewLinkPara{
+  position:absolute;
+  left:85%;
+}
+.oneProduct{
+  margin-left: 150px;
+  display:flex;
+  justify-content:left;
+  width:80%;
+  height:500px;
+  background-color: #f0f0f0;
+  position: relative;
+}
+.allProductButton{
+  width:230px;
+  position:absolute;
+  top:80%;
+  left:70%;
+}
+.allProductTab{
+  margin-left: 150px;
+  width: 70%;
+  margin-top: 100px;
+}
+.productLinkTitle{
+  color:black;
+  text-decoration:none;
+  font-size:25px;
+}
+.productLinkDiv{
+  margin-left:100px;
+  font-weight: bold;
+  margin-top:20px;
+  width:600px;
+  display:flex
+}
+.priceProductLink{
+  position:absolute;
+  left:90%;
+  font-size:20px;
+}
+.userDiv{
+  width:20%;
+  height:auto;
+  border-right:2px solid black;
+  margin-right:30px;
+  border:2px solid blue;
+}
+.userImg{
+  width:150px;
+  height:150px;
+  border-radius:50%;
+  border:1px solid blue;
+  margin-top:5%;
+}
+.userPara{
+  margin-bottom:-10px;
+}
+.userPara svg {
+
+  font-size: 30px;
+  font-weight: bold;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+
+.userPara span {
+  font-size: 25px;
+}
+
+
+/* Styles for mobile screen */
+@media only screen and (max-width: 600px) {
+  .firstElement{
+    height:300px;
+    width:100%;
+    margin-bottom:100px;
+    display:flex
+  }
+  .firstElement > img{
+    height:100%;
+    width:50%;
+  }
+  .secondElement{
+    width:50%
+  }
+  .secondElement{
+    background-color:#e9a8d9;
+    width:50%
+  }
+  .Typewriter>h1{
+    font-size:35px;
+    margin-left:20px;
+    margin-top:30%;
+  }
+  .Typewriter > .h1bottom{
+    margin-top: 1%;
+  font-size: 20px;
+  
+  }
+  .Typewriter > .typeButton{
+
+    width:150px;
+  }
+  .Typewriter > .typeButton > span{
+  
+    font-size:50px;
+    font-weight: 100;
+    
+  }
+ 
+  .contentTitle {
+    position: absolute;
+    top: 100px;
+    left: 10px;
+    z-index: 10;
+  
+  }
+ .top{
+    position: absolute;
+    top: 150px;
+    left: 10px;
+    z-index: 10;
+
+  }
+  .contentText {
+    font-size: 26px;
+    color: white;
+    margin-left: 40px;
+   
+  }
+  .contentText > span {
+    font-weight: 300;
+    font-size: 24px;
+  
+  }
+  .contentVideo {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    z-index: 1;
+  }
+  .animatedButton{
+    position: relative;
+    display: inline-block;
+    padding: 10px 15px;
+    margin: 20px 10px;
+    margin-left: 100px;
+    /* color:rgb(243, 227, 230); */
+    color: #03e9f4;
+    font-weight: 100;
+    font-size: 15px;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: 0.5s;
+    letter-spacing: 4px;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-right: 50%;
+
+  }
+  h2.contentH1 {
+    margin: 0;  /* Reset all margins */
+
+    margin-right: 62%;
+    margin-bottom: 20px;
+  }
+  h2.contentH {
+    margin: 0;  /* Reset all margins */
+  
+    margin-right: 62%;
+    margin-bottom: -70px;
+  }
+  .reviewContent{
+    height:400px;
+    margin-bottom:100px;
+    display:flex;
+  }
+  .reviewdiv{
+   
+    height: 400px;
+    
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
+    background-color: white;
+    border-radius: 10px;
+    margin-left:20px;
+    margin-top:0px;
+  }
+  .footerButton{
+    width:200px;
+    display:inline-block;
+    background-color:transparent;
+    margin-left:32%;
+    margin-bottom: 50px;
+  }
+  .footerPara{
+    display:block;
+    position:absolute;
+    left:50px;
+    top:80px;
+  }
+  .searchForm{
+
+    position:absolute;
+    top:10%;
+    height:auto;
+    left:10%;
+    background:white;
+    border-radius:10px;
+    filter: drop-shadow 5px 5px 6px hwb(314 78% 1%)
+  }
+  .loginReg{
+    display:block;
+    margin-top:-40px;
+ 
+  }
+  .welcomeDiv{
+ 
+    min-height:600px;
+  }
+  .SignIn{
+    padding:100px 0px 25px;
+  }
+  .signIn{
+    min-height: 600px;
+  }
+  .regDiv{
+    min-height:500px;
+    background-color:#fc6bd8;
+
+  }
+  .benefits{
+
+    left:35%;
+
+  }
+  .message{
+    position: fixed;
+    bottom:40%;
+    left: 20%;
+    width:300px;
+    min-height: 150px;
+    border:1px solid black;
+    background-color: #f9f9f9;
+    padding: 10px;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    transition: bottom 0.5s ease-in-out;
+    z-index: 1000
+  }
+  .reviewButton{
+    position: relative;
+     margin-left: 35%;
+  }
+  .modalDiv{
+    width: 40%;
+    margin-left: 55%;
+    border-radius: 20px;
+  
+  }
+  .modalDiv>h4{
+    font-size: 50%;
+    margin-top: 25px;
+  }
+  .modalDiv>p{
+    font-size: 50%;
+    margin-top: 25px;
+   
+  }
+  .linkButton{
+    font-size: 4px;
+
+    text-decoration: none;
+  }
+  .buttonIcon{
+    font-size: 30px; position: relative; bottom: 10px; right: 10px; 
+  }
+  .infoButton{width: 40px;position: absolute;top: -3%; right: -48%;border-radius: 50%}
+  .paraTitle{   width: 300px;}
+  .productDiv{
+    width: 40%;
+    z-index: 1;
+    position:fixed;
+    background-color: #f65dd0;
+    left:55%;
+    top: 95%;
+    border-radius: 10px;
+  }
+  .reviewLinkPara{
+    position:absolute;
+    left:55%;
+    text-align: justify;
+  }
+  .oneProduct{
+    margin-left: 50px;
+    display:block;
+    justify-content:left;
+    width:80%;
+    height:auto;
+    background-color: #f0f0f0;
+
+  }
+ 
+.allProductButton {
+  width: 80%;
+  max-width: 230px;
+  margin-top: 20px;
+  position:relative;
+  top:90%;
+  left:0;
+}
+  .allProductTab{
+    margin-left: 75px;
+    width: 70%;
+    margin-top: 100px;
+  }
+  .productLinkTitle{
+   
+    text-decoration:none;
+    font-size:13px;
+    font-weight: 600;
+    margin-left: 15px;
+  }
+  .productLinkDiv{
+ 
+   margin-left: 15px;
+    margin-top:20px;
+
+    width:50%;
+    height:auto;
+    display:flex
+  }
+  .priceProductLink{
+    position:absolute;
+    left:85%;
+    font-size:15px;
+    font-weight: bold;
+  }
+  .userDiv{
+    width:40%;
+    height:auto;
+    border-right:2px solid black;
+    margin-right:30px;
+    border:2px solid blue;
+  }
+  .userImg{
+    width:100px;
+    height:100px;
+    border-radius:50%;
+    border:1px solid blue;
+    margin-top:5%;
+  }
+
+  .userPara svg {
+    border: 2px solid red;
+    font-size: 15px;
+    font-weight: bold;
+    margin-right: 10px;
+  }
+
+  .userPara span {
+    font-size: 20px;
+   
+  }
+  .userPara svg {
+
+    font-size: 20px;
+    font-weight: bold;
+    margin-right: 10px;
+    margin-bottom: 10px;
+  }
+  
+  
+}
 

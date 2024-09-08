@@ -163,18 +163,26 @@ function UserProducts() {
             <hr></hr>
 
             <div style={{display:"flex"}}>
-            <div style={{width:"20%",height:"auto",borderRight:"2px solid black",marginRight:"30px"}}>
-            <img src="https://thumbs.dreamstime.com/b/red-apple-isolated-clipping-path-19130134.jpg" alt="Description" style={{width:"150px", height:"150px", borderRadius:"50%",border:"1px solid blue",marginTop:"5%"}} />
+            <div className="userDiv" >
+            <img className="userImg" src="https://thumbs.dreamstime.com/b/red-apple-isolated-clipping-path-19130134.jpg" alt="Description"  />
            <h2 style={{marginTop:"5%"}}>{user}</h2>
            <hr></hr>
 
 
-            <div style={{marginTop:"10%",textAlign:"left",marginLeft:"20%"}}>
-
-            <p style={{marginTop:"10%",marginBottom:"-10px",}} onClick={handleFavoritesClick}> <span style={{fontSize:"30px",marginRight:"10px"}}><GrFavorite /></span>Favourites</p>
-            <p onClick={handleSettingsClick} style={{marginBottom:"-10px",}}> <span style={{fontSize:"30px",marginRight:"10px",marginTop:0}}> <MdOutlineSettings /></span> Settings</p>
-            <p onClick={handleLogout}> <span  style={{fontSize:"30px",marginRight:"10px",marginTop:0}}> <IoMdLogOut /></span>Logout</p>
-           </div>
+           <div style={{marginTop:"10%", textAlign:"left", marginLeft:"20%"}}>
+            <p className="userPara" onClick={handleFavoritesClick}>
+                <GrFavorite />
+                <span>Favourites</span>
+            </p>
+            <p className="userPara" onClick={handleSettingsClick}>
+                <MdOutlineSettings />
+                <span>Settings</span>
+            </p>
+            <p className="userPara" onClick={handleLogout}>
+                <IoMdLogOut />
+                <span>Logout</span>
+            </p>
+            </div>
             </div>
 
 
