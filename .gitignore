@@ -1,0 +1,33 @@
+# General
+/.vscode
+*/.DS_Store
+*/.env.local
+*/.env.development.local
+*/.env.test.local
+*/.env.production.local
+
+# Frontend Related
+/frontend/node_modules
+/frontend/.pnp
+/frontend/.pnp.js
+
+/frontend/coverage
+/frontend/build
+
+# Backend Related
+/Backend/bin
+/Backend/obj
+
+
+
+
+
+
+
+
+
+
+
+
+
+
