@@ -168,7 +168,7 @@ namespace  SoftwareProject.Service{
                 };
                 return (true,loginResult);
             }
-            _logger.LogErrorWithMethod("Invalid login attempt,Please try loggin in again or registring for the app");
+            _logger.LogErrorWithMethod("Invalid login attempt,Please try logging in again or registering for the app");
             return(false,"Invalid login attempt,Please try loggin in again or registring for the app");
 
         }
