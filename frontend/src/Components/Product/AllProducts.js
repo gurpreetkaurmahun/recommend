@@ -68,11 +68,6 @@ function AllProducts(){
 
 
       
-
-
-    
-
-
     async function handleProductSave(product) {
 
       const userId=localStorage.getItem("activeUserId");
@@ -117,11 +112,6 @@ function AllProducts(){
 
 
  
-
-
-    
-
-
     const groupedProducts = products.reduce((acc, product) => {
         if (!acc[product.supermarketName]) {
             acc[product.supermarketName] = [];
@@ -143,8 +133,6 @@ function AllProducts(){
         }
     });
 
-
-  
 
     function handleDivCLose(){
       setVisible(false);
