@@ -4,7 +4,7 @@ import Login from "./Components/Login";
 import Home from './Pages/Home';
 import AuthProvider from './Components/AuthenticateContext';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-
+import NewsletterDesigner from './Components/NewsLetter.js';
 import Navbar from './Components/Navbar.js';
 import SearchBar from './Components/SearchBar';
 import EditConsumer from './Components/EditConsumer';
@@ -33,7 +33,8 @@ function App() {
         <Route path="/Search" element={<SearchBar/>} />
         <Route path="/edit" element={<EditConsumer/>} />
         <Route path="/All" element={<AllProducts/>} />
-       
+        <Route path="/news" element={<NewsletterDesigner/>} />
+
         <Route path="/view" element={<ViewLocation/>} />
         <Route path="/user" element={<UserProducts/>} />
         <Route path="/review" element={<ReviewsPage/>} />

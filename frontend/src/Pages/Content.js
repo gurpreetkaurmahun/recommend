@@ -7,7 +7,6 @@ import { getProducts } from "../Backend-services/ProductSpecific";
 import { useAuth } from "../Components/AuthenticateContext";
 import Candies from "../assets/Candies.mp4";
 import Coffee from "../assets/Coffee.mp4";
-import Cherries from "../assets/cherries.mp4";
 import Fruits from "../assets/Fruits.mov";
 import SlideUpDiv from "../Components/InfoModal";
 import "../Components/styles.css";
@@ -105,7 +104,7 @@ function Content(){
 
        {!slideUpDiv&&<button onClick={()=>setSlideUpDiv(true)} 
        className="modalTitleDiv"
-
+        // style={{width:"18%",zIndex:1,position:"fixed",backgroundColor:"#f65dd0",left:"80%",top:"95%",borderRadius:"10px"}}
         
         >Products</button>}
         {slideUpDiv && <SlideUpDiv  onClose={()=>setSlideUpDiv(false)}/>}

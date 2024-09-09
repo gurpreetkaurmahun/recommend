@@ -1,11 +1,9 @@
 
-using System.Collections.Generic;
-using System;
-using System.ComponentModel.DataAnnotations;
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
+
 using SoftwareProject.Models;
 
 
@@ -23,7 +21,7 @@ using SoftwareProject.Models;
         public DbSet<ProductLocation> ProductLocations{get;set;}
 
         public DbSet<WebScrapper> WebScrappers{get;set;}
-
+        public DbSet<NewsLetterSubscription>  NewsLetterSubscriptions{get;set;}
         
 
         public DbSet<SavedProduct> SavedProducts{get;set;}
@@ -47,13 +45,6 @@ using SoftwareProject.Models;
         .HasOne(p => p.Category)
         .WithMany()
         .HasForeignKey(p => p.CategoryId);
-
-
-
-    modelBuilder.Entity<Product>()
-        .HasOne(p => p.Consumer)
-        .WithMany(c => c.Products)
-        .HasForeignKey(p => p.ConsumerId);
 
     modelBuilder.Entity<ProductLocation>()
         .HasKey(pl => new { pl.ProductId, pl.LocationId });
@@ -87,6 +78,11 @@ using SoftwareProject.Models;
         .HasOne(sp => sp.Product)
         .WithMany()
         .HasForeignKey(sp => sp.ProductId);
+
+         modelBuilder.Entity<NewsLetterSubscription>()
+        .HasOne(n => n.Consumer)
+        .WithMany(c => c.Newsletters)
+        .HasForeignKey(n => n.ConsumerId);
 
 
    

@@ -24,9 +24,8 @@ namespace SoftwareProject.Models {
         public  IdentityUser? IdentityUser { get; set; }
 
     
-
-        public  ICollection<Product>? Products { get; set; }
-
+        public  ICollection<NewsLetterSubscription>? Newsletters  { get; set; }
+   
         public virtual ICollection<Review>? Reviews { get; set; }
         
         public int? LocationId { get; set; }
