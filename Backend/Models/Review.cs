@@ -17,7 +17,7 @@ namespace SoftwareProject.Models {
 
         public string UserEmail { get; set; }
         [NotMapped] // This attribute ensures the property is not mapped to the database
-    public string ConsumerName { get; set; }
+        public string ConsumerName { get; set; }
         
     }
 }

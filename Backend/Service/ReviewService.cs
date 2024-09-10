@@ -40,9 +40,7 @@ public async Task<(List<Review> reviews, string message)> GetReviewsAsync()
                     stars = r.stars,
                     ConsumerId = r.ConsumerId,
                     UserEmail = r.UserEmail,
-                    ConsumerName = consumers.TryGetValue(r.Consumer.ConsumerId, out var consumer) 
-                        ? $"{consumer.FName} {consumer.LName}" 
-                        : "Unknown"
+                    ConsumerName = r.Consumer?.FName ?? ""
                 }).ToList();
 
                 _logger.LogInformation($"Successfully retrieved {reviewsWithConsumerNames.Count} reviews with consumer names.");
@@ -106,6 +104,7 @@ public async Task<(List<Review> reviews, string message)> GetReviewsAsync()
                     consumer.Reviews = new List<Review>();
                 }
                 consumer.Reviews.Add(review);
+                consumer.FName = review.ConsumerName;
 
                 // Save changes
                 await _context.SaveChangesAsync();

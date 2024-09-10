@@ -68,9 +68,9 @@ function Navbar() {
 
   
 
-  const handleNavigation=(path)=>{
-
-      navigate(path);
+  const handleNavigation = (path) => {
+    localStorage.removeItem('initialLoginRedirect');
+    navigate(path);
   }
   return (
     <div
@@ -164,7 +164,7 @@ function Navbar() {
             </li>}
           </div>
         </ul>
-        <div
+        {/* <div
           ref={indicatorRef}
           onClick={() => {
             const paths = ["/", "/about", "/login"];
@@ -173,7 +173,7 @@ function Navbar() {
           }}
           className="indicator">
 
-        </div>
+        </div> */}
       </div>
     </div>
   );

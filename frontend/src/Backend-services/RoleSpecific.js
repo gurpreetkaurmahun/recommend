@@ -5,7 +5,20 @@ import { useState } from "react";
 
 
 
+   const getUserEmail=async(id)=>{
+    try{
 
+        const response= await axios.get(`${API_BASE_URL}user/${id}` );
+
+        return response.data;
+
+    }
+    catch (error) {
+        console.error("Role check error:", error.response ? error.response.data : error.message);
+        
+    }
+}
+   
     const GetRoles=async (token)=> {
         try {
             const roleResponse = await axios.get(
@@ -18,13 +31,13 @@ import { useState } from "react";
                 }
             );
     
-            setRoles("User logged in: " + JSON.stringify(roleResponse.data));
+          
          
             return roleResponse.data;
 
         } catch (error) {
             console.error("Role check error:", error.response ? error.response.data : error.message);
-            setRoles("Error checking role");
+            
         }
     }
 
@@ -113,7 +126,7 @@ import { useState } from "react";
             const roleAssign=await axios.post(`${API_BASE_URL}roles/${id}`,
             {
                 UserId :id,
-                RoleName :newRole
+                leName :roleName
             },
             {
                 headers:{
@@ -133,14 +146,5 @@ import { useState } from "react";
     }
 
 
-export{ GetRoles,GetRolesById,createRole,deleteRole,updateRole,assignRole};
+export{ GetRoles,GetRolesById,createRole,deleteRole,updateRole,assignRole,getUserEmail};
 
-//Getusers as well:Important
-
-
-// return<div>
-//   {roles}
-// </div>
-// }
-
-// export default Roles;

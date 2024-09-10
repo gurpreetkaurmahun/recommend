@@ -5,14 +5,12 @@ import {validEmail,validPassword} from "../Helpers/Validation.js";
 import { jwtDecode } from 'jwt-decode';
 import Message from "./Message.js";
 import {getCustomerById} from "../Backend-services/CustomerSpecific.js";
+
+
 export  const AuthContext=createContext();
 
 export  const useAuth=()=>useContext(AuthContext);
     
-
-
-//check local storage and use auth
-
 export default function AuthProvider({children}){
 
   
@@ -133,51 +131,50 @@ export default function AuthProvider({children}){
         }, timeout);
     }
 
-    async function Logout(){
-
-        try{
-         
-        
-        
-            const logoutResponse=await logoutUser();
-        
-
+    async function Logout() {
+        try {
+            const logoutResponse = await logoutUser();
+    
             console.log("Logout Response: ", logoutResponse);
-            if (logoutResponse.message==="Logged out") {
+            if (logoutResponse.message === "Logged out") {
                 console.log("logging out");
-              
+                
+                // Clear all relevant items from local storage
                 localStorage.removeItem("userToken");
                 localStorage.removeItem("activeUserId");
+                localStorage.removeItem("identityId");
+                localStorage.removeItem("userLatitude");
+                localStorage.removeItem("nearbyStores");
+                localStorage.removeItem("userFullLocation");
+                localStorage.removeItem("userLongitude");
+                localStorage.removeItem("userName");
+    
+                // Update state
                 setAuthenticated(false);
                 setIdentityId("");
                 setActiveUserId("");
                 setToken("");
+    
                 console.log("Logout complete", logoutResponse);
                 return true;
-            }
-        
-            else{
+            } else {
                 console.log("Logout Not complete", logoutResponse);
                 return false;
             }
-        }
-        catch(error){
+        } catch (error) {
             console.error(error);
+            return false;
         }
-        }
+    }
 
-        function handleLogout() {
-            localStorage.removeItem("userToken");
-            localStorage.removeItem("activeUserId");
-            localStorage.removeItem("identityId");
-            setAuthenticated(false);
-            setIdentityId("");
-            setActiveUserId("");
-            setToken("");
-            setMessage("Session Timed Out"); // Add this line
+    async function handleLogout() {
+        const logoutSuccessful = await Logout();
+        if (logoutSuccessful) {
+            setMessage("Logged out successfully");
+        } else {
+            setMessage("Logout failed");
         }
-   
-
+    }
 
 
 

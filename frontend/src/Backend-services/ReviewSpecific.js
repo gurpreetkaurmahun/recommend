@@ -62,7 +62,24 @@ const addReview = async (review) => {
 };
 
 
-const updateReviews=()=>{}
+const updateReviews=async(id,reviewData)=>{
+
+    try{
+
+        const response = await axios.put(`${API_BASE_URL}Reviews/${id}`, reviewData, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        console.log("update Review response",response.data);
+        return { success: true, message: response.data };
+
+    }
+    catch(error){
+        console.log("Response error",error)
+       }
+}
 const deleteReview=async(id)=>{
 
     try{

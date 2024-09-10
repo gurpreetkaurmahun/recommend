@@ -10,7 +10,7 @@ import { ImNewspaper } from "react-icons/im";
 import{validPhone} from"../Helpers/Validation.js";
 import MyForm from "./Form.js";
 
-import {registerUser,logoutUser,emailVerification} from"../Backend-services/AccountSpecific.js";
+import {registerUser,emailVerification} from"../Backend-services/AccountSpecific.js";
 import Message from "./Message.js";
 
 
@@ -32,6 +32,7 @@ const Login=()=>{
     const [verificationToken, setVerificationToken] = useState(null);
     const[showVerificationMessage,setShowVerificationMessage]=useState(false);
     const [inactivityTimer, setInactivityTimer] = useState(null);
+    const [showPassword, setShowPassword] = useState(false);
     const[newUser,setNewUser]=useState("");
     const navigate=useNavigate();
     const[error,setError]=useState(false);
@@ -40,12 +41,12 @@ const Login=()=>{
 
    const fields=[
        { name: 'Email', type: 'text', label: 'Email' },
-       { name: 'Password', type: 'text', label: 'Password' }
+       { name: 'Password', type: 'password', label: 'Password' }
    ]
 
    const regFields=[
     { name: 'Email', type: 'text', label: 'Email' },
-    { name: 'Password', type: 'text', label: 'Password' },
+    { name: 'Password', type: 'password', label: 'Password' },
     { name: 'Firstname', type: 'text', label: 'FirstName' },
     { name: 'Lastname', type: 'text', label: 'Lastname' },
     { name: 'Address', type: 'text', label: 'Address' },
@@ -72,22 +73,6 @@ const Login=()=>{
             "FullLocation":""
 
     }
-
-    
-    const[user,setUser]=useState({
-        
-        "Email":"",
-        "Password":"",
-        "FName":"",
-        "LName":"",
-        "Address":"",
-        "ContactNo":"",
-        "Dob":"",
-        "Latitude":0.0,
-        "Longitude":0.0,
-        "FullLocation":""
-    
-});
 
 
 
@@ -117,24 +102,27 @@ const Login=()=>{
     }, [showVerificationMessage, verificationId, verificationToken]);
 
     useEffect(() => {
-       
-        console.log("Auth context in login  is",authContext);
-        console.log("LocalStorage in login componnet",localStorage);
-        if(authContext.authenticated){
-           
-            navigate("/search", { replace: true });
-        }
-       
-      
-      }, [authContext,navigate]);
+      console.log("Auth context in login is", authContext);
+      console.log("LocalStorage in login component", localStorage);
+      if (authContext.authenticated && !localStorage.getItem('initialLoginRedirect')) {
+        localStorage.setItem('initialLoginRedirect', 'true');
+        navigate("/search", { replace: true });
+      }
+    }, [authContext, navigate]);
+
       const handleSuccessfulLogin = async () => {
+        const redirectToReview = localStorage.getItem('redirectToReview');
         const storedProducts = localStorage.getItem('scrapedProducts');
         const searchProduct = localStorage.getItem('searchProduct');
         const nearbyStores = localStorage.getItem('nearbyStores');
       
         console.log("Stored Products", storedProducts);
       
-        if (storedProducts) {
+        if (redirectToReview === 'true') {
+          localStorage.removeItem('redirectToReview');
+          navigate('/review');
+        }
+        else if (storedProducts) {
           navigate('/all', { 
             state: { 
               searchResults: JSON.parse(storedProducts),
@@ -146,20 +134,21 @@ const Login=()=>{
           navigate('/search');
         }
       };
+
       async function handleSubmit(values) {
         console.log("Login Values", values);
         try {
           const success = await authContext.Login(values.Email, values.Password);
-          console.log("Full login response:", success);
+          // console.log("Full login response:", success);
       
           if (success.result && success.token) {
-            console.log("Token received:", success.token);
+            // console.log("Token received:", success.token);
             localStorage.setItem("userToken", success.token);
             const storedToken = localStorage.getItem("userToken");
-            console.log("Token stored in localStorage:", storedToken);
+            // console.log("Token stored in localStorage:", storedToken);
       
             if (storedToken === success.token) {
-              console.log("Token successfully stored");
+              // console.log("Token successfully stored");
               await handleSuccessfulLogin();
             } else {
               throw new Error("Token storage failed");
@@ -174,10 +163,10 @@ const Login=()=>{
         }
       }
 
-    ///handle registration important
+  
 
     async function handleRegSubmit(values) {
-      console.log("Registration Value", values);
+      // console.log("Registration Value", values);
       try {
           const customer = {
               "Email": values.Email,
@@ -272,6 +261,10 @@ const Login=()=>{
           setRegisterCLick(false);
           setLoginClick(false);
          }
+
+         const togglePasswordVisibility = () => {
+          setShowPassword(!showPassword);
+        };
   
     return(
         <div>

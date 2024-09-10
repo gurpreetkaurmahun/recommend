@@ -1,13 +1,11 @@
 import React from "react";
-
 import Product from "./Product.js";
 import { useLocation } from 'react-router-dom';
 import Navbar from "../Navbar.js";
 import { useState,useEffect } from "react";
-import{addSavedProduct,deleteSavedProduct} from "../../Backend-services/SavedProductSpecific.js";
+import{addSavedProduct} from "../../Backend-services/SavedProductSpecific.js";
 import { useAuth } from "../AuthenticateContext.js";
 import ProductLink from "./ProductLink.js";
-import { Link } from "react-router-dom";
 import Footer from "../../Pages/Footer.js";
 import SlideUpDiv from "../InfoModal.js";
 import {useNavigate} from 'react-router-dom';
@@ -86,9 +84,7 @@ function AllProducts(){
             DateSaved: new Date().toISOString()
           });
    
-        
-
-          setProducts(prevProducts => 
+        setProducts(prevProducts => 
             prevProducts.map(p => 
               p.tempId === product.tempId ? {...p, isSaved: true} : p
             )
@@ -110,8 +106,6 @@ function AllProducts(){
       localStorage.removeItem('productToSave');
     }
 
-
- 
     const groupedProducts = products.reduce((acc, product) => {
         if (!acc[product.supermarketName]) {
             acc[product.supermarketName] = [];
@@ -243,13 +237,13 @@ function AllProducts(){
 
             </div>
           )}
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
  
          
     
-          <Footer />
+        <Footer />
         </div>
       );
 

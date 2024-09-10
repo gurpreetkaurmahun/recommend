@@ -7,7 +7,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import NewsletterDesigner from './Components/NewsLetter.js';
 import Navbar from './Components/Navbar.js';
 import SearchBar from './Components/SearchBar';
-import EditConsumer from './Components/EditConsumer';
 import AllProducts from './Components/Product/AllProducts.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
@@ -28,13 +27,10 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/Nav" element={<Navbar />} />
-
         <Route path="/login" element={<Login/>} />
         <Route path="/Search" element={<SearchBar/>} />
-        <Route path="/edit" element={<EditConsumer/>} />
         <Route path="/All" element={<AllProducts/>} />
         <Route path="/news" element={<NewsletterDesigner/>} />
-
         <Route path="/view" element={<ViewLocation/>} />
         <Route path="/user" element={<UserProducts/>} />
         <Route path="/review" element={<ReviewsPage/>} />

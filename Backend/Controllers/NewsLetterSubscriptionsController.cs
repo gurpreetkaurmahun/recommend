@@ -83,7 +83,66 @@ namespace FinalYearProject.Controllers
 
             return CreatedAtAction("GetNewsLetterSubscription", new { id = newsLetterSubscription.Id }, newsLetterSubscription);
         }
+[HttpPost("send/{id}")]
+public async Task<IActionResult> SendNewsletter(int id)
+{
+    var newsletter = await _context.NewsLetterSubscriptions.FindAsync(id);
+    if (newsletter == null)
+    {
+        return NotFound("Newsletter not found");
+    }
 
+    var users = await _context.Users.ToListAsync();
+
+    foreach (var user in users)
+    {
+        await SendNewsletterToUser(newsletter, user.Email);
+    }
+
+    newsletter.SentAt = DateTime.UtcNow;
+    await _context.SaveChangesAsync();
+
+    return Ok("Newsletter sent successfully");
+}
+
+private async Task SendNewsletterToUser(NewsLetterSubscription newsletter, string userEmail)
+{
+    var subject = newsletter.Title;
+    var body = $"<h1>{newsletter.Title}</h1>{newsletter.Content}";
+    if (!string.IsNullOrEmpty(newsletter.Offers))
+    {
+        body += $"<h2>Special Offers</h2><p>{newsletter.Offers}</p>";
+    }
+    if (newsletter.ImageUrls != null && newsletter.ImageUrls.Any())
+    {
+        foreach (var imageUrl in newsletter.ImageUrls)
+        {
+            body += $"<img src='{imageUrl}' alt='Newsletter Image' style='max-width: 100%;' />";
+        }
+    }
+
+    _emailService.SendEmail(userEmail, subject, body);
+}
+private string BuildNewsletterBody(NewsLetterSubscription newsletter)
+{
+    var body = $"<h1>{newsletter.Title}</h1>";
+    body += $"<p>{newsletter.Content}</p>";
+    
+    if (!string.IsNullOrEmpty(newsletter.Offers))
+    {
+        body += $"<h2>Special Offers</h2><p>{newsletter.Offers}</p>";
+    }
+
+    if (newsletter.ImageUrls != null && newsletter.ImageUrls.Any())
+    {
+        foreach (var imageUrl in newsletter.ImageUrls)
+        {
+            body += $"<img src='{imageUrl}' alt='Newsletter Image' style='max-width: 100%;' />";
+        }
+    }
+
+    return body;
+}
         // DELETE: api/NewsLetterSubscriptions/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteNewsLetterSubscription(int id)

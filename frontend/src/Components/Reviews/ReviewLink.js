@@ -2,8 +2,7 @@ import React from "react";
 
 
 function ReviewLink({icon,userName,days,star,content,isOwner,onDelete,onEdit}){
-console.log("eviewlinkpropd:",icon,userName,days,star,content,isOwner,onDelete,onEdit)
-console.log("local storage,",localStorage)
+
  
 
 

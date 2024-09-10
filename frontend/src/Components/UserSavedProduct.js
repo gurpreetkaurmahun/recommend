@@ -127,15 +127,12 @@ function UserProducts() {
 
       async function handleLogout(){
         try {
-            const logout = authContext.Logout();
+            console.log("Local Storage before Logout", localStorage);
+            const logout = await authContext.Logout();
             console.log("Logout response is", logout);
         
             if (logout) {
-              console.log("Local Storage before Logout", localStorage);
-              localStorage.removeItem("userToken");
-              localStorage.removeItem("activeUserId");
-              localStorage.removeItem("userName");
-        
+       
               if (window.inactivityTimer) {
                 clearTimeout(window.inactivityTimer);
                 window.inactivityTimer = null;

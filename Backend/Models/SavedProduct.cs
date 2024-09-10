@@ -9,10 +9,7 @@ public class SavedProduct{
       public string TempId { get; set; }
       public Product? Product{get;set;}
       public Consumer? Consumer { get; set; }
-    
-
-
-}
+    }
 
 
 }

@@ -4,7 +4,7 @@ import{useState,useEffect} from "react";
 import ReviewLink from "./ReviewLink.js";
 import{getReviews,getReviewsById,addReview,updateReviews,deleteReview} from "../../Backend-services/ReviewSpecific.js";
 import Footer from "../../Pages/Footer.js";
-
+import { useNavigate, useLocation } from 'react-router-dom';
 import WriteReview from "./WriteReview.js";
 
 import SlideUpDiv from "../InfoModal.js";
@@ -18,6 +18,7 @@ function ReviewsPage(){
     const[logError,setLogError]=useState(false);
     const [slideUpDiv,setSlideUpDiv] = useState(false);
     const [editingReview, setEditingReview] = useState(null);
+    const [redirectedFromReview, setRedirectedFromReview] = useState(false);
 
     useEffect(()=>{
         fetchReviews();
@@ -26,23 +27,25 @@ function ReviewsPage(){
    
     useEffect(() => {
         const user = localStorage.getItem("activeUserId");
+        const redirectToReview = localStorage.getItem('redirectToReview');
         if (user) {
             setCurrentUserId(user);
-
-            console.log("user:",user)
-            setLogError(false); 
+            setLogError(false);
+            if (redirectToReview === 'true') {
+                setRedirectedFromReview(true);
+                localStorage.removeItem('redirectToReview');
+            }
         } else {
             setLogError(true);
         }
     }, []);
     
-    
-
     useEffect(() => {
-        console.log("Current user ID:", currentUserId);
-        console.log("Reviews:", reviews);
-       
-    }, [reviews, currentUserId]);
+        if (currentUserId && redirectedFromReview) {
+            setReviewLink(true);
+            setRedirectedFromReview(false);
+        }
+    }, [currentUserId, redirectedFromReview]);
 
 
 
@@ -84,8 +87,11 @@ function ReviewsPage(){
         if (currentUserId) {
             setReviewLink(true);
         } else {
+            localStorage.setItem('redirectToReview', 'true');
             setLogError(true);
-            setSlideUpDiv(true);  // Open the SlideUpDiv when a non-logged-in user tries to write a review
+            setSlideUpDiv(true);
+            // Redirect to login page
+           
         }
     };
     function handleEdit(review) {
@@ -115,7 +121,7 @@ function ReviewsPage(){
                     Products
                 </button>
             )}
-            {slideUpDiv && <SlideUpDiv onClose={() => setSlideUpDiv(false)} content=" write reviews" />}
+            {slideUpDiv && <SlideUpDiv onClose={() => setSlideUpDiv(false)}  content={currentUserId ? "View Saved Products" : "Write Reviews"} />}
             <div className="reviewPage" >
                 <h1>Reviews</h1>
                 <button onClick={handleWriteReviewClick} className="buttonT reviewButton" >Write Review</button>
@@ -123,24 +129,24 @@ function ReviewsPage(){
             
 
             {reviewLink && currentUserId && (
-                <WriteReview 
-                    initialReview={editingReview}
-                    onSubmit={(reviewData) => {
-                        if (editingReview) {
-                            handleUpdateReview(editingReview.reviewId, reviewData);
-                        } else {
-                            addReview(reviewData);
-                        }
-                        setReviewLink(false);
-                        fetchReviews();
-                    }}
-                    onClose={() => {
-                        setReviewLink(false);
-                        setEditingReview(null);
-                        fetchReviews();
-                    }} 
-                />
-            )}
+            <WriteReview 
+                initialReview={editingReview}
+                onSubmit={(reviewData) => {
+                    if (editingReview) {
+                        handleUpdateReview(editingReview.reviewId, reviewData);
+                    } else {
+                        addReview(reviewData);
+                    }
+                    setReviewLink(false);
+                    setEditingReview(null);
+                    fetchReviews();
+                }}
+                onClose={() => {
+                    setReviewLink(false);
+                    setEditingReview(null);
+                }} 
+            />
+        )}
 
          
 

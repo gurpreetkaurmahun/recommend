@@ -49,14 +49,6 @@ const validPhone = (PhoneNo) => {
 
     throw new Error("Invalid phone number");
 }
-//location
-const validLatitude=()=>{}
-const validLongitude=()=>{}
-
-//product
-//image
-//productlocation
-
 
 function containSymbol(word){
     const symbols=["!","£","$","&"];
