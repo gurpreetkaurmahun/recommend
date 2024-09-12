@@ -9,7 +9,7 @@ namespace FinalYearProject.Controllers{
 
 [Route("api/[controller]")]
 [ApiController]
-    public class UserController : ControllerBase
+public class UserController : ControllerBase
 {
     private readonly UserManager<IdentityUser> _userManager;
      private readonly ApplicationDbContext _context;
@@ -23,104 +23,123 @@ namespace FinalYearProject.Controllers{
     }
 
    [HttpGet("{userId}")]
-public async Task<IActionResult> GetUserById(string userId)
-{
-    if (string.IsNullOrEmpty(userId))
-    {
-        _logger.LogError("GetUser: User ID cannot be null or empty.");
-        return BadRequest("User ID cannot be null or empty.");
-    }
-
-    try
-    {
-        // Find the IdentityUser
-        var user = await _userManager.FindByIdAsync(userId);
-        if (user == null)
+        public async Task<IActionResult> GetUserById(string userId)
         {
-            _logger.LogWarning($"GetUser: User with ID {userId} not found.");
-            return NotFound("User not found.");
-        }
-
-        // Create a response object with just the ID and email
-        var userInfo = new
-        {
-            UserId = user.Id,
-            Email = user.Email
-        };
-
-        _logger.LogInformation($"GetUser: Successfully retrieved information for user {userId}");
-        return Ok(userInfo);
-    }
-    catch (Exception ex)
-    {
-        _logger.LogError($"GetUser: Error retrieving user {userId}: {ex.Message}");
-        return BadRequest($"Error retrieving user information: {ex.Message}");
-    }
-}
-
-    [HttpDelete("{userId}")]
-public async Task<IActionResult> DeleteUser(string userId)
-{
-    if (string.IsNullOrEmpty(userId))
-    {
-        _logger.LogError("DeleteUser: User ID cannot be null or empty.");
-        return BadRequest("User ID cannot be null or empty.");
-    }
-
-    var user = await _userManager.FindByIdAsync(userId);
-    if (user == null)
-    {
-        _logger.LogWarning($"DeleteUser: User with ID {userId} not found.");
-        return NotFound("User not found.");
-    }
-
-    using (var transaction = await _context.Database.BeginTransactionAsync())
-    {
-        try
-        {
-            _logger.LogInformation($"DeleteUser: Starting deletion process for user {userId}");
-
-            // Find and delete related Consumer record
-            var consumer = await _context.Consumers
-                .Include(c => c.Location) // Include Location if it's a navigation property
-                .FirstOrDefaultAsync(c => c.IdentityUserId == userId);
-
-            if (consumer != null)
+            if (string.IsNullOrEmpty(userId))
             {
-                _logger.LogInformation($"DeleteUser: Deleting Consumer record for user {userId}");
-                
-                // If Location is a separate entity, delete it
-                if (consumer.Location != null)
+                _logger.LogError("GetUser: User ID cannot be null or empty.");
+                return BadRequest("User ID cannot be null or empty.");
+            }
+
+            try
+            {
+                // Find the IdentityUser
+                var user = await _userManager.FindByIdAsync(userId);
+                if (user == null)
                 {
-                    _logger.LogInformation($"DeleteUser: Deleting associated Location for user {userId}");
-                    _context.Locations.Remove(consumer.Location);
+                    _logger.LogWarning($"GetUser: User with ID {userId} not found.");
+                    return NotFound("User not found.");
                 }
 
-                _context.Consumers.Remove(consumer);
+                // Create a response object with just the ID and email
+                var userInfo = new
+                {
+                    UserId = user.Id,
+                    Email = user.Email
+                };
+
+                _logger.LogInformation($"GetUser: Successfully retrieved information for user {userId}");
+                return Ok(userInfo);
             }
-
-            // Save changes to delete related records
-            await _context.SaveChangesAsync();
-
-            // Delete the user
-            _logger.LogInformation($"DeleteUser: Deleting IdentityUser {userId}");
-            var result = await _userManager.DeleteAsync(user);
-            if (!result.Succeeded)
+            catch (Exception ex)
             {
-                throw new Exception($"Failed to delete user: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+                _logger.LogError($"GetUser: Error retrieving user {userId}: {ex.Message}");
+                return BadRequest($"Error retrieving user information: {ex.Message}");
+            }
+        }
+
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAllUsers()
+        {
+            try
+            {
+                var users = await _userManager.Users
+                    .Select(u => new { UserId = u.Id, Email = u.Email })
+                    .ToListAsync();
+
+                _logger.LogInformation($"GetAllUsers: Successfully retrieved {users.Count} users");
+                return Ok(users);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"GetAllUsers: Error retrieving users: {ex.Message}");
+                return BadRequest($"Error retrieving user information: {ex.Message}");
+            }
+        }
+
+    [HttpDelete("{userId}")]
+        public async Task<IActionResult> DeleteUser(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                _logger.LogError("DeleteUser: User ID cannot be null or empty.");
+                return BadRequest("User ID cannot be null or empty.");
             }
 
-            await transaction.CommitAsync();
-            _logger.LogInformation($"DeleteUser: User {userId} and related data deleted successfully");
-            return Ok("User and related data deleted successfully.");
-        }
-        catch (Exception ex)
-        {
-            await transaction.RollbackAsync();
-            _logger.LogError($"DeleteUser: Error deleting user {userId}: {ex.Message}");
-            return BadRequest($"Error deleting user: {ex.Message}");
-        }
-    }
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                _logger.LogWarning($"DeleteUser: User with ID {userId} not found.");
+                return NotFound("User not found.");
+            }
+
+            using (var transaction = await _context.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    _logger.LogInformation($"DeleteUser: Starting deletion process for user {userId}");
+
+                    // Find and delete related Consumer record
+                    var consumer = await _context.Consumers
+                        .Include(c => c.Location) // Include Location if it's a navigation property
+                        .FirstOrDefaultAsync(c => c.IdentityUserId == userId);
+
+                    if (consumer != null)
+                    {
+                        _logger.LogInformation($"DeleteUser: Deleting Consumer record for user {userId}");
+                        
+                        // If Location is a separate entity, delete it
+                        if (consumer.Location != null)
+                        {
+                            _logger.LogInformation($"DeleteUser: Deleting associated Location for user {userId}");
+                            _context.Locations.Remove(consumer.Location);
+                        }
+
+                        _context.Consumers.Remove(consumer);
+                    }
+
+                    // Save changes to delete related records
+                    await _context.SaveChangesAsync();
+
+                    // Delete the user
+                    _logger.LogInformation($"DeleteUser: Deleting IdentityUser {userId}");
+                    var result = await _userManager.DeleteAsync(user);
+                    if (!result.Succeeded)
+                    {
+                        throw new Exception($"Failed to delete user: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+                    }
+
+                    await transaction.CommitAsync();
+                    _logger.LogInformation($"DeleteUser: User {userId} and related data deleted successfully");
+                    return Ok("User and related data deleted successfully.");
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    _logger.LogError($"DeleteUser: Error deleting user {userId}: {ex.Message}");
+                    return BadRequest($"Error deleting user: {ex.Message}");
+                }
+            }
 }
 
     }

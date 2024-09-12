@@ -92,4 +92,13 @@ const deleteReview=async(id)=>{
     }
 }
 
-export{getReviews,getReviewsById,addReview,updateReviews,deleteReview};
+//
+function calculateDays(reviewDate) {
+    const today = new Date();
+    const reviewDay = new Date(reviewDate);
+    const diffTime = Math.abs(today - reviewDay);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+    return diffDays;
+}
+
+export{getReviews,getReviewsById,addReview,updateReviews,deleteReview,calculateDays};

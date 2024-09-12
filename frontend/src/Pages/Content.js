@@ -102,11 +102,7 @@ function Content(){
 
 <div className="mainContent" >
 
-       {!slideUpDiv&&<button onClick={()=>setSlideUpDiv(true)} 
-       className="modalTitleDiv"
-        // style={{width:"18%",zIndex:1,position:"fixed",backgroundColor:"#f65dd0",left:"80%",top:"95%",borderRadius:"10px"}}
-        
-        >Products</button>}
+       {!slideUpDiv&&<button onClick={()=>setSlideUpDiv(true)} className="modalTitleDiv">Products</button>}
         {slideUpDiv && <SlideUpDiv  onClose={()=>setSlideUpDiv(false)}/>}
         <h2 className="contentH1" >Shop in  Candies</h2>
         <div className="contentTitle top" >
@@ -143,10 +139,10 @@ function Content(){
             className="animatedButton"
         
           >
-            <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
             Search
           </Link>
         </div>
@@ -160,16 +156,11 @@ function Content(){
           <h2 className="contentText">
             Brew Your Perfect Cup <span >☕</span>
           </h2>
-          <Link
-            to="/Search"
-            className="animatedButton"
-       
-            onClick={handleClick}
-          >
-            <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
+          <Link to="/Search" className="animatedButton"onClick={handleClick}>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
             Search
           </Link>
         </div>

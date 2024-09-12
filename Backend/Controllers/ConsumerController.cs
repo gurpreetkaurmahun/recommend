@@ -1,16 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using SoftwareProject.Helpers;
 using SoftwareProject.Service;
 using SoftwareProject.Models;
-
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Http.HttpResults;
+
 
 namespace FinalYearProject.Controllers
 {
@@ -20,15 +14,13 @@ namespace FinalYearProject.Controllers
     {
      
         private readonly ILogger<ConsumerController> _logger; 
-        private readonly UserManager<IdentityUser> _userManager;
-
         private readonly ConsumerService _consumerService;
 
-        public ConsumerController(ILogger<ConsumerController> logger,  UserManager<IdentityUser> userManager,ConsumerService consumerService)
+        public ConsumerController(ILogger<ConsumerController> logger,ConsumerService consumerService)
         {
            
             _logger=logger;
-            _userManager=userManager;
+         
             _consumerService=consumerService;
         }
 
@@ -45,7 +37,6 @@ namespace FinalYearProject.Controllers
             else{
                 return BadRequest(message);
             }
-            
         }
 
         // GET: api/Consumer/5
@@ -58,7 +49,6 @@ namespace FinalYearProject.Controllers
                 _logger.LogInformationWithMethod(message);
 
                 return Ok(new{consumer,message});
-
             }
             else{
                 return BadRequest(message);
@@ -70,13 +60,12 @@ namespace FinalYearProject.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutConsumer(int id, Consumer consumer)
         {
-
-           var (result,message) = await _consumerService.UpdateConsumer(id,consumer);
-           if(result){
-            return Ok(new{message});
-           }
-           else{
-            return BadRequest(new{message});
+            var (result,message) = await _consumerService.UpdateConsumer(id,consumer);
+            if(result){
+                return Ok(new{message});
+            }
+            else{
+                return BadRequest(new{message});
            }
         }
 
@@ -85,7 +74,6 @@ namespace FinalYearProject.Controllers
         [HttpPost]
         public async Task<ActionResult<Consumer>> PostConsumer(Consumer consumer)
         {
-
             var (newConsumer,message) = await _consumerService.AddNewConsumer(consumer);
             if(newConsumer!=null){
                 return Ok(new{message});
@@ -96,15 +84,10 @@ namespace FinalYearProject.Controllers
            
         }
 
-
-
-
-
         // DELETE: api/Consumer/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteConsumer(int id)
         {
-
             var(result,message)= await _consumerService.DeleteConsumerById(id);
 
             if(result){
@@ -119,15 +102,4 @@ namespace FinalYearProject.Controllers
     }
 }
 
-// [
-//     {
-//         "reviewId": 1,
-//         "review": "awesome service",
-//         "reviewDate": "2024-08-09",
-//         "stars": 5,
-//         "consumerId": null,
-//         "consumer": null,
-//         "userEmail": "pinkfloers"
-//     }
-// ]
 

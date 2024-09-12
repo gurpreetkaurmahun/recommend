@@ -26,8 +26,6 @@ const ImageSlider = () => {
     'https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcQTHRUot_r6lmUIe06bxYEsWhY8gi4r2CglpMJ1ZAeaurtXO64iQUm5JQWIU25GAjlBtc_tkSmu4o3UMcxfzkRDKpTR2v6kD07VoybtsONc3wc1iP0wb8xc-PTRLKIPeArKsIOC7q7eFg&usqp=CAc',
     'https://www.ocado.com/productImages/103/10397011_0_640x640.jpg?identifier=6e888fc25dfc2ddaab4d929a07bd5d13',
     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQyamIS1zm3jeiCSTK6ByvFTUQ4fPuWmHudwA&s',
-
-
     'https://wimpoleclinic.com/wp-content/uploads/2024/01/Is-Olive-Oil-Good-for-Hair-Growth-Benefits-Risks-and-Uses.jpg',
     'https://www.savethestudent.org/uploads/Sandwich-crisps-walkers-cheese-onion-innocent-smoothie-meal-deal.jpg',
     'https://www.shape.com/thmb/Un9ZcomP7xyUTI9RobuzQNfODrM=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/Benefits-of-Edamame-GettyImages-1353712599-6ab843f27ac04b9da945a58543018caf.jpg',
@@ -35,6 +33,8 @@ const ImageSlider = () => {
     'https://www.100daysofrealfood.com/wp-content/uploads/2023/09/shutterstock_23429146-800x545.jpg',
     'https://www.mayoclinichealthsystem.org/-/media/national-files/images/hometown-health/2021/eggs-in-a-wood-bowl.jpg?sc_lang=en'
   ];
+
+  
   return (
     <div className="slider" style={{marginTop:100}}>
       <div className="slides">

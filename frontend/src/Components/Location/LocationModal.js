@@ -6,7 +6,7 @@ function LocationModal({ onAllow, onDeny, onClose }) {
       <div className="modal-dialog" role="document">
         <div className="modal-content">
           <div className="modal-header" style={{background: "linear-gradient(45deg, #f321bf, #ebe1e4)"}}>
-            {/* <h5 className="modal-title" ><span className="brand" style={{fontSize:"20px",fontWeight:200}}> </span></h5> */}
+            
             <button type="button" className="btn-close" onClick={onClose} aria-label="Close"></button>
           </div>
           <div className="modal-body">

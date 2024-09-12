@@ -20,10 +20,10 @@ function TypeWriters({topString,bottomString,link,buttonText}){
                     />
                 </h1>
                 <h1 className="h1bottom"style={{color:"white"}}>{bottomString}</h1>
-                <button className="typeButton"> <Link to={link} style={{textDecoration:"none",color:"white"}}> {buttonText} <span ><LiaSearchSolid />
-</span></Link></button>
+                <button className="typeButton"> <Link to={link} style={{textDecoration:"none",color:"white"}}> {buttonText} 
+                <span ><LiaSearchSolid /></span></Link>
+                </button>
                 
-
         </div>
     )
 }

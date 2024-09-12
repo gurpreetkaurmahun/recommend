@@ -392,6 +392,8 @@ button{
 .brand:after{
 content:"";
 font-weight: 400;
+color:white;
+margin-left: 40%;
 font-size: 40px;
 animation-name: animatingText;
 animation-duration: 2500ms;
@@ -404,12 +406,12 @@ animation-iteration-count: infinite;
   20%{content:"REC"}
   30%{content:"RECO"}
   40%{content:"RECOM"}
-  50%{content:"RECOME"}
-  60%{content:"RECOMEN"}
-  70%{content:"RECOMEND"}
-  80%{content:"RECOMENDD"}
-  90%{content:"RECOMENDD."}
-  100%{content:"RECOMENDD.."}
+  50%{content:"RECOMME"}
+  60%{content:"RECOMMEN"}
+  70%{content:"RECOMMEND"}
+  80%{content:"RECOMMEND."}
+  90%{content:"RECOMMEND...."}
+  100%{content:"RECOMMEND....."}
 }
 
 .buttonT{
@@ -881,13 +883,13 @@ h2.contentH {
   height:auto;
   border-right:2px solid black;
   margin-right:30px;
-  border:2px solid blue;
+
 }
 .userImg{
   width:150px;
   height:150px;
   border-radius:50%;
-  border:1px solid blue;
+
   margin-top:5%;
 }
 .userPara{

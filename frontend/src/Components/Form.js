@@ -1,11 +1,10 @@
-
 import React from 'react';
 import { useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import "./styles.css";
 
-function MyForm({fields=[], initialValues, onSubmit, dropdownOptions=[], buttonText, children, layout='inline'}) {
+function MyForm({fields=[], initialValues, onSubmit, buttonText, children, layout='inline',inputStyle,buttonStyle,width=150}) {
     const [passwordVisibility, setPasswordVisibility] = useState({});
 
      const togglePasswordVisibility = (fieldName) => {
@@ -14,13 +13,14 @@ function MyForm({fields=[], initialValues, onSubmit, dropdownOptions=[], buttonT
             [fieldName]: !prev[fieldName]
         }));
     }
+
     const getFieldsContainerStyle = () => {
         const baseStyle = {
             display: 'flex',
             flexWrap: 'wrap',
             marginTop: 50
         };
-
+        //Custome style for feilds
         if (layout === 'inline') {
             return {
                 ...baseStyle,
@@ -57,6 +57,7 @@ function MyForm({fields=[], initialValues, onSubmit, dropdownOptions=[], buttonT
                                             className="form-control"
                                             placeholder={`Enter ${field.label}`}
                                             style={{
+                                                ...inputStyle,
                                                 width: '100%',
                                                 borderTop: "none",
                                                 borderLeft: "none",
@@ -72,6 +73,7 @@ function MyForm({fields=[], initialValues, onSubmit, dropdownOptions=[], buttonT
                                                 type="button"
                                                 onClick={() => togglePasswordVisibility(field.name)}
                                                 style={{
+                                                    ...buttonStyle,
                                                     width: '10%',
                                                     borderTop: "none",
                                                     borderLeft: "none",
@@ -97,7 +99,7 @@ function MyForm({fields=[], initialValues, onSubmit, dropdownOptions=[], buttonT
                         </div>
 
                         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px', marginTop: "10px", marginBottom: "30px" }}>
-                            <button className="buttonT" type="submit" style={{ width: 150, background: "linear-gradient(45deg, #f321bf, #ebe1e4)", borderRadius: "20px" }}>{buttonText}</button>
+                            <button className="buttonT" type="submit" style={{  ...buttonStyle, background: "linear-gradient(45deg, #f321bf, #ebe1e4)", borderRadius: "20px" }}>{buttonText}</button>
                             {children} 
                         </div>
                     </Form>

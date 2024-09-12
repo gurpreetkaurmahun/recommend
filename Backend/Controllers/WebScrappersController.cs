@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 using SoftwareProject.Models;
 using SoftwareProject.Scrapper;
@@ -32,16 +31,16 @@ namespace FinalYearProject.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<WebScrapper>>> GetWebScrappers()
         {
-
             var (result,message)=await _webScrappingService.GetAllWebScrappers();
-            if(result!=null){
+            if(result!=null)
+            {
                 return Ok(result);
             }
-            else{
+            else
+            {
                 return BadRequest(new{message});
             }
 
-            
         }
 
         // GET: api/WebScrappers/5
@@ -59,45 +58,29 @@ namespace FinalYearProject.Controllers
            
         }
 
-        //  [HttpPost("scrape")]
-        // public async Task<IActionResult> ScrapeProducts([FromBody]dynamic requestData)
-        // {
-        //     try
-        //     {
-        //         string brand = requestData.brand;
-        // string product = requestData.product;
-        //         var scrapedProducts=await _scrapingService.ScrapeAndSaveProducts(brand,product);
-                 
-
-        //         return Ok(new { message = "Scraping completed successfully", productCount = scrapedProducts.Count, products = scrapedProducts });
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         return BadRequest(new{message=$"Error occurred during scraping:"});
-        //     }
        [HttpPost("scrape")]
-public async Task<IActionResult> ScrapeProducts([FromBody] JsonElement requestData)
-{
-    try
-    {
-        if (!requestData.TryGetProperty("brand", out JsonElement brandElement) || 
-            !requestData.TryGetProperty("product", out JsonElement productElement))
+        public async Task<IActionResult> ScrapeProducts([FromBody] JsonElement requestData)
         {
-            return BadRequest(new { message = "Brand and product must be provided." });
+            try
+            {
+                if (!requestData.TryGetProperty("brand", out JsonElement brandElement) || 
+                    !requestData.TryGetProperty("product", out JsonElement productElement))
+                {
+                    return BadRequest(new { message = "Brand and product must be provided." });
+                }
+
+                string brand = brandElement.GetString();
+                string product = productElement.GetString();
+
+                var scrapedProducts = await _scrapingService.ScrapeAndSaveProducts(brand, product);
+
+                return Ok(new { message = "Scraping completed successfully", productCount = scrapedProducts.Count, products = scrapedProducts });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = $"Error occurred during scraping: {ex.Message}" });
+            }
         }
-
-        string brand = brandElement.GetString();
-        string product = productElement.GetString();
-
-        var scrapedProducts = await _scrapingService.ScrapeAndSaveProducts(brand, product);
-
-        return Ok(new { message = "Scraping completed successfully", productCount = scrapedProducts.Count, products = scrapedProducts });
-    }
-    catch (Exception ex)
-    {
-        return BadRequest(new { message = $"Error occurred during scraping: {ex.Message}" });
-    }
-}
 
 
 
@@ -137,7 +120,6 @@ public async Task<IActionResult> ScrapeProducts([FromBody] JsonElement requestDa
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteWebScrapper(int id)
         {
-            
             var(result,message)=await _webScrappingService.DeleteWebScrapperById(id);
             if(result){
                 return Ok(new{message});
@@ -145,7 +127,6 @@ public async Task<IActionResult> ScrapeProducts([FromBody] JsonElement requestDa
             else{
                 return BadRequest(new{message});
             }
-           
         }
 
     }

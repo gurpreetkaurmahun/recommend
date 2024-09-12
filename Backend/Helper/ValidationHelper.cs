@@ -3,7 +3,8 @@ namespace SoftwareProject.Helpers{
 
         public static bool Validpassword(string password){
 
-            if(string.IsNullOrEmpty(password) ||  password.Length<8){
+            if(string.IsNullOrEmpty(password) ||  password.Length<8)
+            {
                 return false;
             }
 

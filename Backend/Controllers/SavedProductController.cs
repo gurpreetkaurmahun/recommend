@@ -69,52 +69,37 @@ namespace FinalYearProject.Controllers
         [HttpGet("{consumerId}")]
         public async Task<ActionResult<Dictionary<int, List<object>>>> GetSavedProduct(int consumerId)
         {
-
-          
-           var result = await _savedProductService.GetSavedProductForConsumer(consumerId);
-    
+            var result = await _savedProductService.GetSavedProductForConsumer(consumerId);
             if (result == null)
             {
                 return BadRequest(new { Message = "Failed to retrieve saved products" });
             }
-            
             if (result.ContainsKey(consumerId) && result[consumerId].Count == 0)
             {
                 return Ok(new { Message = "No saved products found for this user", Data = result });
             }
-            
             return Ok(new { Message = "Retrieved SavedProducts", Data = result });
     
-               
-               
-    }
+        }
     
-
-      
         // POST: api/SavedProduct
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-[HttpPost]
-public async Task<ActionResult<SavedProduct>> PostSavedProduct([FromBody] JsonElement jsonElement)
-{
-
-    var (result,message)=await _savedProductService.AddSavedProduct(jsonElement);
-    if(result!=null){
-        return Ok(new{message="Prodcut saved for the consumer"});
-    }
-    else{
-        return BadRequest(new{message="Erroo Saving product for the consumer"});
-    }
-    }
-
-
- 
-
+        [HttpPost]
+        public async Task<ActionResult<SavedProduct>> PostSavedProduct([FromBody] JsonElement jsonElement)
+        {
+            var (result,message)=await _savedProductService.AddSavedProduct(jsonElement);
+            if(result!=null){
+                return Ok(new{message="Prodcut saved for the consumer"});
+            }
+            else{
+                return BadRequest(new{message="Erroo Saving product for the consumer"});
+            }
+        }
 
         // DELETE: api/SavedProduct/5
         [HttpDelete("{consumerId}/{tempId}")]
         public async Task<IActionResult> DeleteSavedProduct(int consumerId,string tempId)
         {
-
             var (result,message)=await _savedProductService.DeleteSavedProductForConsumer(consumerId,tempId);
             if(result){
                 return Ok(new{message});
@@ -124,7 +109,5 @@ public async Task<ActionResult<SavedProduct>> PostSavedProduct([FromBody] JsonEl
             }
            
         }
-
-       
     }
 }

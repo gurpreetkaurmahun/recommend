@@ -1,8 +1,9 @@
 import React from "react";
 import {useState,useEffect} from "react";
 import ReviewLink from "./ReviewLink";
-import {getReviews} from"../../Backend-services/ReviewSpecific.js";
+import {getReviews,calculateDays} from"../../Backend-services/ReviewSpecific.js";
 import { Link } from "react-router-dom";
+
 function Reviews(){
 
     const [reviews,setReviews]=useState([]);
@@ -31,14 +32,7 @@ function Reviews(){
             console.error("Error fetching reviews:", error);
         }
     }
-    function calculateDays(reviewDate) {
-        const today = new Date();
-        const reviewDay = new Date(reviewDate);
-        const diffTime = Math.abs(today - reviewDay);
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-        return diffDays;
-    }
-
+   
     const loadMoreReviews = () => {
         setVisibleReviews(prevVisible => prevVisible + 6);
     };

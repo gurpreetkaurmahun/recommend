@@ -18,7 +18,6 @@ function AllProducts(){
     const[products,setProducts]=useState([]);
     const [searchProduct,setSearchProduct]=useState("");
     const [nearbyStores, setNearbyStores] = useState([]);
-
     const [activeTab, setActiveTab] = useState('moreProducts');
     const [showAllProducts, setShowAllProducts] = useState(false);
     const [slideUpDiv,setSlideUpDiv] = useState(false);

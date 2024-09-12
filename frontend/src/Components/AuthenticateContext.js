@@ -58,23 +58,22 @@ export default function AuthProvider({children}){
     }, [authenticated, token, activeUserId, identityId]);
 
     
-
-
     async function Login(email, password) {
-        try {
+        try 
+        {
             const emailBody = { Email: email, Password: password };
             if (!validEmail(emailBody.Email)) return { error: "Invalid Email entered" };
+
             if (!validPassword(emailBody.Password)) return { error: "Invalid password" };
     
             const loginResponse = await loginUser(emailBody);
-           
-    
             if (loginResponse.error) return { error: loginResponse.error.message };
     
             if (loginResponse.message && loginResponse.message.token) {
                 console.log("Received token:", loginResponse.message.token); // Log the received token
                 
-                try {
+                try 
+                {
                     const decodedToken = jwtDecode(loginResponse.message.token);
                     console.log("Decoded token:", decodedToken); // Log the decoded token
                     
@@ -82,33 +81,40 @@ export default function AuthProvider({children}){
                     setActiveUserId(parseInt(loginResponse.message.consumerId, 10));
                     setToken(loginResponse.message.token);
                     setIdentityId(loginResponse.message.identityUserId);
+
                     const user= await getCustomerById(loginResponse.message.consumerId, 10);
-                 
-             
+
                     localStorage.setItem("userName",user.consumer.fName);
-                    // Verify token is stored correctly
-                  console.log("login slocal storage",localStorage);
                     
                     setTokenExpirationTimer(decodedToken.exp * 1000 - Date.now());
                     return { result: true, token: loginResponse.message.token };
-                } catch (decodeError) {
-                    console.error("Error decoding token:", decodeError);
+
+                } 
+                catch (decodeError) {
+
+                    // console.error("Error decoding token:", decodeError);
                     return { error: "Invalid token structure" };
                 }
-            } else {
+            } 
+            else 
+            {
                 console.error("Login response does not contain a token:", loginResponse);
                 return { error: "Invalid Credentials" };
             }
-        } catch (err) {
+        } 
+        catch (err) 
+        {
             console.error("Login error:", err);
             return { error: err.message || "An unexpected error occurred" };
         }
+
     }
 
     function checkTokenValidity() {
         const storedToken = localStorage.getItem("userToken");
         if (storedToken) {
-            try {
+            try 
+            {
                 const decodedToken = jwtDecode(storedToken);
                 if (decodedToken.exp * 1000 > Date.now()) {
                     setAuthenticated(true);
@@ -125,6 +131,8 @@ export default function AuthProvider({children}){
             }
         }
     }
+
+
     function setTokenExpirationTimer(timeout) {
         setTimeout(() => {
             handleLogout();
@@ -155,13 +163,16 @@ export default function AuthProvider({children}){
                 setActiveUserId("");
                 setToken("");
     
-                console.log("Logout complete", logoutResponse);
                 return true;
-            } else {
+            } 
+            else 
+            {
                 console.log("Logout Not complete", logoutResponse);
                 return false;
             }
-        } catch (error) {
+        } 
+        catch (error) 
+        {
             console.error(error);
             return false;
         }
@@ -183,7 +194,7 @@ export default function AuthProvider({children}){
     return(<AuthContext.Provider value={contextToBeShared}>
             {children}
             {message && console.log("Rendering message:", message)}
-{message && <Message value={message} onClose={() => setMessage(null)} />}
+            {message && <Message value={message} onClose={() => setMessage(null)} />}
             </AuthContext.Provider>
     )
 }

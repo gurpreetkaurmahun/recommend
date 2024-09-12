@@ -1,10 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using SoftwareProject.Service;
 using SoftwareProject.Models;
 using SoftwareProject.Helpers;
@@ -15,14 +9,11 @@ namespace FinalYearProject.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
-
         private readonly ILogger<ProductController> _logger; 
         private readonly ProductService _productService;
 
-        public ProductController(ApplicationDbContext context,ILogger<ProductController> logger,ProductService productService)
+        public ProductController(ILogger<ProductController> logger,ProductService productService)
         {
-            _context = context;
             _logger=logger;
             _productService=productService;
 
@@ -32,29 +23,23 @@ namespace FinalYearProject.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
         {
-
             var (allProducts,message)=await _productService.GetAllProductsAsync();
-
             if(allProducts!=null){
                 _logger.LogInformationWithMethod(message);
                 return Ok(allProducts);
             }
             else{
-
                 _logger.LogErrorWithMethod(message);
                 return StatusCode(500,message);
             }
            
         }
 
-
         // GET: api/Product/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
-
             var (product,message) = await _productService.GetProductByIdAsync(id) ;
-
             if(product!=null){
                 _logger.LogInformationWithMethod(message);
                 return Ok(product);
@@ -62,11 +47,8 @@ namespace FinalYearProject.Controllers
             else{
                 _logger.LogErrorWithMethod(message);
                 return StatusCode(500,message);
-
             }
 
-           
-         
         }
 
         // PUT: api/Product/5
@@ -74,9 +56,7 @@ namespace FinalYearProject.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProduct(int id, Product product)
         {
-            
             var (result,message)=await _productService.UpdateProductAsync(id,product);
-
             if(result){
                 return Ok(new{message});
             }
@@ -105,7 +85,6 @@ namespace FinalYearProject.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
-
             var (result,message)= await _productService.DeleteProductAsync(id);
             if(result){
                 return Ok(new{message});
@@ -113,28 +92,23 @@ namespace FinalYearProject.Controllers
             else{
                 return BadRequest(message);
             }
-            
         }
 
-//         [HttpDelete]
-// [Route("delete-all")]
-// public async Task<IActionResult> DeleteAllProducts()
-// {
-//     var (result, message) = await _productService.DeleteAllProductsAsync();
-//     if (result)
-//     {
-//         _logger.LogInformationWithMethod(message);
-//         return Ok(new { message });
-//     }
-//     else
-//     {
-//         _logger.LogErrorWithMethod(message);
-//         return StatusCode(500, new { message });
-//     }
-// }
-
-
-
-        
+        [HttpDelete]
+        [Route("delete-all")]
+        public async Task<IActionResult> DeleteAllProducts()
+        {
+            var (result, message) = await _productService.DeleteAllProductsAsync();
+            if (result)
+            {
+                _logger.LogInformationWithMethod(message);
+                return Ok(new { message });
+            }
+            else
+            {
+                _logger.LogErrorWithMethod(message);
+                return StatusCode(500, new { message });
+            }
+        }
     }
 }

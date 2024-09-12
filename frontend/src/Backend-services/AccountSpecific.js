@@ -31,7 +31,7 @@ const loginUser=async(credentials)=>{
 
     }catch(error){
         console.error("Error while loggin in:",  error.message);
-        return{error:error.response.data};
+        return{error:error.response};
     }
 };
 

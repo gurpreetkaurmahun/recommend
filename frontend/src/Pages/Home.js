@@ -30,7 +30,9 @@ function Home() {
            </div>
            
            </div>
+
       <Content/>
+
       <div className="reviewContent"  >
         <div style={{backgroundColor:"#e9a8d9", width:"50%"}}>
             <TypeWriters
@@ -40,13 +42,15 @@ function Home() {
                 buttonText="View All"
             />
         </div>
+
         <div className="reviewdiv" >
             <div style={{width:"100%", height: "100%", overflow: "auto",marginLeft:"50px"}}>
             <HomeReview/>
             </div>
         </div>
     </div>
-      <Footer/>
+
+    <Footer/>
 
       
     </div>

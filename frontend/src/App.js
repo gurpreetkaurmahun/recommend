@@ -1,6 +1,6 @@
 
 import './App.css';
-import Login from "./Components/Login";
+import Login from "./Components/User/Login.js";
 import Home from './Pages/Home';
 import AuthProvider from './Components/AuthenticateContext';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
@@ -13,7 +13,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min';
 import ViewLocation from './Components/Location/ViewLocation.js';
 import Admin from './Components/Admin.js';
 import ReviewsPage from "../src/Components/Reviews/ReviewsPage.js";
-import UserProducts from './Components/UserSavedProduct.js';
+import UserProducts from './Components/User/UserSavedProduct.js';
 
 function App() {
 

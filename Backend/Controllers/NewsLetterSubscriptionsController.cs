@@ -1,11 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SoftwareProject.Models;
+using Microsoft.AspNetCore.Identity;
+using SoftwareProject.Service;
+
 
 namespace FinalYearProject.Controllers
 {
@@ -14,11 +13,15 @@ namespace FinalYearProject.Controllers
     public class NewsLetterSubscriptionsController : ControllerBase
     { private readonly ApplicationDbContext _context;
         private readonly EmailService _emailService;
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly NewsLetterSubscriptionService _newsLetterSubscriptionService;
 
-        public NewsLetterSubscriptionsController(ApplicationDbContext context,EmailService emailService)
+        public NewsLetterSubscriptionsController(ApplicationDbContext context,EmailService emailService, UserManager<IdentityUser> userManager,NewsLetterSubscriptionService newsLetterSubscriptionService)
         {
             _context = context;
             _emailService=emailService;
+            _userManager=userManager;
+            _newsLetterSubscriptionService=newsLetterSubscriptionService;
         }
 
         // GET: api/NewsLetterSubscriptions
@@ -83,66 +86,21 @@ namespace FinalYearProject.Controllers
 
             return CreatedAtAction("GetNewsLetterSubscription", new { id = newsLetterSubscription.Id }, newsLetterSubscription);
         }
-[HttpPost("send/{id}")]
-public async Task<IActionResult> SendNewsletter(int id)
-{
-    var newsletter = await _context.NewsLetterSubscriptions.FindAsync(id);
-    if (newsletter == null)
-    {
-        return NotFound("Newsletter not found");
-    }
 
-    var users = await _context.Users.ToListAsync();
+        [HttpPost("send/{id}")]
+       
+        public async Task<IActionResult> SendNewsletter(int id, [FromBody] string email){
 
-    foreach (var user in users)
-    {
-        await SendNewsletterToUser(newsletter, user.Email);
-    }
-
-    newsletter.SentAt = DateTime.UtcNow;
-    await _context.SaveChangesAsync();
-
-    return Ok("Newsletter sent successfully");
-}
-
-private async Task SendNewsletterToUser(NewsLetterSubscription newsletter, string userEmail)
-{
-    var subject = newsletter.Title;
-    var body = $"<h1>{newsletter.Title}</h1>{newsletter.Content}";
-    if (!string.IsNullOrEmpty(newsletter.Offers))
-    {
-        body += $"<h2>Special Offers</h2><p>{newsletter.Offers}</p>";
-    }
-    if (newsletter.ImageUrls != null && newsletter.ImageUrls.Any())
-    {
-        foreach (var imageUrl in newsletter.ImageUrls)
-        {
-            body += $"<img src='{imageUrl}' alt='Newsletter Image' style='max-width: 100%;' />";
+            var(result,message)= await _newsLetterSubscriptionService.SendNewsletter(id,email);
+            if (result){
+                return Ok(new{message});
+            }
+            else{
+                return BadRequest(new{message});
+            }
         }
-    }
 
-    _emailService.SendEmail(userEmail, subject, body);
-}
-private string BuildNewsletterBody(NewsLetterSubscription newsletter)
-{
-    var body = $"<h1>{newsletter.Title}</h1>";
-    body += $"<p>{newsletter.Content}</p>";
-    
-    if (!string.IsNullOrEmpty(newsletter.Offers))
-    {
-        body += $"<h2>Special Offers</h2><p>{newsletter.Offers}</p>";
-    }
 
-    if (newsletter.ImageUrls != null && newsletter.ImageUrls.Any())
-    {
-        foreach (var imageUrl in newsletter.ImageUrls)
-        {
-            body += $"<img src='{imageUrl}' alt='Newsletter Image' style='max-width: 100%;' />";
-        }
-    }
-
-    return body;
-}
         // DELETE: api/NewsLetterSubscriptions/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteNewsLetterSubscription(int id)

@@ -7,26 +7,20 @@ import {useAuth} from "./AuthenticateContext.js";
 import{Link, useNavigate} from "react-router-dom";
 import { IoSearch } from "react-icons/io5";
 import { BsSave2 } from "react-icons/bs";
-import {getCustomerById} from "../Backend-services/CustomerSpecific.js";
-
 import "./styles.css";
 
 function Navbar() {
   const [activeIndex, setActiveIndex] = useState(0);
   const navigate=useNavigate();
-
   const indicatorRef = useRef(null);
   const listItemRefs = useRef([]);
-
   const authContext=useAuth();
-  
   const[name,setName]=useState("");
-
   const isAuthenticated=authContext.authenticated;
 
 
   useEffect(() => {
-    // This effect will run on mount and whenever isAuthenticated changes
+    
     if (isAuthenticated) {
       getUser();
       console.log("Local Storage",localStorage);
@@ -36,7 +30,6 @@ function Navbar() {
   }, [isAuthenticated]);
   
   useEffect(() => {
-
     const user=localStorage.getItem("userName");
     if (user) {
       setName(user[0]);
@@ -44,7 +37,8 @@ function Navbar() {
   }, []);
 
   useEffect(() => {
-    if (indicatorRef.current && listItemRefs.current[activeIndex]) {
+    if (indicatorRef.current && listItemRefs.current[activeIndex]) 
+    {
       const currentItem = listItemRefs.current[activeIndex];
       indicatorRef.current.style.left = `${currentItem.offsetLeft}px`;
       indicatorRef.current.style.width = `${currentItem.offsetWidth}px`;
@@ -60,18 +54,20 @@ function Navbar() {
 
     if (userName) {
       setName(userName[0].toUpperCase());
-    } else {
+    } 
+    else 
+    {
       // Handle the case where userName is null or undefined
       setName("");
     }
   }
 
-  
-
   const handleNavigation = (path) => {
     localStorage.removeItem('initialLoginRedirect');
     navigate(path);
   }
+
+
   return (
     <div
 
@@ -164,7 +160,7 @@ function Navbar() {
             </li>}
           </div>
         </ul>
-        {/* <div
+        <div
           ref={indicatorRef}
           onClick={() => {
             const paths = ["/", "/about", "/login"];
@@ -173,7 +169,7 @@ function Navbar() {
           }}
           className="indicator">
 
-        </div> */}
+        </div>
       </div>
     </div>
   );

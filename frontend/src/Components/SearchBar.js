@@ -14,15 +14,13 @@ import axios from "axios";
 import Footer from "../Pages/Footer.js";
 import Supermarket from "../assets/background.jpg";
 import HomeReview from "./Reviews/HomeReview.js";
-//shut down browrser and implement advanced search
+
 
 function SearchBar(){
 
     const[modal,setModal]=useState(false);
     const [error,setError]=useState(false);
-    const[displayMessage,setDisplayMessage]=useState("");
-
-  
+    const[errorMessage,setErrorMessage]=useState("");
 
     const advancedFields=[
         { name: 'BrandName', type: 'text', label: 'BrandName' },
@@ -41,15 +39,7 @@ function SearchBar(){
         Quantity:"",
         dropdown:""
     }
-    const dropdownOptions = [
-        { value: "Groceries", label: "Groceries" },
-        { value: "Cosmetics", label: "Cosmetics" },
-        {value:"Stationary",label:"Stationary"},
-        { value: "Drinks", label: "Drinks" }
-    ];
-
-
-
+  
     const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
     const[userLocation,setUserLocation]=useState({
         Latitude:0,
@@ -67,23 +57,13 @@ function SearchBar(){
  
 
     useEffect(()=>{
-
-  
-
-
     const storedLatitude = localStorage.getItem('userLatitude');
     const storedLongitude = localStorage.getItem('userLongitude');
-    const storedFullLocation = localStorage.getItem('userFullLocation');
-
-    
-
-    if((!storedLatitude || !storedLongitude || storedLatitude === "null" || storedLongitude === "null")){
+    if((!storedLatitude || !storedLongitude || storedLatitude === "null" || storedLongitude === "null"))
+    {
         setModal(true);
     }
- 
-
-    
-},[]);
+    },[]);
 
 const handleAllowLocation = () => {
     setModal(false);
@@ -91,24 +71,19 @@ const handleAllowLocation = () => {
     GetLocation(handleLocation);
   };
 
-  const handleDenyLocation = () => {
+const handleDenyLocation = () => {
     setModal(false);
   };
 
-   
-
-
-
-const handleLocation = async (locationData) => {
+   const handleLocation = async (locationData) => {
     console.log("Location Data:", locationData);
-   
 
-    console.log("Location storage",localStorage);
     setUserLocation({
       Latitude: locationData.latitude,
       Longitude: locationData.longitude,
       FullLocation: locationData.location
     });
+
     localStorage.setItem('userLatitude', locationData.latitude);
     localStorage.setItem('userLongitude', locationData.longitude);
     localStorage.setItem('userFullLocation', locationData.location);
@@ -123,17 +98,13 @@ const handleLocation = async (locationData) => {
     }
   };
 
-
-
-
-
 async function handleSubmit(values) {
-    console.log("Values are:", values);
-  
 
     const fullProduct = `${values.BrandName}${values.Product}${values.Quantity}`.trim();
+
     if(fullProduct===""){
-       setError(true);
+        setError(true);
+        setErrorMessage("Please enter a product to search")
         return;
     }
 
@@ -142,11 +113,9 @@ async function handleSubmit(values) {
         product: values.Product
     };
 
-    try {
-      
+    try 
+    {
         setLoading(true);
-
-       
         const [productScrapping, fetchStores] = await Promise.all([
             axios.post(`${API_BASE_URL}WebScrappers/scrape`, requestPayload, {
                 headers: {
@@ -156,8 +125,6 @@ async function handleSubmit(values) {
             fetchNearbyStores(localStorage.getItem('userLatitude'), localStorage.getItem('userLongitude'))
         ]);
 
-     
-        
         if (productScrapping.data.products && productScrapping.data.products.length > 0) {
 
             const scrapedProducts = productScrapping.data.products;
@@ -166,32 +133,32 @@ async function handleSubmit(values) {
             localStorage.setItem('scrapedProducts', JSON.stringify(scrapedProducts));
             localStorage.setItem('nearbyStores', JSON.stringify(fetchStores));
             localStorage.setItem('searchProduct', fullProduct);
-
-      console.log("new local storage",localStorage);
-
-           
-      try{
-
-        console.log("Fetching stores");
-            
-                setNearbyStores(fetchStores);
-             
-
+        try
+        {
+            console.log("Fetching stores for User");
+            setNearbyStores(fetchStores);
             setStatus("Scraping Completed");
             navigate("/all", { state: { searchResults: scrapedProducts,nearbyStores:fetchStores,searchProduct:fullProduct} });
 
-      }catch(error){
+        }
+        catch(error){
         console.log("Error Fetching stores:",error);
-      }
+        setError(true);
+        setErrorMessage(error);
+        }
 
-        } else {
+        } 
+        else {
             setStatus("No products found");
         }
-    } catch (error) {
-       
-        console.error("Scraping error:", error);
-        setStatus(error.response?.data?.message || "An error occurred while scraping");
-    } finally {
+    } 
+    catch (error) 
+    {
+    console.error("Scraping error:", error);
+    setStatus(error.response?.data?.message || "An error occurred while scraping");
+    } 
+    finally 
+    {
         setLoading(false);
     }
 }
@@ -200,64 +167,60 @@ async function handleSubmit(values) {
 
 return(
         <div >
-                        {modal && (
-   <LocationModal onAllow={handleAllowLocation} onDeny={handleDenyLocation} />
- )}
+        {modal && (<LocationModal onAllow={handleAllowLocation} onDeny={handleDenyLocation} onClose={()=>setModal(false)} />)}
           <Navbar />
-          {error&& <Message value="Please enter a product to search" onClose={()=>setError(false)}/>}
-          <div style={{position:"relative"}}>
+
+          {error&& <Message value={errorMessage} onClose={()=>setError(false)}/>}
+
+            <div style={{position:"relative"}}>
            
-           <div className="searchContainer" >
-
-            <img src={ Supermarket} style={{height:700,width:"100%"}}></img>
+            <div className="searchContainer" >
+                <img src={ Supermarket} style={{height:700,width:"100%"}}></img>
            </div>
-
+        
             <ImageSlider/>
 
+            <div className="searchForm" >
 
-         <div className="searchForm" >
+            <MyForm
+                fields={showAdvancedSearch ? advancedFields : basicFields}
+                initialValues={initialValues}
+                onSubmit={handleSubmit}
+                buttonText="Search"
+                layout="inline"
+                >
+                <button
+                    onClick={() => setShowAdvancedSearch(!showAdvancedSearch)}
+                    className="buttonT"
+                    type="button"
+                    style={{ width: 200, background: "linear-gradient(45deg, #f321bf, #ebe1e4)", borderRadius: "20px",
+                    }}
+                >
+                    {!showAdvancedSearch ? "Advanced Search" : "Close Advanced Search"}
+                </button>
+            </MyForm>
+            </div>
 
-         <MyForm
-                        fields={showAdvancedSearch ? advancedFields : basicFields}
-                        initialValues={initialValues}
-                        onSubmit={handleSubmit}
-                        dropdownOptions={dropdownOptions}
-                        buttonText="Search"
-                        layout="inline"
-                    >
-                        <button
-                            onClick={() => setShowAdvancedSearch(!showAdvancedSearch)}
-                            className="buttonT"
-                            type="button"
-                            style={{ width: 200, background: "linear-gradient(45deg, #f321bf, #ebe1e4)", borderRadius: "20px",
-                         }}
-                        >
-                            {!showAdvancedSearch ? "Advanced Search" : "Close Advanced Search"}
-                        </button>
-                    </MyForm>
-
-
-
-</div>
           </div>
          
           <div className="reviewContent"  >
-        <div style={{backgroundColor:"#e9a8d9", width:"50%"}}>
-            <TypeWriters
-                topString="Reviews...."
-                link="/review"
-                bottomString="See what people have to say about us.."
-                buttonText="View All"
-            />
-        </div>
-        <div className="reviewdiv" >
-            <div style={{width:"100%", height: "100%", overflow: "auto",marginLeft:"50px"}}>
-            <HomeReview/>
+            <div style={{backgroundColor:"#e9a8d9", width:"50%"}}>
+                <TypeWriters
+                    topString="Reviews...."
+                    link="/review"
+                    bottomString="See what people have to say about us.."
+                    buttonText="View All"
+                />
+            </div>
+
+            <div className="reviewdiv" >
+                <div style={{width:"100%", height: "100%", overflow: "auto",marginLeft:"50px"}}>
+                <HomeReview/>
+                </div>
             </div>
         </div>
-    </div>
           
-            <Footer/>
+        <Footer/>
  
         </div>
       );

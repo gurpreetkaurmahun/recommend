@@ -1,10 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using SoftwareProject.Models;
 using SoftwareProject.Service;
 
@@ -15,7 +10,6 @@ namespace FinalYearProject.Controllers
     public class ReviewsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-
         private readonly ReviewService _reviewService;
 
         public ReviewsController(ApplicationDbContext context,ReviewService reviewService)
@@ -28,13 +22,16 @@ namespace FinalYearProject.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Review>>> GetReviews()
         {
-          
             var (reviews, message) = await _reviewService.GetReviewsAsync();
-    if (reviews == null)
-    {
-        return BadRequest(message);
-    }
-    return Ok(new { Reviews = reviews, Message = message });
+            if (reviews == null)
+            {
+                return BadRequest(message);
+            }
+            else
+            {
+                return Ok(new { Reviews = reviews, Message = message });
+            }
+            
         }
 
         // GET: api/Reviews/5
@@ -42,13 +39,14 @@ namespace FinalYearProject.Controllers
         public async Task<ActionResult<Review>> GetReview(int id)
         {
             var review = await _context.Reviews.FindAsync(id);
-
             if (review == null)
             {
                 return NotFound();
             }
-
-            return review;
+            else{
+                return review;
+            }
+            
         }
 
         // PUT: api/Reviews/5
@@ -71,12 +69,12 @@ namespace FinalYearProject.Controllers
         public async Task<ActionResult<Review>> PostReview(Review review)
         {
             var (result,message)= await _reviewService.PostReviewsAsync(review);
-            if (result!=null){
-
+            if (result!=null)
+            {
                 return Ok(new{message});
-
             }
-            else{
+            else
+            {
                 return BadRequest(new{message});
             }
         }
@@ -94,6 +92,5 @@ namespace FinalYearProject.Controllers
             }
         }
 
-        
     }
 }

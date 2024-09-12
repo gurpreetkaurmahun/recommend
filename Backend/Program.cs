@@ -56,6 +56,7 @@ builder.Services.AddScoped<WebScrapperService>();
 builder.Services.AddScoped<SavedProductService>();
 builder.Services.AddScoped<CategoryService>();
 builder.Services.AddScoped<ReviewService>();
+builder.Services.AddScoped<NewsLetterSubscriptionService>();
 
 builder.Services.AddAuthentication(options =>
             {
@@ -81,7 +82,6 @@ builder.Services.AddAuthentication(options =>
 var app = builder.Build();
 
 
-   
 
   
 // Configure the HTTP request pipeline.

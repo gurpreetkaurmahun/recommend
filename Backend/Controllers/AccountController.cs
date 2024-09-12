@@ -1,16 +1,7 @@
 using SoftwareProject.Models;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SoftwareProject.Helpers;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using SoftwareProject.Service;
-using System.Text;
-using Microsoft.AspNetCore.Authorization;
-
-
 
 namespace SoftwareProject.Controllers
 {
@@ -18,13 +9,11 @@ namespace SoftwareProject.Controllers
 [ApiController]
 
 
- public class AccountController : ControllerBase{
+public class AccountController : ControllerBase{
    
 
         private readonly AccountService _accountService;
         private readonly ILogger<AccountController> _logger;
-
-   
 
         public AccountController(ILogger<AccountController> logger,  AccountService accountService)
         {
@@ -34,12 +23,12 @@ namespace SoftwareProject.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register(AuthModel model){
-
-
+        public async Task<IActionResult> Register(AuthModel model)
+        {
             var scheme = Request.Scheme;
             var host = Request.Host.Value;
             var(result,message,userID,token)= await _accountService. RegisterNewUser(model,scheme,host);
+
             if(result){
                 return Ok(new{result,message,userID,token});
             }
@@ -48,9 +37,6 @@ namespace SoftwareProject.Controllers
             }
         }
        
-      
-
-
         // Add an action to handle email verification
         [HttpGet("verify-email")]
         public async Task<IActionResult> VerifyEmail(string userId, string token)
@@ -67,16 +53,12 @@ namespace SoftwareProject.Controllers
             else{
                 return BadRequest(new{result,message});
             }
-
-            
         }
-
 
 
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginModel model)
         {
-
             var (result,message)= await _accountService.LoginToAccount(model);
             if (result){
                 return Ok(new{message});
@@ -85,6 +67,7 @@ namespace SoftwareProject.Controllers
                 return BadRequest(new{message});
             }
         }
+
 
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()

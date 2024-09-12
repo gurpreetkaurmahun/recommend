@@ -1,9 +1,6 @@
 using System.Runtime.CompilerServices;
 
 namespace SoftwareProject.Helpers{
-
-
-
 public static class LoggerExtensions{
 
 public static void LogInformationWithMethod(this ILogger logger, string message, [CallerMemberName] string callerMethodName = "")
@@ -21,5 +18,6 @@ public static void LogInformationWithMethod(this ILogger logger, string message,
         logger.LogError($"{callerMethodName}: {message}");
     }
     
-}
+    }
+    
 }
