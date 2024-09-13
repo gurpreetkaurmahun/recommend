@@ -1,10 +1,7 @@
 
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using SoftwareProject.Models;
 using System.Text.Json;
-
-using SoftwareProject.Helpers;
 using SoftwareProject.Service;
 
 
@@ -30,39 +27,14 @@ namespace FinalYearProject.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SavedProduct>>> GetSavedProduct()
         {
-
-            try{
-                _logger.LogInformationWithMethod($" Retreiving SavedProducts:===>");
-
-            //Prodcuts saved with consumerid as key and product as valuue
-
-            var savedProducts = await _context.SavedProducts
-            .Include(sp => sp.Product)
-            .Include(sp => sp.Consumer)
-            .Where(sp => sp.ConsumerId != null) // Filter out any null ConsumerId
-            .GroupBy(sp => sp.ConsumerId!.Value) // Use non-nullable value
-            .Select(group => new
+            var result=await _savedProductService.SavedProductsByConsumers();
+            if (result == null)
             {
-                ConsumerId = group.Key,
-                Products = group.Select(sp => new
-                {
-                    ProductName = sp.Product.ProductName,
-                    ConsumerName = sp.Consumer.FName,
-                    DateSaved = sp.DateSaved,
-                }).ToList()
-            })
-            .ToDictionaryAsync(x => x.ConsumerId, x => x.Products);
-                _logger.LogInformationWithMethod("Saved Products retreived Sucessfully");
-                return Ok(savedProducts);
+                return BadRequest(new { Message = "Failed to retrieve saved products for consumers" });
             }
-            catch(Exception ex){
-
-                _logger.LogErrorWithMethod($"Failed to SavedProducts:{ex.Message}");
-
-                return StatusCode(500,$"Failed with error:{ex.Message}");
-
+            else{
+                 return Ok(new { Message = "Retrieved SavedProducts", Data = result });
             }
-          
         }
 
         // GET: api/SavedProduct/5

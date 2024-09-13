@@ -70,11 +70,7 @@ function WriteReview({onClose, initialReview, onSubmit}){
        async function handleSubmit(values) {
 
         console.log("review values",values);
-        // if(!validEmail(values.Email)){
-        //     setErrorMessage("Invalid Email Entered");
-        //     setError(true);
-        //     return;
-        // }
+        
         if (!values.Review || !values.Stars ||  !values.ScreenName) {
             setErrorMessage("Please fill out all the fields");
             setError(true);
@@ -83,7 +79,8 @@ function WriteReview({onClose, initialReview, onSubmit}){
 
         const stars = parseInt(values.Stars, 10);
         if (isNaN(stars) || stars < 1 || stars > 5) {
-            setError("Stars must be a number between 1 and 5");
+            setError(true);
+            setErrorMessage("Stars must be a number between 1 and 5");
             return;
         }
 

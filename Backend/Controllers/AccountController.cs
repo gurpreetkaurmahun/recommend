@@ -7,14 +7,10 @@ namespace SoftwareProject.Controllers
 {
 [Route("api/[controller]")]
 [ApiController]
-
-
-public class AccountController : ControllerBase{
-   
-
+public class AccountController : ControllerBase
+{
         private readonly AccountService _accountService;
         private readonly ILogger<AccountController> _logger;
-
         public AccountController(ILogger<AccountController> logger,  AccountService accountService)
         {
             

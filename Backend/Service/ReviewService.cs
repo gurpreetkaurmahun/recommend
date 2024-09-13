@@ -36,7 +36,7 @@ namespace  SoftwareProject.Service{
                     stars = r.stars,
                     ConsumerId = r.ConsumerId,
                     UserEmail = r.UserEmail,
-                    ConsumerName = r.Consumer?.FName ?? ""
+                    ConsumerName = r.ConsumerName
                 }).ToList();
 
                 _logger.LogInformation($"Successfully retrieved {reviewsWithConsumerNames.Count} reviews with consumer names.");
@@ -100,9 +100,8 @@ namespace  SoftwareProject.Service{
                     consumer.Reviews = new List<Review>();
                 }
                 consumer.Reviews.Add(review);
-                consumer.FName = review.ConsumerName;
+                
 
-                // Save changes
                 await _context.SaveChangesAsync();
                 _logger.LogInformationWithMethod($" Review with id:{review.ReviewId} added to the system");
 

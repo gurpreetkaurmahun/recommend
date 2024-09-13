@@ -22,14 +22,14 @@ namespace FinalYearProject.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Review>>> GetReviews()
         {
-            var (reviews, message) = await _reviewService.GetReviewsAsync();
-            if (reviews == null)
+            var (result, message) = await _reviewService.GetReviewsAsync();
+            if (result == null)
             {
                 return BadRequest(message);
             }
             else
             {
-                return Ok(new { Reviews = reviews, Message = message });
+                return Ok(new { Reviews = result, Message = message });
             }
             
         }
@@ -38,15 +38,13 @@ namespace FinalYearProject.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Review>> GetReview(int id)
         {
-            var review = await _context.Reviews.FindAsync(id);
-            if (review == null)
-            {
-                return NotFound();
+            var (result,message)=await _reviewService.GetReviewsByIdAsync(id);
+            if(result!=null){
+              return Ok(new{result,message});
             }
             else{
-                return review;
+                return BadRequest(message);
             }
-            
         }
 
         // PUT: api/Reviews/5

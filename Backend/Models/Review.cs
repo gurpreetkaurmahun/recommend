@@ -16,7 +16,7 @@ namespace SoftwareProject.Models {
         public virtual Consumer? Consumer { get; set; }
 
         public string UserEmail { get; set; }
-        [NotMapped] // This attribute ensures the property is not mapped to the database
+       // This attribute ensures the property is not mapped to the database
         public string ConsumerName { get; set; }
         
     }

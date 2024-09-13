@@ -28,21 +28,32 @@ namespace FinalYearProject.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<NewsLetterSubscription>>> GetNewsLetterSubscriptions()
         {
-            return await _context.NewsLetterSubscriptions.ToListAsync();
+            var (result,message)=await _newsLetterSubscriptionService.GetAllNewsLetters();
+
+            if (result!=null){
+                // _logger.LogInformationWithMethod(message);
+                return Ok(new{result,message});
+            }
+            else{
+                 return BadRequest(message);
+            }
+
         }
 
         // GET: api/NewsLetterSubscriptions/5
         [HttpGet("{id}")]
         public async Task<ActionResult<NewsLetterSubscription>> GetNewsLetterSubscription(int id)
         {
-            var newsLetterSubscription = await _context.NewsLetterSubscriptions.FindAsync(id);
+           var (result,message)=await _newsLetterSubscriptionService.GetNewsLetterById(id);
 
-            if (newsLetterSubscription == null)
-            {
-                return NotFound();
+            if(result!=null){
+                // _logger.LogInformationWithMethod(message);
+
+                return Ok(new{result,message});
             }
-
-            return newsLetterSubscription;
+            else{
+                return BadRequest(message);
+            }
         }
 
         // PUT: api/NewsLetterSubscriptions/5
@@ -50,30 +61,13 @@ namespace FinalYearProject.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutNewsLetterSubscription(int id, NewsLetterSubscription newsLetterSubscription)
         {
-            if (id != newsLetterSubscription.Id)
-            {
-                return BadRequest();
+            var (result,message)=await _newsLetterSubscriptionService.updateNewsletter(id,newsLetterSubscription);
+             if(result){
+                return Ok(new{message});
             }
-
-            _context.Entry(newsLetterSubscription).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!NewsLetterSubscriptionExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            else{
+                return BadRequest(new{message});
+           }
         }
 
         // POST: api/NewsLetterSubscriptions
@@ -81,10 +75,13 @@ namespace FinalYearProject.Controllers
         [HttpPost]
         public async Task<ActionResult<NewsLetterSubscription>> PostNewsLetterSubscription(NewsLetterSubscription newsLetterSubscription)
         {
-            _context.NewsLetterSubscriptions.Add(newsLetterSubscription);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetNewsLetterSubscription", new { id = newsLetterSubscription.Id }, newsLetterSubscription);
+           var (result,message)=await _newsLetterSubscriptionService.addNewsletter(newsLetterSubscription);
+            if(result!=null){
+                return Ok(new{message});
+            }
+            else{
+                return BadRequest(new{message});
+            }
         }
 
         [HttpPost("send/{id}")]
@@ -105,21 +102,15 @@ namespace FinalYearProject.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteNewsLetterSubscription(int id)
         {
-            var newsLetterSubscription = await _context.NewsLetterSubscriptions.FindAsync(id);
-            if (newsLetterSubscription == null)
-            {
-                return NotFound();
+            var (result,message)=await _newsLetterSubscriptionService.deleteNewsletter(id);
+            if (result){
+                return Ok(new{message});
+            }
+            else{
+                return BadRequest(new{message});
             }
 
-            _context.NewsLetterSubscriptions.Remove(newsLetterSubscription);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
         }
 
-        private bool NewsLetterSubscriptionExists(int id)
-        {
-            return _context.NewsLetterSubscriptions.Any(e => e.Id == id);
-        }
     }
 }

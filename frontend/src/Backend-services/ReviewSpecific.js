@@ -98,7 +98,13 @@ function calculateDays(reviewDate) {
     const reviewDay = new Date(reviewDate);
     const diffTime = Math.abs(today - reviewDay);
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-    return diffDays;
+
+    if (diffDays > 31) {
+        const months = Math.floor(diffDays / 30.44); // Average days in a month
+        return `${months} month${months > 1 ? 's' : ''} ago`;
+    } else {
+        return `${diffDays} day${diffDays !== 1 ? 's' : ''} ago`;
+    }
 }
 
 export{getReviews,getReviewsById,addReview,updateReviews,deleteReview,calculateDays};

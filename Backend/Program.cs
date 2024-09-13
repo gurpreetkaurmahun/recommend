@@ -57,6 +57,8 @@ builder.Services.AddScoped<SavedProductService>();
 builder.Services.AddScoped<CategoryService>();
 builder.Services.AddScoped<ReviewService>();
 builder.Services.AddScoped<NewsLetterSubscriptionService>();
+builder.Services.AddHostedService<NewsLetterSenderService>();
+
 
 builder.Services.AddAuthentication(options =>
             {

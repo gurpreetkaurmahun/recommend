@@ -3,10 +3,7 @@ import React from "react";
 
 function ReviewLink({icon,userName,days,star,content,isOwner,onDelete,onEdit}){
 
- 
-
-
-    const renderStars = (rating) => {
+        const renderStars = (rating) => {
         const goldStar = "⭐";
         const greyStar = "☆";
         return (
@@ -16,8 +13,6 @@ function ReviewLink({icon,userName,days,star,content,isOwner,onDelete,onEdit}){
             </>
         );
     };
-
-
 
     return(
         <div style={{ marginBottom:"30px",borderRadius:"20px"}}>
@@ -42,7 +37,7 @@ function ReviewLink({icon,userName,days,star,content,isOwner,onDelete,onEdit}){
 
             <div style={{display:"flex"}}>
             <p>{renderStars(star)}</p>
-            <p className="reviewLinkPara" > posted {days} days ago</p>
+            <p className="reviewLinkPara" > posted {days} </p>
            
 
             </div>

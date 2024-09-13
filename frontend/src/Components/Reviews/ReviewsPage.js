@@ -2,7 +2,7 @@
 import Navbar from "../Navbar.js";
 import{useState,useEffect} from "react";
 import ReviewLink from "./ReviewLink.js";
-import{getReviews,getReviewsById,addReview,updateReviews,deleteReview} from "../../Backend-services/ReviewSpecific.js";
+import{getReviews,getReviewsById,addReview,updateReviews,deleteReview,calculateDays} from "../../Backend-services/ReviewSpecific.js";
 import Footer from "../../Pages/Footer.js";
 import { useNavigate, useLocation } from 'react-router-dom';
 import WriteReview from "./WriteReview.js";
@@ -65,13 +65,7 @@ function ReviewsPage(){
             console.error("Error fetching reviews:", error);
         }
     }
-    function calculateDays(reviewDate) {
-        const today = new Date();
-        const reviewDay = new Date(reviewDate);
-        const diffTime = Math.abs(today - reviewDay);
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-        return diffDays;
-    }
+   
 
 
     async function handleDelete(reviewId) {

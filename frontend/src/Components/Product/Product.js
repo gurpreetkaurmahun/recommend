@@ -1,5 +1,5 @@
 import React from "react";
-import { MdFavoriteBorder, MdDelete } from "react-icons/md";
+import { MdDelete } from "react-icons/md";
 //Addlocation Icon
 function Product({title,price,image,link,pricePerUnit,supermarket,onSave,onDelete,isSaved}){
 

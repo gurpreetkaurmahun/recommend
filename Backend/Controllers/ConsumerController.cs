@@ -12,7 +12,6 @@ namespace FinalYearProject.Controllers
     [ApiController]
     public class ConsumerController : ControllerBase
     {
-     
         private readonly ILogger<ConsumerController> _logger; 
         private readonly ConsumerService _consumerService;
 

@@ -2,13 +2,13 @@ import { FiArrowRightCircle } from "react-icons/fi";
 import MyForm from "../Components/Form";
 import { Link } from "react-router-dom";
 import Message from "../Components/Message.js";
-import { useState } from "react";
+import { useState,useEffect } from "react";
+import {getCustomerById,updateCustomer} from "../Backend-services/CustomerSpecific.js";
 
-import{sendNewsLetter} from"../Backend-services/NewsLetterSpecific.js";
-import { ErrorMessage } from "formik";
 
 function Footer(){
 
+  const [user,setUser]=useState("");
   const[error,setError]=useState(false);
   const[errorMessage,setErrorMessage]=useState("");
 
@@ -16,34 +16,47 @@ function Footer(){
 
   const initialValues={Email:""}
 
-async function handleSubmit(values) {
-  try {
-    console.log("Newsletter values:", values);
-    const response = await sendNewsLetter(1, values.Email);
-    console.log("Response from newsletter:", response);
+  useEffect(()=>{
+    const UserId=localStorage.getItem("activeUserId");
 
-    if (response.success) {
-      console.log("Response from newsletter:", response.data);
-      // Handle successful newsletter subscription (e.g., show a success message)
-      setError(false);
-      setErrorMessage("bvbnnnnnn");
-      // You might want to add a success message state here
-    } else {
+    console.log("UserId in Footer:",UserId);
+    console.log("logged in Footer user is:",user);
+  },[]);
+
+  async function handleSubmit(values) {
+    try {
+      const response = await getCustomerById(localStorage.getItem("activeUserId"));
+      console.log("Logged in user in Local storage is:", response.consumer);
+      
+      if (response.consumer) {
+
+        const updatedUser = { ...response.consumer, isSubscribed: true };
+        setUser(updatedUser);
+        const updateResponse = await updateCustomer(updatedUser.consumerId, updatedUser);
+        if (updateResponse.success) {
+          setError(false);
+          setErrorMessage("");
+          console.log("User successfully subscribed to newsletter");
+        } else {
+          throw new Error("Failed to update user subscription status");
+        }
+        
+        setError(false);
+        setErrorMessage("");
+      } else {
+        throw new Error("No consumer data found");
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
       setError(true);
-      setErrorMessage("bvbnnnnnn");
+      setErrorMessage(error.message || "Failed to fetch user data");
     }
-  } catch (error) {
-    console.error("Error subscribing to newsletter:", error);
-    setError(true);
-    setErrorMessage(error);
-    // Handle error (e.g., show an error message to the user)
   }
-}
 
     return (
     <div style={{background: "linear-gradient(45deg, #f321bf, #ebe1e4)",}}>
         <footer class="pt-4 my-md-5 pt-md-5 " >
-          {error&&<Message value={ErrorMessage} onClose={()=>setError(false)}/>}
+          {error&&<Message value={errorMessage} onClose={()=>setError(false)}/>}
         <div class="row">
           <div className="newsletter" style={{height:300,marginTop:"-50px",position:"relative",marginBottom:50}}>
                 <h2 style={{marginTop:100}}>Subscribe to our Newsletter</h2>

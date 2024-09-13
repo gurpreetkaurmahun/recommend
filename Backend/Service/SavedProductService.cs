@@ -18,6 +18,39 @@ namespace  SoftwareProject.Service{
             _logger=logger;
         }
 
+        public async Task<Dictionary<int, List<object>>> SavedProductsByConsumers()
+        {
+            try
+            {
+                _logger.LogInformationWithMethod("Retrieving SavedProducts ===>");
+
+                var savedProducts = await _context.SavedProducts
+                    .Include(sp => sp.Product)
+                    .Include(sp => sp.Consumer)
+                    .Where(sp => sp.ConsumerId != null)
+                    .GroupBy(sp => sp.ConsumerId!.Value)
+                    .Select(group => new
+                    {
+                        ConsumerId = group.Key,
+                        Products = group.Select(sp => new
+                        {
+                            ProductName = sp.Product.ProductName,
+                            ConsumerName = sp.Consumer.FName,
+                            DateSaved = sp.DateSaved,
+                        }).ToList()
+                    })
+                    .ToDictionaryAsync(x => x.ConsumerId, x => x.Products.Cast<object>().ToList());
+
+                _logger.LogInformationWithMethod("Saved Products retrieved successfully");
+                return savedProducts;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogErrorWithMethod($"Failed to retrieve SavedProducts: {ex.Message}");
+                return null;
+            }
+
+        }
         public async Task<Dictionary<int, List<object>>> GetSavedProductForConsumer(int consumerId)
         {
             try

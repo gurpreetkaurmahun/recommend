@@ -17,13 +17,11 @@ namespace SoftwareProject.Models {
         public string ContactNo { get; set; }
 
         public DateTime Dob{get;set;}
+        public bool isSubscribed { get; set; }
 
         public string? IdentityUserId { get; set; }
         
-        // Navigation property
         public  IdentityUser? IdentityUser { get; set; }
-
-    
         public virtual ICollection<NewsLetterSubscription>? Newsletters { get; set; }
    
         public virtual ICollection<Review>? Reviews { get; set; }
