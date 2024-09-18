@@ -668,20 +668,24 @@ background:transparent}
 h2.contentH1 {
   margin: 0;  /* Reset all margins */
  
-  margin-right: 62%;
-  margin-bottom: -20px;
+  margin-right: 50%;
+  margin-bottom: 1%;
+  
 }
 h2.contentH {
   margin: 0;  /* Reset all margins */
  
   margin-right: 62%;
-  margin-bottom: -120px;
+  margin-bottom: -3% ;
+  
+ 
 }
 .contentTitle{
   position: absolute;
-  top: 250px;
-  left: 300px;
+  top: 15%;
+  left: 20%;
   z-index: 10;
+  
 
 }
 .contentText{
@@ -769,6 +773,7 @@ h2.contentH {
 
 }
 .regDiv{  background-color:#fc6bd8;min-height: 1000px;}
+
 .message{
   position: fixed;
   bottom:40%;
@@ -1209,6 +1214,8 @@ h2.contentH {
     margin-right: 10px;
     margin-bottom: 10px;
   }
+
+ 
   
   
 }

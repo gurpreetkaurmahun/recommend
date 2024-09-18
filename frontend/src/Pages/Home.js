@@ -1,7 +1,5 @@
 import React from "react";
-
 import 'bootstrap/dist/css/bootstrap.min.css';
-
 import Footer from "./Footer";
 import Navbar from "../Components/Navbar";
 import Content from "./Content";
@@ -43,12 +41,12 @@ function Home() {
             />
         </div>
 
-        <div className="reviewdiv" >
-            <div style={{width:"100%", height: "100%", overflow: "auto",marginLeft:"50px"}}>
-            <HomeReview/>
-            </div>
-        </div>
+        <div className="reviewdiv" style={{ minHeight: '250px' }}>
+    <div style={{width:"100%", height: "100%", overflow: "auto", marginLeft:"50px"}}>
+      <HomeReview/>
     </div>
+  </div>
+</div>
 
     <Footer/>
 

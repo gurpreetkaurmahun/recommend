@@ -9,13 +9,12 @@ namespace  SoftwareProject.Service{
 
         private readonly ApplicationDbContext _context;
         private readonly ILogger<ReviewService> _logger;
-        private readonly UserManager<IdentityUser> _userManager;
 
-        public ReviewService(ApplicationDbContext context,ILogger<ReviewService> logger,UserManager<IdentityUser> userManager)
+        public ReviewService(ApplicationDbContext context,ILogger<ReviewService> logger)
         {
             _context=context;
             _logger=logger;
-            _userManager=userManager;
+            
         }
 
         public async Task<(List<Review> reviews, string message)> GetReviewsAsync()

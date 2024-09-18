@@ -130,15 +130,15 @@ public async Task<List<Product>> GetProductDetails(List<string> urls, string bra
                 var title = await page.EvaluateAsync<string>("() => document.querySelector('h1')?.innerText || 'Title not found'");
                 Console.WriteLine($"Extracted title: {title}");
 
-                // Check if the title contains the brand and product
-                bool brandMatch = string.IsNullOrEmpty(brand) || title.Contains(brand, StringComparison.OrdinalIgnoreCase);
-                bool productMatch = string.IsNullOrEmpty(product) || title.Contains(product, StringComparison.OrdinalIgnoreCase);
+                // // Check if the title contains the brand and product
+                // bool brandMatch = string.IsNullOrEmpty(brand) || title.Contains(brand, StringComparison.OrdinalIgnoreCase);
+                // bool productMatch = string.IsNullOrEmpty(product) || title.Contains(product, StringComparison.OrdinalIgnoreCase);
 
-                if (!brandMatch || !productMatch)
-                {
-                    Console.WriteLine($"Skipping product as it doesn't match the expected brand or product name: {title}");
-                    continue; // Skip to the next URL
-                }
+                // if (!brandMatch && !productMatch)
+                // {
+                //     Console.WriteLine($"Skipping product as it doesn't match the expected brand or product name: {title}");
+                //     continue; // Skip to the next URL
+                // }
 
                 var price = await page.EvaluateAsync<string>(@"() => {
                     const priceElement = document.querySelector('.pdp-main-details__price-container .co-product__price');
@@ -200,118 +200,6 @@ public async Task<List<Product>> GetProductDetails(List<string> urls, string bra
     return products;
 }
 
-// public async Task<List<Product>> GetProductDetails(List<string> urls, string brand, string product)
-// {
-//     List<Product> products = new List<Product>();
-
-//     using var playwright = await Playwright.CreateAsync();
-//     await using var browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
-//     {
-//         Headless = true // Set to true for headless operation
-//     });
-
-//     foreach (string url in urls)
-//     {
-//         try
-//         {
-//             Console.WriteLine($"Fetching URL: {url}");
-
-//             var context = await browser.NewContextAsync(new BrowserNewContextOptions
-//             {
-//                 UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
-//             });
-
-//             var page = await context.NewPageAsync();
-
-//             var response = await page.GotoAsync(url, new PageGotoOptions
-//             {
-//                 WaitUntil = WaitUntilState.NetworkIdle,
-//                 Timeout = 60000 // 60 seconds timeout
-//             });
-
-//             if (response.Ok)
-//             {
-//                 // Ensure the page is fully loaded and elements are visible
-//                 await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-//                 await page.WaitForSelectorAsync("h1", new PageWaitForSelectorOptions { State = WaitForSelectorState.Visible, Timeout = 30000 });
-
-//                 var title = await page.EvaluateAsync<string>("() => document.querySelector('h1')?.innerText || 'Title not found'");
-//                 Console.WriteLine($"Extracted title: {title}");
-
-//                 bool brandMatch = string.IsNullOrEmpty(brand) || title.Contains(brand, StringComparison.OrdinalIgnoreCase);
-//                 bool productMatch = string.IsNullOrEmpty(product) || title.Contains(product, StringComparison.OrdinalIgnoreCase);
-
-//                 if (!brandMatch && !productMatch)
-//                 {
-//                     Console.WriteLine($"Skipping product as it doesn't match the expected brand or product name: {title}");
-//                     continue;
-//                 }
-
-         
-//                 var price = await page.EvaluateAsync<string>(@"() => {
-//                     const priceElement = document.querySelector('.pdp-main-details__price-container .co-product__price');
-//                     if (priceElement) {
-//                         let price = priceElement.innerText.trim();
-//                         return price.replace(/^now\s*/i, ''); // Remove 'now' from the beginning
-//                     }
-//                     return 'Price not found';
-//                 }");
-
-//                 // var pricePerPiece = await page.EvaluateAsync<string>(@"() => {
-//                 //     const element = document.querySelector('.co-product__price-per-uom');
-//                 //     return element ? element.innerText.trim() : 'Price per piece not found';
-//                 // }");
-//                  var pricePerPiece = await page.EvaluateAsync<string>(@"() => {
-//                     const element = document.querySelector('.co-product__price-per-uom');
-//                     if (element) {
-//                         let price = element.innerText.trim();
-//                         return price.replace(/^\(|\)$/g, ''); // Remove brackets
-//                     }
-//                     return 'Price per piece not found';
-//                 }");
-
-//                 var imageUrl = await page.EvaluateAsync<string>(@"() => {
-//                     const imgElement = document.querySelector('img.asda-img.asda-image');
-//                     return imgElement ? imgElement.src : 'Image not found';
-//                 }");
-//                 Console.WriteLine($"Extracted image URL: {imageUrl}");
-
-//                 // Categorize the product
-//                 var categoryName = _categoryService.CategorizeProduct(title);
-//                 var category = new Category { CategoryName = categoryName };
-
-//                 products.Add(new Product
-//                 {
-//                     ProductName = title,
-//                     Price = price,
-//                     ImageUrl = imageUrl,
-//                     pricePerUnit = pricePerPiece,
-//                     ImageLogo = "https://cdn.dribbble.com/users/432077/screenshots/2731784/attachments/553941/asda2.jpg",
-//                     Url = url,
-//                     IsAvailable = true,
-//                     Date = DateOnly.FromDateTime(DateTime.Now),
-//                     Category = category, // Assign the category
-//                     CategoryId = category.CategoryId // Assign the category ID (if available)
-//                 });
-//             }
-//             else
-//             {
-//                 Console.WriteLine($"Failed to load page: {url}. Status: {response.Status}");
-//             }
-
-//             await context.CloseAsync();
-
-//             // Random delay to mimic human behavior and avoid being blocked
-//             await Task.Delay(TimeSpan.FromSeconds(new Random().Next(5, 15)));
-//         }
-//         catch (Exception ex)
-//         {
-//             Console.WriteLine($"Failed to get details for URL: {url}. Error: {ex.Message}");
-//         }
-//     }
-
-//     return products;
-// }
 
 
 

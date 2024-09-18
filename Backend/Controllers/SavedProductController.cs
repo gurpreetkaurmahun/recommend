@@ -64,7 +64,7 @@ namespace FinalYearProject.Controllers
                 return Ok(new{message="Prodcut saved for the consumer"});
             }
             else{
-                return BadRequest(new{message="Erroo Saving product for the consumer"});
+                return BadRequest(new{message});
             }
         }
 

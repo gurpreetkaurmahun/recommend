@@ -14,7 +14,7 @@ const getCustomers= async ()=>{
     }catch (error) {
         return { 
             success: false, 
-            error: error.response?.data || error.message || "An error occurred while sending the newsletter"
+            error: error.response?.data || error.message || "An error occurred while retreiving all users"
           };
         
     }
@@ -34,7 +34,7 @@ const getCustomerById=async(id)=>{
     }catch(error){
         return { 
             success: false, 
-            error: error.response?.data || error.message || "An error occurred while sending the newsletter"
+            error: error.response?.data || error.message || "An error occurred while retreiving the user"
           };
     }
 };
@@ -58,7 +58,7 @@ const addCustomer=async(token,customer)=>{
     }catch(error){
         return { 
             success: false, 
-            error: error.response?.data || error.message || "An error occurred while sending the newsletter"
+            error: error.response?.data || error.message || "An error occurred while adding the user"
           };
     }
 };
@@ -76,7 +76,7 @@ const updateCustomer = async (id, editCustomer) => {
     } catch (error) {
         return { 
             success: false, 
-            error: error.response?.data || error.message || "An error occurred while sending the newsletter"
+            error: error.response?.data || error.message || "An error occurred while updating the user"
           };
     }
 };
@@ -95,7 +95,7 @@ const deleteCustomer=async(token,customerId)=>{
     }catch(error){
         return { 
             success: false, 
-            error: error.response?.data || error.message || "An error occurred while sending the newsletter"
+            error: error.response?.data || error.message || "An error occurred while deleting the user"
           };
     }
 };

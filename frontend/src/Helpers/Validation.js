@@ -35,7 +35,7 @@ const validPassword=(password)=>{
 
 
 }
-const validPhone = (PhoneNo) => {
+const validPhoneNo = (PhoneNo) => {
     if (PhoneNo === null || PhoneNo.trim() === "") {
         throw new Error("Phone number is missing");
     }
@@ -62,4 +62,4 @@ function containSymbol(word){
     return false;
 }
 
-export  {validName,validPassword,validEmail,validPhone};
+export  {validName,validPassword,validEmail,validPhoneNo};

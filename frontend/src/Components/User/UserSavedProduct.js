@@ -2,13 +2,12 @@ import React, { useState, useEffect } from "react";
 import Product from "../Product/Product.js";
 import Navbar from "../Navbar.js";
 import {Link} from "react-router-dom";
-import { getProductsById } from "../../Backend-services/SavedProductSpecific.js";
+import { getProductsById,deleteSavedProduct } from "../../Backend-services/SavedProductSpecific.js";
 import ShoppingCart from "../../assets/shopping Cart.jpg";
 import { useAuth } from "../AuthenticateContext.js";
 import Products from "../../assets/products 1.jpg";
-import {deleteSavedProduct} from "../../Backend-services/SavedProductSpecific.js";
+import{getCustomerById}from "../../Backend-services/CustomerSpecific.js";
 import Search from "../../assets/Search.mp4";
-import{getCustomerById} from "../../Backend-services/CustomerSpecific.js";
 import {useNavigate} from "react-router-dom";
 import Footer from "../../Pages/Footer.js";
 import { GrFavorite } from "react-icons/gr";
@@ -28,9 +27,9 @@ function UserProducts() {
     const[reviews,setReviews]=useState([]);
     const[empty,setEmpty]=useState(false); 
     const [currentUserId, setCurrentUserId] = useState(null);
-
     const[userSettings,setUserSettings]=useState(false);
-   const[showReviews,setShowReviews]=useState(false);
+    const[noReview,setNoReview]=useState(false);
+    const[showReviews,setShowReviews]=useState(false);
     const [showFavorites, setShowFavorites] = useState(true);
     const [showSettings, setShowSettings] = useState(false);
     const[loggedIn,setLoggedIn]=useState(false);
@@ -38,21 +37,21 @@ function UserProducts() {
     const[reviewLink,setReviewLink]=useState(false);
 
     const[user,setUser]=useState("");
+
     const authContext=useAuth();
+    const isAuthenticated = authContext.authenticated; 
+    const identityId=authContext.identityId;
+    const activeId=authContext.activeUserId;
+    const activeToken=authContext.token;
 
     const navigate=useNavigate();
 
     useEffect(() => {
-        const userToken = localStorage.getItem("userToken");
-        const userId = localStorage.getItem('activeUserId');
-   
-        console.log("Token in use effect:", userToken);
-        console.log("User ID in use effect:", userId);
-    
-        if (userToken && userId) {
-            setCurrentUserId(userId)
-            getSaved(userId, userToken);
-            getConsumer(userId);
+       
+        if (isAuthenticated) {
+            setCurrentUserId(activeId)
+            getSaved(activeId, activeToken);
+            getConsumer(parseInt(activeId),10);
             setLoggedIn(true);
         }
         else{
@@ -60,6 +59,7 @@ function UserProducts() {
         }
         console.log("Reviews for logged in user is:",reviews);
         console.log("Local Storage from User Saved", localStorage);
+       
     }, []);
 
     async function getSaved(userId, userToken) {
@@ -93,12 +93,12 @@ function UserProducts() {
     }
 
     async function deleteTheProduct(product) {
-        const userId = localStorage.getItem('activeUserId');
+        // const userId = localStorage.getItem('activeUserId');
         
         console.log("delete clicked for", product.tempId);
     
         try {
-            const deleteProd = await deleteSavedProduct(userId, product.tempId);
+            const deleteProd = await deleteSavedProduct(currentUserId, product.tempId);
             console.log("Delete Status", deleteProd);
 
             setSavedProducts(prevProducts => {
@@ -108,26 +108,30 @@ function UserProducts() {
             });
         } catch (error) {
             console.error("Error deleting product:", error);
-            // Optionally set an error state here
+           
         }
     }
 
     async function getConsumer(userId) {
         try {
-            const response = await getCustomerById(userId);
-            console.log("logged in user is :", response.consumer);
-            
-            setUser(response.consumer.fName);
-            if (Array.isArray(response.consumer.reviews)) {
-                setReviews(response.consumer.reviews);
-              } else {
-                console.log("Reviews is not an array:", response.consumer.reviews);
-                setReviews([]); // Set to empty array if it's not valid
+          const response = await getCustomerById(userId);
+          console.log("Full response from getCustomerById:", response);
+      
+          if (response && response.data && response.data.consumer) {
+            setUser(response.data.consumer.fName);
+            if (response.data.consumer.reviews.length === 0) {
+                setNoReview(true);
               }
+            setReviews(response.data.consumer.reviews);
+          } else {
+            console.error("Unexpected response structure:", response);
+            
+          }
         } catch (error) {
-            console.log("Error fetching Consumers:", error);
+          console.error("Error fetching Consumer:", error);
+          
         }
-    }
+      }
 
 
 
@@ -143,15 +147,16 @@ function UserProducts() {
       const handleSettingsClick = () => {
         setShowFavorites(false);
         setShowSettings(true);
+        setShowReviews(false);
+        setUserSettings(false);
       };
 
-      const handleReviewsClick=()=>{
+      const handleReviewsClick = () => {
         setShowReviews(true);
         setShowSettings(false);
         setUserSettings(false);
         setShowFavorites(false);
-      }
-
+      };
       async function handleLogout(){
         try {
             console.log("Local Storage before Logout", localStorage);
@@ -178,7 +183,7 @@ function UserProducts() {
         try {
            const response= await deleteReview(reviewId);
            getConsumer(currentUserId);
-            // fetchReviews(); // Refresh the reviews after deleting
+         
         } catch (error) {
             console.error("Error deleting review:", error);
         }
@@ -193,19 +198,12 @@ function UserProducts() {
             await updateReviews(reviewId, updatedReviewData);
             setEditingReview(null);
             getConsumer(currentUserId);
-            // fetchReviews();
+            
         } catch (error) {
             console.error("Error updating review:", error);
         }
     }
-    // function calculateDays(reviewDate) {
-    //     const today = new Date();
-    //     const reviewDay = new Date(reviewDate);
-    //     const diffTime = Math.abs(today - reviewDay);
-    //     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-    //     return diffDays;
-    // }
-
+ 
 
 
     return (
@@ -274,19 +272,21 @@ function UserProducts() {
             <div className="emptyInfo" 
             style={{
               display: "block",
-              position: "absolute",  // Add this
-              top: "30%",  // Add this
-              left: "55%",  // Add this
-              transform: "translateX(-50%)",  // Add this
+              position: "absolute",  
+              top: "30%",  
+              left: "55%",  
+              transform: "translateX(-50%)",  
               zIndex: "1",  // Add this
-              backgroundColor: "rgba(255, 255, 255, 0.8)",  // Add this for better readability
-              padding: "20px",  // Add this for spacing
-              borderRadius: "10px",  // Add this for rounded corners
+              backgroundColor: "rgba(255, 255, 255, 0.8)", 
+              padding: "20px",  
+              borderRadius: "10px",  
               textAlign: "center",
               marginTop:"3%",
      
               height:"auto"
-            }}
+            }
+          
+          }
             >
               <h3> View your saved productshere!</h3>  
             <p>Its simple! search for products, click the heart icon and it will be added here!</p>
@@ -331,6 +331,9 @@ function UserProducts() {
           )
           
           }
+          <div>
+          <button className="buttonT "  onClick={()=>navigate("/view")}> Nearby Locations</button>
+          </div>
         </>
       )}
 
@@ -338,21 +341,39 @@ function UserProducts() {
     </>
   )}
  {showSettings && <Settings onUserUpdate={handleUserUpdate}/>}
- {showReviews && reviews.map(review => (
-  <div key={review.reviewId} style={{ backgroundColor: "white", marginBottom: "10px", borderRadius: "20px", filter: "drop-shadow(5px 5px 6px hwb(314 78% 1%))" }}>
-    <ReviewLink 
-      icon={review.consumerName ? review.consumerName[0] : ''}
-      userName={review.consumerName}
-      days={calculateDays(review.reviewDate)}
-      star={review.stars}
-      content={review.review}
-      isOwner={Number(review.consumerId) === Number(currentUserId)}
-      onDelete={() => handleDelete(review.reviewId)}
-      onEdit={() => handleEdit(review)}
-    />
+ {showReviews && (
+  <div>
+    <h2> {user}'s Reviews</h2>
+    {noReview&&(
+        <div>
+            <h6>
+                Write reviews to help Recommend serve better.
+            </h6>
+            
+        </div>
+    )}
+   
+    {reviews.map(review => (
+      <div key={review.reviewId} style={{ backgroundColor: "white", marginBottom: "10px", borderRadius: "20px", filter: "drop-shadow(5px 5px 6px hwb(314 78% 1%))" }}>
+        <ReviewLink 
+          icon={review.consumerName ? review.consumerName[0] : ''}
+          userName={review.consumerName}
+          days={calculateDays(review.reviewDate)}
+          star={review.stars}
+          content={review.review}
+          isOwner={Number(review.consumerId) === Number(currentUserId)}
+          onDelete={() => handleDelete(review.reviewId)}
+          onEdit={() => handleEdit(review)}
+        />
+      </div>
+    ))}
+     <div>
+      <button className="buttonT">
+        <Link style={{textDecoration:"none",color:"white"}} to="/review">Write reviews</Link>
+      </button>
+    </div>
   </div>
-))}
-
+)}
 {reviewLink && currentUserId && (
             <WriteReview 
                 initialReview={editingReview}

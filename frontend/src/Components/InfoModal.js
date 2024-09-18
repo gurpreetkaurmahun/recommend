@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import { IoCloseCircleOutline } from "react-icons/io5";
+import { useAuth } from './AuthenticateContext';
 
 const SlideUpDiv = ({ onClose,content }) => {
+
+  const authContext=useAuth();
   const [isUser, setIsUser] = useState(false);
 
   useEffect(() => {
-    const id = localStorage.getItem('activeUserId');
+    // const id = localStorage.getItem('activeUserId');
+    const id = authContext.activeUserId;
     setIsUser(id !== null && id !== "null" && id !== "");
   }, []);
 

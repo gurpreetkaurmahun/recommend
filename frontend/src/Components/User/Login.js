@@ -3,13 +3,13 @@ import "../styles.css";
 import { useNavigate } from 'react-router-dom';
 import { useState ,useEffect} from "react";
 import { HiOutlineSaveAs } from "react-icons/hi";
-import {useAuth}from "../AuthenticateContext.js";
+import {useAuth} from "../AuthenticateContext.js";
 import Navbar from "../Navbar.js";
 import { ImNewspaper } from "react-icons/im";
-import{validPhone} from"../../Helpers/Validation.js";
 import MyForm from "../Form.js";
 import {registerUser,emailVerification} from"../../Backend-services/AccountSpecific.js";
 import Message from "../Message.js";
+import {validName,validPassword,validEmail,validPhoneNo}from "../../Helpers/Validation.js";
 
 
 
@@ -23,8 +23,7 @@ const Login=()=>{
     const [verificationToken, setVerificationToken] = useState(null);
     const[showVerificationMessage,setShowVerificationMessage]=useState(false);
     const [inactivityTimer, setInactivityTimer] = useState(null);
-    const [showPassword, setShowPassword] = useState(false);
-    // const[newUser,setNewUser]=useState("");
+
     const navigate=useNavigate();
     const[error,setError]=useState(false);
     const[errorMessage,setErrorMessage]=useState("");
@@ -129,7 +128,7 @@ const Login=()=>{
         console.log("Login Values", values);
         try {
           const success = await authContext.Login(values.Email, values.Password);
-          // console.log("Full login response:", success);
+          console.log("Full login response:", success);
       
           if (success.result && success.token) {
             // console.log("Token received:", success.token);
@@ -153,53 +152,64 @@ const Login=()=>{
         }
       }
 
-
-  
-
-    async function handleRegSubmit(values) 
-    {
-      
-      try 
-      {
-        const customer = {
-          "Email": values.Email,
-          "Password": values.Password,
-          "FName": values.Firstname,
-          "LName": values.Lastname,
-          "Address": values.Address,
-          "ContactNo": values.ContactNo,
-          "Dob": values.DateOfBirth,
-          "Latitude": values.Latitude,
-          "Longitude": values.Longitude,
-          "FullLocation": values.FullLocation
-        };
-
-          // validPhone(customer.ContactNo);
-  
-          const response = await registerUser(customer);
-  
-          console.log("Registration response", response);
-  
-          if (response.result) {
-              setError(false);
-              setErrorMessage('');
-         
-              setShowVerificationMessage(true);
-              setVerificationId(response.userId);
-              setVerificationToken(response.token);
-  
-              // Don't redirect automatically
-          } 
-          else {
-            
+      async function handleRegSubmit(values) {
+        try {
+          // Validate email
+          if (!validEmail(values.Email)) {
+            setError(true);
+           setErrorMessage("Invalid email address. Please use a valid .com email.");
           }
-      } 
-      catch (error) 
-      {
+      
+          // Validate password
+          if (!validPassword(values.Password)) {
+            setError(true);
+            setErrorMessage("Invalid password. Password must be at least 8 characters long and contain uppercase, lowercase, and one of these symbols: !@#$%");
+          }
+      
+          // Validate phone number
+         if(!validPhoneNo(values.ContactNo)){
           setError(true);
-          setErrorMessage(error.message.message);
+          setErrorMessage("Invalid phone no");
+         }
+      
+          // Check for symbols in name fields
+          if (!validName(values.Firstname) || validName(values.Lastname)) {
+            setError(true);
+            setErrorMessage("First name and last name should not contain symbols.");
+          }
+      
+          const customer = {
+            "Email": values.Email,
+            "Password": values.Password,
+            "FName": values.Firstname,
+            "LName": values.Lastname,
+            "Address": values.Address,
+            "ContactNo": values.ContactNo,
+            "Dob": values.DateOfBirth,
+            "Latitude": values.Latitude,
+            "Longitude": values.Longitude,
+            "FullLocation": values.FullLocation
+          };
+      
+          const response = await registerUser(customer);
+          console.log("Registration response", response);
+      
+          if (response.result) {
+            setError(false);
+            setErrorMessage('');
+            setShowVerificationMessage(true);
+            setVerificationId(response.userId);
+            setVerificationToken(response.token);
+          } else {
+            setError(true);
+            setErrorMessage(response.err.data.message || "Registration failed. Please try again.");
+          }
+        } catch (error) {
+          console.error("Registration error:", error);
+          setError(true);
+          setErrorMessage(error.message || "An unexpected error occurred. Please try again.");
+        }
       }
-    }
 
     async function checkVerificationStatus() {
       if (verificationId && verificationToken) {
@@ -251,29 +261,18 @@ const Login=()=>{
     const handleInactivityLogout = () => {
       authContext.Logout();
       navigate('/login');
-      // alert("Session timed out");
+     
     };
 
-        //  function onClose(){
-        //   setShowVerificationMessage(false);
-        //   setRegisterCLick(false);
-        //   setLoginClick(false);
-        //  }
-
-        //  const togglePasswordVisibility = () => {
-        //   setShowPassword(!showPassword);
-        // };
-  
+    
     return(
         <div>
         <Navbar/>
         <div  className="loginReg">
        <div style={{flex:1}}>
  
-        {/* //Login Div */}
-
-       
-       {!loginClick&&<div className="signIn" >  
+      {/* Login Div  */}
+      {!loginClick&&<div className="signIn" >  
         <h1 className="SignIn" > Sign In </h1>
         <MyForm
         fields={fields}
@@ -305,7 +304,7 @@ const Login=()=>{
       {error && <Message value={errorMessage} onClose={()=>{setError(false)}} />}
 
       {!registerClick&& <div className="regDiv" >
-        
+      {error && <Message value={errorMessage} onClose={()=>{setError(false)}} />}
         <h1 className="SignIn">Is this your first visit?</h1>
         <button onClick={handleRegistration} className="buttonT"> Create Account</button>
         <p style={{padding:"30px 0px 30px"}}> You'll gain</p>

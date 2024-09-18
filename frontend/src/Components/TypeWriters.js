@@ -8,14 +8,12 @@ function TypeWriters({topString,bottomString,link,buttonText}){
     return(
         <div className="Typewriter"   >
                 <h1 className="h1Top">
-
                     <TypeWriter
                     options={{
                         autoStart:true,
                         loop:true,
                         delay:150,
                         strings:[topString]
-
                     }}
                     />
                 </h1>

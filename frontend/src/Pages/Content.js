@@ -123,7 +123,7 @@ function Content(){
           </Link>
         </div>
         <video className="contentVideo" src={Candies} autoPlay loop muted  />
-        <div style={{ marginTop: 80 }}>{renderProductsByCategory("Candies")}</div>
+        <div style={{ marginTop: 80,marginBottom:80 }}>{renderProductsByCategory("Candies")}</div>
       </div>
 
 
@@ -147,7 +147,7 @@ function Content(){
           </Link>
         </div>
         <video className="contentVideo" src={Fruits} autoPlay loop muted  />
-        <div style={{ marginTop: 80 }}>{renderProductsByCategory("Fruits")}</div>
+        <div style={{ marginTop: 80,marginBottom:80 }}>{renderProductsByCategory("Fruits")}</div>
       </div>
 
       <h2 className="contentH1 contentH " >Shop in  Coffee</h2>
@@ -165,7 +165,7 @@ function Content(){
           </Link>
         </div>
         <video className="contentVideo" src={Coffee} autoPlay loop muted  />
-        <div style={{ marginTop: 80 }}>{renderProductsByCategory(" Coffee")}</div>
+        <div style={{ marginTop: 80,marginBottom:80 }}>{renderProductsByCategory(" Coffee")}</div>
       </div>
       
         </div>

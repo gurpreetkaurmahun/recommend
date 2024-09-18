@@ -106,7 +106,7 @@ namespace  SoftwareProject.Service{
         
                 var tempId = jsonElement.GetProperty("TempId").GetString();
                 var consumerId = jsonElement.GetProperty("ConsumerId").GetInt32();
-                var dateSaved = jsonElement.GetProperty("DateSaved").GetDateTime();
+                var dateSaved = DateTime.Parse(jsonElement.GetProperty("DateSaved").GetString());
 
                 if (string.IsNullOrEmpty(tempId))
                 {

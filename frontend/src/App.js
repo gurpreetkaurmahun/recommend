@@ -34,6 +34,7 @@ function App() {
         <Route path="/view" element={<ViewLocation/>} />
         <Route path="/user" element={<UserProducts/>} />
         <Route path="/review" element={<ReviewsPage/>} />
+        
     
         
       </Routes>

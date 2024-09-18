@@ -5,17 +5,23 @@ import{ API_BASE_URL} from"../apiConfig.js";
 //This works
 
 
-const registerUser= async (customer)=>{
-    try{
-        const registerResponse = await axios.post(
+const registerUser = async (customer) => {
+    try {
+        const response = await axios.post(
             `${API_BASE_URL}Account/register`,customer)
-       
-        console.log("Register response:",registerResponse.data)
-        return registerResponse.data;
-
-    }catch (error) {
-        console.error("Registration error:", error.response?.data?.message || error.message);
-        return {err:error.response.data};
+      return { result: true, ...response.data };
+    } catch (error) {
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        return { result: false, err: error.response };
+      } else if (error.request) {
+        // The request was made but no response was received
+        throw new Error('No response received from server');
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        throw error;
+      }
     }
   };
 

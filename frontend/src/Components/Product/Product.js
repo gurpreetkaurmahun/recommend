@@ -57,7 +57,7 @@ function Product({title,price,image,link,pricePerUnit,supermarket,onSave,onDelet
   <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/>
 </svg> :
       {supermarket}</li>
-    <li  style={{textAlign:"left",listStyle:"none",margin:5,position:"relative"}}> <button className="buttonT" style={{width:80}}> <a style={{textDecoration:"none",color:"white"}} href={link}>Visit</a></button> </li>
+    <li  style={{textAlign:"left",listStyle:"none",margin:5,position:"relative"}}> <button className="buttonT" style={{width:80}}> <a style={{textDecoration:"none",color:"white" }} href={link}>Visit</a></button> </li>
    
   </ul>
   <div className="card-body">

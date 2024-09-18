@@ -77,7 +77,7 @@ const updateReviews=async(id,reviewData)=>{
 
     }
     catch(error){
-        console.log("Response error",error)
+        return { success: false, error: error.message };
        }
 }
 const deleteReview=async(id)=>{

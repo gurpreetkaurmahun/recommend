@@ -2,11 +2,10 @@
 import Navbar from "../Navbar.js";
 import{useState,useEffect} from "react";
 import ReviewLink from "./ReviewLink.js";
-import{getReviews,getReviewsById,addReview,updateReviews,deleteReview,calculateDays} from "../../Backend-services/ReviewSpecific.js";
+import{getReviews,addReview,updateReviews,deleteReview,calculateDays} from "../../Backend-services/ReviewSpecific.js";
 import Footer from "../../Pages/Footer.js";
-import { useNavigate, useLocation } from 'react-router-dom';
 import WriteReview from "./WriteReview.js";
-
+import{useAuth}from "../AuthenticateContext.js";
 import SlideUpDiv from "../InfoModal.js";
 
 function ReviewsPage(){
@@ -19,6 +18,10 @@ function ReviewsPage(){
     const [slideUpDiv,setSlideUpDiv] = useState(false);
     const [editingReview, setEditingReview] = useState(null);
     const [redirectedFromReview, setRedirectedFromReview] = useState(false);
+    const authContext = useAuth();
+    const isAuthenticated = authContext.authenticated;
+    const identityId = authContext.identityId;
+    const activeId = authContext.activeUserId;
 
     useEffect(()=>{
         fetchReviews();
@@ -26,10 +29,10 @@ function ReviewsPage(){
     },[])
    
     useEffect(() => {
-        const user = localStorage.getItem("activeUserId");
+       
         const redirectToReview = localStorage.getItem('redirectToReview');
-        if (user) {
-            setCurrentUserId(user);
+        if (isAuthenticated ) {
+            setCurrentUserId(activeId);
             setLogError(false);
             if (redirectToReview === 'true') {
                 setRedirectedFromReview(true);
@@ -92,7 +95,6 @@ function ReviewsPage(){
         setEditingReview(review);
         setReviewLink(true);
     }
-
     async function handleUpdateReview(reviewId, updatedReviewData) {
         try {
             await updateReviews(reviewId, updatedReviewData);
@@ -102,7 +104,6 @@ function ReviewsPage(){
             console.error("Error updating review:", error);
         }
     }
-
     return (
         <div>
             <Navbar />
@@ -121,29 +122,30 @@ function ReviewsPage(){
                 <button onClick={handleWriteReviewClick} className="buttonT reviewButton" >Write Review</button>
             </div>
             
-
             {reviewLink && currentUserId && (
-            <WriteReview 
+                <WriteReview 
                 initialReview={editingReview}
-                onSubmit={(reviewData) => {
-                    if (editingReview) {
-                        handleUpdateReview(editingReview.reviewId, reviewData);
-                    } else {
-                        addReview(reviewData);
+                onSubmit={async (reviewData, action) => {
+                    try {
+                        if (action === 'update') {
+                            await handleUpdateReview(reviewData.reviewId, reviewData);
+                        } else {
+                            await addReview(reviewData);
+                        }
+                        await fetchReviews();
+                        setReviewLink(false);
+                        setEditingReview(null);
+                    } catch (error) {
+                        console.error("Error submitting review:", error);
                     }
-                    setReviewLink(false);
-                    setEditingReview(null);
-                    fetchReviews();
                 }}
                 onClose={() => {
                     setReviewLink(false);
                     setEditingReview(null);
                 }} 
-            />
-        )}
-
-         
-
+                />
+                )
+            }
 
             <div style={{ width: "70%", backgroundColor: "white", marginBottom: "30px", borderRadius: "20px", filter: "drop-shadow(5px 5px 6px hwb(314 78% 1%))", marginLeft: "20%" }}>
                 {reviews.length > 0 ? (

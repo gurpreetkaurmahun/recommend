@@ -10,7 +10,7 @@ import Footer from "../../Pages/Footer.js";
 import SlideUpDiv from "../InfoModal.js";
 import {useNavigate} from 'react-router-dom';
 import Reviews from "../Reviews/Reviews.js";
-
+import Message from "../Message.js";
 
 
 function AllProducts(){
@@ -21,8 +21,9 @@ function AllProducts(){
     const [activeTab, setActiveTab] = useState('moreProducts');
     const [showAllProducts, setShowAllProducts] = useState(false);
     const [slideUpDiv,setSlideUpDiv] = useState(false);
-  
     const[visible,setVisible]=useState(false);
+    const[saved,setSaved]=useState(false);
+    const[saveMessage,setSaveMessage]=useState("");
     const navigate=useNavigate();
 
 
@@ -68,6 +69,8 @@ function AllProducts(){
     async function handleProductSave(product) {
 
       const userId=localStorage.getItem("activeUserId");
+      console.log("local storage for user in saved product is is :",localStorage);
+
       if (authContext.activeUserId === "") {
         localStorage.setItem('scrapedProducts', JSON.stringify(products));
         localStorage.setItem('searchProduct', searchProduct);
@@ -75,23 +78,37 @@ function AllProducts(){
         localStorage.setItem('lastAction', 'saveProduct');
         localStorage.setItem('productToSave', JSON.stringify(product));
         setVisible(true);
-      } else {
-        try {
-          const save = await addSavedProduct({
-            TempId: product.tempId,
-            ConsumerId: parseInt(userId, 10),
-            DateSaved: new Date().toISOString()
-          });
-   
+      } 
+      else 
+      {
+        try
+    {
+      const savedProductData = {
+        TempId: product.tempId,
+        ConsumerId: parseInt(userId, 10),
+        DateSaved: new Date().toISOString().split('.')[0] // Format: YYYY-MM-DDTHH:mm:ss
+    };
+      console.log("Sending data to save product:", savedProductData);
+      const save = await addSavedProduct(savedProductData);
+
+      console.log("Response from product save is:", save);
+      if (save.success) {
+        setSaved(true);
+        setSaveMessage("Product saved!");
         setProducts(prevProducts => 
-            prevProducts.map(p => 
-              p.tempId === product.tempId ? {...p, isSaved: true} : p
-            )
-          );
-          
-          clearLocalStorage();
-        
-        } catch (error) {
+          prevProducts.map(p => 
+            p.tempId === product.tempId ? {...p, isSaved: true} : p
+          )
+        );
+        clearLocalStorage();
+      } else if (save.alreadySaved) {
+        setSaved(true);
+        setSaveMessage(save.error); // "This product is already in your favorites."
+      } else {
+        throw new Error(save.error || "Failed to save product");
+      }
+    } 
+    catch (error) {
           console.log("Error is", error);
         }
       }
@@ -142,6 +159,8 @@ function AllProducts(){
           <div style={{ width: "100%" }}>
                 {/* Display one product from each supermarket */}
 
+                {saved&&<Message value={saveMessage} onClose={()=>setSaved(false)}/>}
+                
                 <div className="oneProduct" >
 
                 {firstProducts.map(product => (

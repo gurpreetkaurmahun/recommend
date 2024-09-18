@@ -14,27 +14,23 @@ function Navbar() {
   const navigate=useNavigate();
   const indicatorRef = useRef(null);
   const listItemRefs = useRef([]);
-  const authContext=useAuth();
   const[name,setName]=useState("");
-  const isAuthenticated=authContext.authenticated;
+
+  const authContext=useAuth();
+  const isAuthenticated = authContext.authenticated; 
+  const user = authContext.user;
 
 
   useEffect(() => {
     
     if (isAuthenticated) {
       getUser();
-      console.log("Local Storage",localStorage);
+     
     } else {
       setName("");
     }
   }, [isAuthenticated]);
   
-  useEffect(() => {
-    const user=localStorage.getItem("userName");
-    if (user) {
-      setName(user[0]);
-    }
-  }, []);
 
   useEffect(() => {
     if (indicatorRef.current && listItemRefs.current[activeIndex]) 
@@ -50,15 +46,15 @@ function Navbar() {
   };
   
   function getUser() {
-    const userName = localStorage.getItem("userName");
-
-    if (userName) {
-      setName(userName[0].toUpperCase());
-    } 
-    else 
-    {
-      // Handle the case where userName is null or undefined
-      setName("");
+    if (user && user.fName) {
+      setName(user.fName[0].toUpperCase());
+    } else {
+      const userName = localStorage.getItem("userName");
+      if (userName) {
+        setName(userName[0].toUpperCase());
+      } else {
+        setName("");
+      }
     }
   }
 

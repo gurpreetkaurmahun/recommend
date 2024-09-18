@@ -224,7 +224,7 @@ namespace  SoftwareProject.Service{
                 _configuration["Jwt:Issuer"],
                 _configuration["Jwt:Issuer"],
                 claims,
-                expires: DateTime.UtcNow.AddMinutes(30),
+                expires: expires,
                 signingCredentials: creds
             );
 

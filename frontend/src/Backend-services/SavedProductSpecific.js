@@ -44,20 +44,33 @@ const getSavedProducts= async (token)=>{
     }
 };
 
-const addSavedProduct=async(product)=>{
-
-    try{
-
-        const productAdd=await axios.post(`${API_BASE_URL}SavedProduct`, product);
-        console.log("Data:",productAdd.data);
-        return productAdd.data;
-
-    }catch(error){
-        console.error("SavedProduct Add error:", error.response ? error.response.data : error.message);
-        return error;
+const addSavedProduct = async (product) => {
+    try {
+      const productAdd = await axios.post(`${API_BASE_URL}SavedProduct`, product, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      console.log("Data:", productAdd.data);
+      return { success: true, data: productAdd.data };
+    } catch (error) {
+      console.error("Error in addSavedProduct:", error.response?.data || error.message);
+      
+      // Check if the error is due to the product already being saved
+      if (error.response?.data?.message === 'Product already saved by the consumer') {
+        return { 
+          success: false, 
+          error: 'This product is already in your favorites.',
+          alreadySaved: true
+        };
+      }
+      
+      return { 
+        success: false, 
+        error: error.response?.data?.message || error.message || "An error occurred while saving product"
+      };
     }
-};
-
+  };
 const updateSavedProduct=async(token,id,editProduct)=>{
 
     try{

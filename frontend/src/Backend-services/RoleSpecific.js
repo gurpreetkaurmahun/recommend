@@ -14,10 +14,55 @@ import { useState } from "react";
 
     }
     catch (error) {
-        console.error("Role check error:", error.response ? error.response.data : error.message);
+        return { 
+            success: false, 
+            error: error.response?.data || error.message || "An error occurred while retreiving the user"
+          };
         
     }
 }
+
+const deleteUserProfile = async (id) => {
+    try {
+        console.log(`Attempting to delete user profile with ID: ${id}`);
+        
+        const response = await axios.delete(`${API_BASE_URL}user/${id}`);
+        
+        console.log('Delete response:', response);
+
+        if (response.status === 200) {
+            console.log('User profile deleted successfully');
+            return { success: true, message: 'User profile deleted successfully' };
+        } else {
+            console.warn('Unexpected response status:', response.status);
+            return { success: false, error: `Unexpected response status: ${response.status}` };
+        }
+    } catch (error) {
+        console.error('Error deleting user profile:', error);
+
+        if (error.response) {
+            console.error('Error response data:', error.response.data);
+            console.error('Error response status:', error.response.status);
+         
+            return { 
+                success: false, 
+                error: error.response.data || `Server responded with status: ${error.response.status}`
+            };
+        } else if (error.request) {
+            console.error('No response received:', error.request);
+            return { 
+                success: false, 
+                error: 'No response received from server'
+            };
+        } else {
+            console.error('Error setting up request:', error.message);
+            return { 
+                success: false, 
+                error: error.message || 'An error occurred while deleting the user profile'
+            };
+        }
+    }
+};
    
     const GetRoles=async (token)=> {
         try {
@@ -146,5 +191,5 @@ import { useState } from "react";
     }
 
 
-export{ GetRoles,GetRolesById,createRole,deleteRole,updateRole,assignRole,getUserEmail};
+export{ GetRoles,GetRolesById,createRole,deleteRole,updateRole,assignRole,getUserEmail,deleteUserProfile};
 

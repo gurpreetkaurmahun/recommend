@@ -43,7 +43,9 @@ namespace  SoftwareProject.Service{
                 var newsLetterService = scope.ServiceProvider.GetRequiredService<NewsLetterSubscriptionService>();
                 var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
 
-                var subscribedConsumers = await _context.Consumers.Where(c => c.isSubscribed).ToListAsync();
+                var subscribedConsumers = await _context.Consumers
+                                        .Where(c => c.isSubscribed)
+                                        .ToListAsync();
 
                 foreach (var consumer in subscribedConsumers)
                 {

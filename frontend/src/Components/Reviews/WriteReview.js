@@ -1,52 +1,58 @@
 import React from "react";
 import MyForm from "../Form";
 import{useState,useEffect}from"react";
-import {addReview,updateReviews}from"../../Backend-services/ReviewSpecific.js";
-import{validEmail}from "../../Helpers/Validation.js";
 import Message from "../Message.js";
 import {getUserEmail} from "../../Backend-services/RoleSpecific.js";
 import {useAuth}from "../AuthenticateContext.js";
 
 function WriteReview({onClose, initialReview, onSubmit}){
 
-    console.log("Initial review passed is",initialReview);
+    // console.log("Initial review passed is",initialReview);
 
-    const[user,setUser]=useState("");
+    const[userId,setUserId]=useState("");
     const[userEmail,setUserEmail]=useState("");
     const[error,setError]=useState(false);
     const [errorMessage,setErrorMessage]=useState("");
     const[message,setShowMessage]=useState(false);
+    const[authIdentity,setAuthIdentity]=useState("");
+    const authContext=useAuth();
+    const isAuthenticated = authContext.authenticated; 
+    const identityId=authContext.identityId;
+    const activeId=authContext.activeUserId;
+
 
     useEffect(() => {
-        const userId = localStorage.getItem("activeUserId");
-        const identity=localStorage.getItem("identityId");
-        console.log("Retrieved user for local reviews ID:", userId);
-        if (userId) {
-            setUser(userId);
-     
-            getUsersEmail(identity);
-        } else {
-            console.log("No user ID found in localStorage");
+        if(isAuthenticated){
+            console.log("AuthCOntext for writing emails",authContext);
+            getUserInfo();
+            getUsersEmail(identityId);
+        }
+        else {
+            console.log("No user ID found in AuthContext");
         }
     }, []);
 
-    async function getUsersEmail(userId){
+    function getUserInfo() {
+        if (identityId ) {
+            setUserId(activeId);
+            setAuthIdentity(identityId);
+        } else {
+          console.log("AuthContext values failed",authContext);
+        }
+      }
 
-      
-
-        try{
-            const response= await getUserEmail(userId);
+    async function getUsersEmail(user){
+        try
+        {
+            const response= await getUserEmail(user);
             setUserEmail(response.email);
             console.log("userEmail response",response);
-
         }
         catch(error){
             console.log("error retreving user Email");
         }
     }
-
-
-
+    
     const fields=[
        
         { name: 'Review', type: 'text', label: 'Review' },
@@ -66,77 +72,48 @@ function WriteReview({onClose, initialReview, onSubmit}){
         Stars: "",
         ScreenName: ""
     };
-
-       async function handleSubmit(values) {
-
-        console.log("review values",values);
+    async function handleSubmit(values) {
+        console.log("review values", values, "initial review", initialReview);
         
-        if (!values.Review || !values.Stars ||  !values.ScreenName) {
+        if (!values.Review || !values.Stars || !values.ScreenName) {
             setErrorMessage("Please fill out all the fields");
             setError(true);
             return;
         }
-
+    
         const stars = parseInt(values.Stars, 10);
         if (isNaN(stars) || stars < 1 || stars > 5) {
             setError(true);
             setErrorMessage("Stars must be a number between 1 and 5");
             return;
         }
-
+    
         try {
-            let result;
+            const reviewData = {
+                review: values.Review.trim(),
+                reviewDate: new Date().toISOString().split('T')[0],
+                stars: parseInt(values.Stars, 10),
+                consumerId: parseInt(userId, 10),
+                userEmail: userEmail,
+                consumerName: values.ScreenName.trim()
+            };
+    
             if (initialReview) {
-                // Updating an existing review
-                const reviewData = {
-                    reviewId: initialReview.reviewId,
-                    review: values.Review.trim(),
-                    reviewDate: new Date().toISOString().split('T')[0],
-                    stars: stars,
-                    consumerId: parseInt(user, 10),
-                    userEmail:userEmail,
-                    consumerName: values.ScreenName.trim()
-                };
-                result = await updateReviews(initialReview.reviewId, reviewData);
-                if (result.success) {
-                    setShowMessage(true);
-                    onSubmit(reviewData);
-                }
-            } else {
-                if (!values.Review || !values.Stars ||  !values.ScreenName) {
-                    setErrorMessage("Please fill out all the fields");
-                    setError(true);
-                    return;
-                }
-                // Adding a new review
-                const newReview = {
-                    review: values.Review.trim(),
-                    reviewDate: new Date().toISOString().split('T')[0],
-                    stars: stars,
-                    consumerId: parseInt(user, 10),
-                    userEmail:userEmail,
-                    consumerName: values.ScreenName.trim()
-                };
-                result = await addReview(newReview);
-                if (result.success) {
-                    setShowMessage(true);
-                    onSubmit(newReview);
-                }
+                reviewData.reviewId = initialReview.reviewId;
             }
     
-            if (result.success) {
-                onClose();
-            } else {
-                setError(result.error || "Failed to submit review. Please try again.");
-            }
+            setShowMessage(true);
+            onSubmit(reviewData, initialReview ? 'update' : 'add');
+            onClose();
         } catch (error) {
             console.error("Error in handleSubmit:", error);
-            setError("An unexpected error occurred. Please try again.");
+            setError(true);
+            setErrorMessage("An unexpected error occurred. Please try again.");
         }
     }
 
 
-       return(
+ return(
         <div style={{
             position: "fixed", 
             top: "50%", 
